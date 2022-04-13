@@ -1,7 +1,13 @@
 {
-  "name": "ece-as-a-service",
-  "version": "0.1.0",
+  "name": "@serlo/ece-as-a-service",
+  "version": "0.0.0",
   "private": true,
+  "bugs": {
+    "url": "https://github.com/serlo/ece-as-a-service/issues"
+  },
+  "repository": "serlo/ece-as-a-service",
+  "license": "Apache-2.0",
+  "author": "Serlo Education e.V.",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -24,5 +30,8 @@
     "prettier": "^2.6.2",
     "prettier-plugin-packagejson": "^2.2.17",
     "typescript": "^4.6.3"
+  },
+  "engines": {
+    "node": "^16.0.0"
   }
 }
