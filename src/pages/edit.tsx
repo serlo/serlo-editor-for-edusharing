@@ -1,11 +1,14 @@
+import { Editor } from '@edtr-io/core'
 import { GetServerSideProps } from 'next'
 
 import { getJsonBody } from '../utils/get-json-body'
+import { plugins } from '../plugins'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
     return {
-      notFound: true,
+      // TODO: revert this
+      props: {},
     }
   }
 
@@ -18,11 +21,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 export interface EditProps {
-  state?: unknown
+  state?: { plugin: string; state?: unknown }
   saveUrl: string
   savePayload?: unknown
 }
 
 export default function Edit(props: EditProps) {
-  return <>{JSON.stringify(props)}</>
+  return (
+    <Editor
+      plugins={plugins}
+      initialState={props.state ?? { plugin: 'text' }}
+    />
+  )
 }
