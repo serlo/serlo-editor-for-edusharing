@@ -17,7 +17,19 @@
   },
   "dependencies": {
     "@edtr-io/core": "^2.5.0",
+    "@edtr-io/plugin-anchor": "^2.5.0",
+    "@edtr-io/plugin-blockquote": "^2.5.1",
+    "@edtr-io/plugin-highlight": "^2.5.0",
+    "@edtr-io/plugin-input-exercise": "^2.5.1",
+    "@edtr-io/plugin-rows": "^2.5.1",
+    "@edtr-io/plugin-sc-mc-exercise": "^2.5.1",
+    "@edtr-io/plugin-serlo-injection": "^2.5.0",
+    "@edtr-io/plugin-spoiler": "^2.5.1",
     "@edtr-io/plugin-text": "^2.5.1",
+    "@edtr-io/ui": "^2.5.0",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
     "body-parser": "^1.20.0",
     "immutable": "^4.0.0",
     "next": "^12.1.5",
@@ -27,6 +39,7 @@
     "react-dnd-html5-backend": "^14.1.0",
     "react-dom": "^17.0.2",
     "react-is": "^17.0.2",
+    "redux": "^4.2.0",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {

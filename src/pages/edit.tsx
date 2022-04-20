@@ -30,7 +30,7 @@ export default function Edit(props: EditProps) {
   return (
     <Editor
       plugins={plugins}
-      initialState={props.state ?? { plugin: 'text' }}
+      initialState={props.state ?? { plugin: 'rows' }}
     />
   )
 }
