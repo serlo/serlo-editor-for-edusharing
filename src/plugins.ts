@@ -134,8 +134,8 @@ export const plugins = {
     content: { plugin: 'text', config: { registry: [] } },
     feedback: { plugin: 'text', config: { registry: [] } },
   }),
-  serloInjectionPlugin: createSerloInjectionPlugin(),
-  spoilerPlugin: createSpoilerPlugin({
+  serloInjection: createSerloInjectionPlugin(),
+  spoiler: createSpoilerPlugin({
     content: { plugin: 'rows' },
   }),
   text: createTextPlugin({

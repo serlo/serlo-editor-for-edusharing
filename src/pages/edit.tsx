@@ -1,8 +1,9 @@
 import { Editor } from '@edtr-io/core'
 import { GetServerSideProps } from 'next'
 
-import { getJsonBody } from '../utils/get-json-body'
+import { Layout } from '../layout'
 import { plugins } from '../plugins'
+import { getJsonBody } from '../utils/get-json-body'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
@@ -28,9 +29,11 @@ export interface EditProps {
 
 export default function Edit(props: EditProps) {
   return (
-    <Editor
-      plugins={plugins}
-      initialState={props.state ?? { plugin: 'rows' }}
-    />
+    <Layout>
+      <Editor
+        plugins={plugins}
+        initialState={props.state ?? { plugin: 'rows' }}
+      />
+    </Layout>
   )
 }
