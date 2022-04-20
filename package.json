@@ -26,6 +26,7 @@
     "@edtr-io/plugin-serlo-injection": "^2.5.0",
     "@edtr-io/plugin-spoiler": "^2.5.1",
     "@edtr-io/plugin-text": "^2.5.1",
+    "@edtr-io/renderer": "^2.5.0",
     "@edtr-io/ui": "^2.5.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",

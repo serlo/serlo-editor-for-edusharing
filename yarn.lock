@@ -734,6 +734,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@edtr-io/renderer@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "@edtr-io/renderer@npm:2.5.0"
+  dependencies:
+    "@edtr-io/internal__dev-expression": ^2.3.2
+    "@edtr-io/plugin": ^2.5.0
+    "@edtr-io/store": ^2.5.0
+    "@edtr-io/ui": ^2.5.0
+    "@types/react": ^17.0.43
+    "@types/react-dom": ^17.0.14
+    "@types/styled-components": ^5.1.24
+  peerDependencies:
+    "@edtr-io/core": ">= 1"
+    react: ">= 17"
+    react-dnd: ">= 14"
+    react-dnd-html5-backend: ">= 14"
+    react-dom: ">= 17"
+    react-is: ">= 17"
+    redux: ">= 4"
+    styled-components: ">= 4"
+  checksum: 3a75197dc796fc5d4bb363f87bd5f3fabcc860146c830b9d6ed3cc46659af5354d52f625bf829340d81c1ef4fe3b83a6a43ea7597f878f84c3435d662e1f923e
+  languageName: node
+  linkType: hard
+
 "@edtr-io/store@npm:^2.5.0":
   version: 2.5.0
   resolution: "@edtr-io/store@npm:2.5.0"
@@ -1135,6 +1159,7 @@ __metadata:
     "@edtr-io/plugin-serlo-injection": ^2.5.0
     "@edtr-io/plugin-spoiler": ^2.5.1
     "@edtr-io/plugin-text": ^2.5.1
+    "@edtr-io/renderer": ^2.5.0
     "@edtr-io/ui": ^2.5.0
     "@fortawesome/fontawesome-svg-core": ^6.1.1
     "@fortawesome/free-solid-svg-icons": ^6.1.1

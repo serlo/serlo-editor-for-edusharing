@@ -1,11 +1,18 @@
+import { Renderer } from '@edtr-io/renderer'
 import { GetServerSideProps } from 'next'
 
+import { kitchenSink } from '../fixtures/kitchen-sink'
+import { Layout } from '../layout'
+import { plugins } from '../plugins'
 import { getJsonBody } from '../utils/get-json-body'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
     return {
-      notFound: true,
+      // TODO: revert this
+      props: {
+        state: kitchenSink,
+      },
     }
   }
 
@@ -18,9 +25,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 export interface RenderProps {
-  state: unknown
+  state: { plugin: string; state?: unknown }
 }
 
 export default function Render(props: RenderProps) {
-  return <>{JSON.stringify(props)}</>
+  return (
+    <Layout>
+      <Renderer plugins={plugins} state={props.state} />
+    </Layout>
+  )
 }
