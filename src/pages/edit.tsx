@@ -4,12 +4,15 @@ import { GetServerSideProps } from 'next'
 import { Layout } from '../layout'
 import { plugins } from '../plugins'
 import { getJsonBody } from '../utils/get-json-body'
+import { kitchenSink } from '../fixtures/kitchen-sink'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
     return {
       // TODO: revert this
-      props: {},
+      props: {
+        state: kitchenSink,
+      },
     }
   }
 
