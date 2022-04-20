@@ -405,9 +405,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edtr-io/plugin-rows@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@edtr-io/plugin-rows@npm:2.5.0"
+"@edtr-io/plugin-rows@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "@edtr-io/plugin-rows@npm:2.5.1"
   dependencies:
     "@edtr-io/editor-ui": ^2.5.0
     "@edtr-io/plugin": ^2.5.0
@@ -430,19 +430,19 @@ __metadata:
     react-is: ">= 17"
     redux: ">= 4"
     styled-components: ">= 4"
-  checksum: 978cdf44ef37b4e32b9a43788c8e96a13d7562cef9062d20128888534dc9369fcc0cd5b04f9cf9cda5cbc087c118991ac3ef652ed1e843a1db4bc23e0cdeda7f
+  checksum: c806fa1f01bbd8e002c64470d5f31a1a41583a4c084361a65da5e9f453fbaa382113c7f57d95f06ee1d6d31aba232deb8a2f190a1e6b781c7f7115373229b387
   languageName: node
   linkType: hard
 
-"@edtr-io/plugin-text@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@edtr-io/plugin-text@npm:2.5.0"
+"@edtr-io/plugin-text@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "@edtr-io/plugin-text@npm:2.5.1"
   dependencies:
     "@convertkit/slate-lists": ^0.2.11
     "@edtr-io/editor-ui": ^2.5.0
     "@edtr-io/math": ^2.5.0
     "@edtr-io/plugin": ^2.5.0
-    "@edtr-io/plugin-rows": ^2.5.0
+    "@edtr-io/plugin-rows": ^2.5.1
     "@edtr-io/store": ^2.5.0
     "@edtr-io/ui": ^2.5.0
     "@types/is-hotkey": ^0.1.7
@@ -468,7 +468,7 @@ __metadata:
     react-is: ">= 17"
     redux: ">= 4"
     styled-components: ">= 4"
-  checksum: 4428b9419f4781348c9f08293e6dc2cb4798e38355aade1551504795ec6aadfb9f8771941f1853df366db723402b1669454e1422eb03d413a132860b586cec54
+  checksum: 69746acafd8331128997c3d94707349a1103b8527b0c6b935fc429fb87afa2fe10a1b4ec5080b50fd4dbc4fc56b465a994fbf7753c9e9c00f61ef59663c76188
   languageName: node
   linkType: hard
 
@@ -875,9 +875,9 @@ __metadata:
   resolution: "@serlo/ece-as-a-service@workspace:."
   dependencies:
     "@edtr-io/core": ^2.5.0
-    "@edtr-io/plugin-text": ^2.5.0
-    "@types/react": ^17.0.39
-    "@types/react-dom": ^17.0.11
+    "@edtr-io/plugin-text": ^2.5.1
+    "@types/react": ^17.0.44
+    "@types/react-dom": ^17.0.15
     body-parser: ^1.20.0
     eslint: ^8.13.0
     eslint-config-next: ^12.1.5
@@ -888,7 +888,7 @@ __metadata:
     raw-body: ^2.5.1
     react: ^17.0.2
     react-dnd: ^14.0.5
-    react-dnd-html5-backend: ^14.0.5
+    react-dnd-html5-backend: ^14.1.0
     react-dom: ^17.0.2
     react-is: ^17.0.2
     styled-components: ^5.3.5
@@ -974,7 +974,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^17.0.11, @types/react-dom@npm:^17.0.14":
+"@types/react-dom@npm:^17.0.14, @types/react-dom@npm:^17.0.15":
   version: 17.0.15
   resolution: "@types/react-dom@npm:17.0.15"
   dependencies:
@@ -1015,7 +1015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17, @types/react@npm:^17.0.39, @types/react@npm:^17.0.43":
+"@types/react@npm:^17, @types/react@npm:^17.0.43, @types/react@npm:^17.0.44":
   version: 17.0.44
   resolution: "@types/react@npm:17.0.44"
   dependencies:
@@ -3157,7 +3157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dnd-html5-backend@npm:^14.0.5":
+"react-dnd-html5-backend@npm:^14.1.0":
   version: 14.1.0
   resolution: "react-dnd-html5-backend@npm:14.1.0"
   dependencies:
