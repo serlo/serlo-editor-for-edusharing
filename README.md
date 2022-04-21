@@ -2,7 +2,9 @@
 
 ## Endpoints
 
-### /edit
+We expose two POST endpoints.
+
+### Editing documents: POST /edit
 
 Expects a POST request with the following JSON body:
 
@@ -13,6 +15,7 @@ interface EditProps {
   // The endpoint that will be used when the user initiates a save.
   saveUrl: string
   // Arbitrary additional information that we should pass when the user iniates a save.
+  // (e.g. user id, token, ...)
   savePayload?: unknown
 }
 ```
@@ -28,7 +31,7 @@ interface SavePayload {
 }
 ```
 
-### /render
+### Rendering documents: POST /render
 
 Expects a POST request with the following JSON body:
 
