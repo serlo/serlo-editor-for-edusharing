@@ -21,6 +21,9 @@ import {
   serializeRootDocument,
   persist,
 } from '@edtr-io/store'
+import { faRedoAlt } from '@edtr-io/ui'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSave } from '@fortawesome/free-solid-svg-icons'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
@@ -78,74 +81,81 @@ function EditInner({
 
   return (
     <>
-      <div className="bg-indigo-600">
-        <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between flex-wrap">
-            <div className="w-0 flex-1 flex items-center" />
-            <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
-              <button
-                type="button"
-                className={classNames(
-                  'flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50',
-                  {
-                    'opacity-50 cursor-not-allowed': !undoable,
-                  }
-                )}
-                disabled={!undoable}
-                onClick={() => {
-                  dispatch(undo())
-                }}
-              >
-                Undo
-              </button>
-            </div>
-            <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto sm:ml-3">
-              <button
-                type="button"
-                className={classNames(
-                  'flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50',
-                  {
-                    'opacity-50 cursor-not-allowed': !redoable,
-                  }
-                )}
-                disabled={!redoable}
-                onClick={() => {
-                  dispatch(redo())
-                }}
-              >
-                Redo
-              </button>
-            </div>
-            <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto sm:ml-3">
-              <button
-                type="button"
-                className={classNames(
-                  'flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50',
-                  {
-                    'opacity-50 cursor-not-allowed': !hasPendingChanges,
-                  }
-                )}
-                disabled={!hasPendingChanges}
-                onClick={async () => {
-                  await fetch(saveUrl, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      state: serializeRootDocument()(store.getState()),
-                      ...(savePayload !== undefined
-                        ? { payload: savePayload }
-                        : {}),
-                    }),
-                  })
-                  dispatch(persist())
-                }}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {renderToolbar()}
       <Layout>{children}</Layout>
+      {renderExtraEditorStyles()}
     </>
   )
+
+  function renderToolbar() {
+    const buttonStyle =
+      'px-1.5 py-1 border border-transparent rounded-xl shadow-sm text-white text-sm font-medium bg-sky-800/0 hover:bg-sky-800 hover:opacity-100 ml-1'
+    const getButtonActiveClass = (active: boolean) => {
+      return active ? 'opacity-90' : 'opacity-50 cursor-not-allowed'
+    }
+
+    return (
+      <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
+        <div className="max-w-6xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex">
+          <button
+            type="button"
+            className={classNames(buttonStyle, getButtonActiveClass(undoable))}
+            disabled={!undoable}
+            onClick={() => {
+              dispatch(undo())
+            }}
+          >
+            <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Undo
+          </button>
+          <button
+            type="button"
+            className={classNames(buttonStyle, getButtonActiveClass(redoable))}
+            disabled={!redoable}
+            onClick={() => {
+              dispatch(redo())
+            }}
+          >
+            <FontAwesomeIcon icon={faRedoAlt} /> Redo
+          </button>
+          <button
+            type="button"
+            className={classNames(
+              buttonStyle,
+              'ml-12',
+              getButtonActiveClass(hasPendingChanges)
+            )}
+            disabled={!hasPendingChanges}
+            onClick={async () => {
+              await fetch(saveUrl, {
+                method: 'POST',
+                body: JSON.stringify({
+                  state: serializeRootDocument()(store.getState()),
+                  ...(savePayload !== undefined
+                    ? { payload: savePayload }
+                    : {}),
+                }),
+              })
+              dispatch(persist())
+            }}
+          >
+            <FontAwesomeIcon icon={faSave} /> Save
+          </button>
+        </div>
+      </nav>
+    )
+  }
+
+  function renderExtraEditorStyles() {
+    return (
+      <style jsx global>{`
+        .fa-4x {
+          color: rgb(175, 215, 234);
+          width: 3rem;
+        }
+        div[data-document] h3 {
+          margin-top: 1.5rem;
+        }
+      `}</style>
+    )
+  }
 }
