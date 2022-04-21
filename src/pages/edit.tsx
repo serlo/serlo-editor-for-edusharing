@@ -131,7 +131,9 @@ function EditInner({
                     method: 'POST',
                     body: JSON.stringify({
                       state: serializeRootDocument()(store.getState()),
-                      payload: savePayload,
+                      ...(savePayload !== undefined
+                        ? { payload: savePayload }
+                        : {}),
                     }),
                   })
                   dispatch(persist())
