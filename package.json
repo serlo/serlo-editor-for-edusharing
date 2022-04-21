@@ -10,7 +10,7 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "next dev -p 3003",
     "format": "prettier --write .",
     "lint": "next lint",
     "start": "next start"
