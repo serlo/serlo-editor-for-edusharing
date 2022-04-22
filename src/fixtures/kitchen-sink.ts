@@ -28,7 +28,14 @@ export const kitchenSink = {
           type: 'p',
           children: [
             { text: 'The editor supports ' },
-            { text: 'rich text.', strong: true },
+            { text: 'rich text', strong: true },
+            { text: ' with ' },
+            {
+              type: 'a',
+              href: 'https://google.com',
+              children: [{ text: 'links' }],
+            },
+            { text: ' etc.', strong: true },
           ],
         },
       ],

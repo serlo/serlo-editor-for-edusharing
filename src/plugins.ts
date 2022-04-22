@@ -20,6 +20,7 @@ import {
   faPhotoVideo,
   faQuoteRight,
 } from '@edtr-io/ui'
+import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
 
 const registry = [
   {
@@ -102,11 +103,13 @@ const registry = [
     name: 'inputExercise',
     title: 'Input exercise',
     description: 'Create a input exercise.',
+    icon: createIcon(faPuzzlePiece),
   },
   {
     name: 'scMcExercise',
     title: 'Choice exercise',
     description: 'Create a single- or multiple-exercise.',
+    icon: createIcon(faPuzzlePiece),
   },
 ]
 
