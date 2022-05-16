@@ -7,7 +7,7 @@ export async function getJsonBody<T = unknown>({
   req,
   res,
 }: GetServerSidePropsContext) {
-  return new Promise((resolve) => {
+  return new Promise<T>((resolve) => {
     jsonParser(req, res, () => {
       resolve((req as unknown as { body: T }).body)
     })

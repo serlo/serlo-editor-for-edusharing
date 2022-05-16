@@ -4,14 +4,6 @@ import {
   useScopedSelector,
   useScopedStore,
 } from '@edtr-io/core'
-import classNames from 'classnames'
-import { GetServerSideProps } from 'next'
-import { ReactNode } from 'react'
-
-import { Layout } from '../layout'
-import { plugins } from '../plugins'
-import { getJsonBody } from '../utils/get-json-body'
-import { kitchenSink } from '../fixtures/kitchen-sink'
 import {
   hasRedoActions,
   hasUndoActions,
@@ -24,13 +16,25 @@ import {
 import { faRedoAlt } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
+import classNames from 'classnames'
+import { GetServerSideProps } from 'next'
+import { ReactNode } from 'react'
+
+import { kitchenSink } from '../fixtures/kitchen-sink'
+import { Layout } from '../layout'
+import { currentVersion, MigratableState, migrate } from '../migrations'
+import { plugins } from '../plugins'
+import { getJsonBody } from '../utils/get-json-body'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
     return {
       // TODO: revert this
       props: {
-        state: kitchenSink,
+        state: migrate({
+          version: 0,
+          document: kitchenSink,
+        }),
         saveUrl: '#',
         savePayload: {
           foo: 'bar',
@@ -43,12 +47,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: validate props
 
   return {
-    props,
+    props: {
+      ...props,
+      state: migrate(props.state),
+    },
   }
 }
 
 export interface EditProps {
-  state?: { plugin: string; state?: unknown }
+  state?: MigratableState
   saveUrl: string
   savePayload?: unknown
 }
@@ -58,10 +65,17 @@ export default function Edit(props: EditProps) {
     <>
       <Editor
         plugins={plugins}
-        initialState={props.state ?? { plugin: 'rows' }}
+        initialState={props.state?.document ?? { plugin: 'rows' }}
       >
         {(document) => {
-          return <EditInner {...props}>{document}</EditInner>
+          return (
+            <EditInner
+              {...props}
+              version={props.state?.version ?? currentVersion}
+            >
+              {document}
+            </EditInner>
+          )
         }}
       </Editor>
     </>
@@ -72,7 +86,8 @@ function EditInner({
   children,
   saveUrl,
   savePayload,
-}: { children: ReactNode } & EditProps) {
+  version,
+}: { children: ReactNode; version: number } & EditProps) {
   const dispatch = useScopedDispatch()
   const store = useScopedStore()
   const undoable = useScopedSelector(hasUndoActions())
@@ -129,7 +144,10 @@ function EditInner({
               await fetch(saveUrl, {
                 method: 'POST',
                 body: JSON.stringify({
-                  state: serializeRootDocument()(store.getState()),
+                  state: {
+                    version,
+                    state: serializeRootDocument()(store.getState()),
+                  },
                   ...(savePayload !== undefined
                     ? { payload: savePayload }
                     : {}),
@@ -152,6 +170,7 @@ function EditInner({
           color: rgb(175, 215, 234);
           width: 3rem;
         }
+
         div[data-document] h3 {
           margin-top: 1.5rem;
         }
