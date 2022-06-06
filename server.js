@@ -11,13 +11,12 @@ Provider.setup(
   'LTIKEY', // Key used to sign cookies and tokens
   {
     // Database configuration
+    // TODO: use postgres instead?
     url: 'mongodb://localhost/admin',
     connection: { user: 'root', pass: 'example' },
   },
   {
     // Options
-    appRoute: '/',
-    loginRoute: '/login', // Optionally, specify some of the reserved routes
     cookies: {
       secure: false, // Set secure to true if the testing platform is in a different domain and https is being used
       sameSite: '', // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
@@ -45,5 +44,18 @@ void (async () => {
 
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`)
+  })
+
+  // TODO: Docker env variables? Or dynamic registration flow?
+  Provider.registerPlatform({
+    url: 'http://localhost:8000',
+    name: 'Moodle',
+    clientId: 'yPv7JvU5UcfBXTr',
+    authenticationEndpoint: 'http://localhost:8000/mod/lti/auth.php',
+    accesstokenEndpoint: 'http://localhost:8000/mod/lti/token.php',
+    authConfig: {
+      method: 'JWK_SET',
+      key: 'http://localhost:8000/mod/lti/certs.php',
+    },
   })
 })()
