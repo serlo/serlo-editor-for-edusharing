@@ -10,7 +10,7 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "build": "next build",
-    "dev": "next dev -p 3003",
+    "dev": "node server.js",
     "format": "prettier --write .",
     "lint": "next lint",
     "start": "next start"
@@ -37,6 +37,7 @@
     "body-parser": "^1.20.0",
     "classnames": "^2.3.1",
     "immutable": "^4.1.0",
+    "ltijs": "^5.8.8",
     "next": "^12.1.6",
     "raw-body": "^2.5.1",
     "react": "^17.0.2",
