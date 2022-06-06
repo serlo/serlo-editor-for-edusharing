@@ -1,7 +1,9 @@
 import { createAnchorPlugin } from '@edtr-io/plugin-anchor'
 import { createBlockquotePlugin } from '@edtr-io/plugin-blockquote'
+import { createGeogebraPlugin } from '@edtr-io/plugin-geogebra'
 import { createHighlightPlugin } from '@edtr-io/plugin-highlight'
 import { createInputExercisePlugin } from '@edtr-io/plugin-input-exercise'
+import { createMultimediaExplanationPlugin } from '@edtr-io/plugin-multimedia-explanation'
 import { createRowsPlugin } from '@edtr-io/plugin-rows'
 import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
 import { createSerloInjectionPlugin } from '@edtr-io/plugin-serlo-injection'
@@ -35,12 +37,12 @@ const registry = [
     description: 'Create indented text for quotations.',
     icon: createIcon(faQuoteRight),
   },
-  // {
-  //   name: 'geogebra',
-  //   title: 'GeoGebra Applet',
-  //   description: 'Embed GeoGebra Materials applets via URL or ID.',
-  //   icon: createIcon(faCubes),
-  // },
+  {
+    name: 'geogebra',
+    title: 'GeoGebra Applet',
+    description: 'Embed GeoGebra Materials applets via URL or ID.',
+    icon: createIcon(faCubes),
+  },
   {
     name: 'highlight',
     title: 'Source Code',
@@ -75,13 +77,13 @@ const registry = [
     description: 'Embed serlo.org content via their ID.',
     icon: createIcon(faNewspaper),
   },
-  // {
-  //   name: 'multimedia',
-  //   title: 'Multimedia content associated with text',
-  //   description:
-  //     'edtr-io::Create an illustrating or explaining multimedia content associated with text.',
-  //   icon: createIcon(faPhotoVideo),
-  // },
+  {
+    name: 'multimedia',
+    title: 'Multimedia content associated with text',
+    description:
+      'edtr-io::Create an illustrating or explaining multimedia content associated with text.',
+    icon: createIcon(faPhotoVideo),
+  },
   {
     name: 'spoiler',
     title: 'Spoiler',
@@ -120,6 +122,7 @@ export const plugins = {
       plugin: 'text',
     },
   }),
+  geogebra: createGeogebraPlugin(),
   highlight: createHighlightPlugin(),
   inputExercise: createInputExercisePlugin({
     feedback: {
@@ -128,6 +131,15 @@ export const plugins = {
         registry: [],
       },
     },
+  }),
+  multimediaExplanation: createMultimediaExplanationPlugin({
+    explanation: { plugin: 'rows' },
+    plugins: [
+      {
+        name: 'geogebra',
+        title: 'GeoGebra Applet',
+      },
+    ],
   }),
   rows: createRowsPlugin({
     content: { plugin: 'text' },
