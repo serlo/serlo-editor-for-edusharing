@@ -1,6 +1,7 @@
 const express = require('express')
 const { Provider } = require('ltijs')
 const next = require('next')
+const fetch = require('node-fetch')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -25,9 +26,35 @@ Provider.setup(
   }
 )
 
-Provider.onConnect((token, req, res) => {
-  console.log(token)
-  return res.send("It's alive!")
+Provider.onConnect(async (token, req, res) => {
+  // TODO: get url from somewhere
+  const response = await fetch('http://localhost:3000/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      // TODO: state
+      ltik: res.locals.ltik,
+    }),
+  })
+  res.send(await response.text())
+})
+
+Provider.onDeepLinking(async (token, req, res) => {
+  console.log('hey ho')
+  // TODO: get url from somewhere
+  const response = await fetch('http://localhost:3000/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      // TODO: state
+      ltik: res.locals.ltik,
+    }),
+  })
+  res.send(await response.text())
 })
 
 void (async () => {
@@ -37,6 +64,15 @@ void (async () => {
   const server = express()
 
   server.use('/lti', Provider.app)
+
+  server.post('/lti/save', async (req, res) => {
+    const form = await Provider.DeepLinking.createDeepLinkingForm(
+      res.locals.token,
+      [],
+      { message: 'Successfully registered resource!' }
+    )
+    return res.send(form)
+  })
 
   server.all('*', (req, res) => {
     return handle(req, res)

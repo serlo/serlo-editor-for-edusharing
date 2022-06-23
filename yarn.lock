@@ -1239,6 +1239,7 @@ __metadata:
     immutable: ^4.1.0
     ltijs: ^5.8.8
     next: ^12.1.6
+    node-fetch: ^2.0.0
     postcss: ^8.4.14
     prettier: ^2.6.2
     prettier-plugin-packagejson: ^2.2.18
@@ -4749,7 +4750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1":
+"node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
   dependencies:

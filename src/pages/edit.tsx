@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames'
 import { GetServerSideProps } from 'next'
-import { ReactNode } from 'react'
+import { ReactNode, useRef } from 'react'
 
 import { kitchenSink } from '../fixtures/kitchen-sink'
 import { Layout } from '../layout'
@@ -35,10 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           version: 0,
           document: kitchenSink,
         }),
-        saveUrl: '#',
-        savePayload: {
-          foo: 'bar',
-        },
+        ltik: '',
       },
     }
   }
@@ -49,15 +46,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       ...props,
-      state: migrate(props.state),
+      state: migrate(
+        props.state ?? {
+          version: 0,
+          document: kitchenSink,
+        }
+      ),
     },
   }
 }
 
 export interface EditProps {
   state?: MigratableState
-  saveUrl: string
-  savePayload?: unknown
+  ltik: string
 }
 
 export default function Edit(props: EditProps) {
@@ -84,8 +85,7 @@ export default function Edit(props: EditProps) {
 
 function EditInner({
   children,
-  saveUrl,
-  savePayload,
+  ltik,
   version,
 }: { children: ReactNode; version: number } & EditProps) {
   const dispatch = useScopedDispatch()
@@ -93,12 +93,14 @@ function EditInner({
   const undoable = useScopedSelector(hasUndoActions())
   const redoable = useScopedSelector(hasRedoActions())
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
+  const formDiv = useRef<HTMLDivElement>(null)
 
   return (
     <>
       {renderToolbar()}
       <Layout>{children}</Layout>
       {renderExtraEditorStyles()}
+      <div ref={formDiv} />
     </>
   )
 
@@ -141,18 +143,24 @@ function EditInner({
             )}
             disabled={!hasPendingChanges}
             onClick={async () => {
-              await fetch(saveUrl, {
+              const response = await fetch('/lti/save', {
                 method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${ltik}`,
+                },
                 body: JSON.stringify({
                   state: {
                     version,
                     state: serializeRootDocument()(store.getState()),
                   },
-                  ...(savePayload !== undefined
-                    ? { payload: savePayload }
-                    : {}),
                 }),
               })
+              const html = await response.text()
+              formDiv.current.innerHTML = html.trim()
+              const form = document.getElementById(
+                'ltijs_submit'
+              ) as HTMLFormElement
+              form.submit()
               dispatch(persist())
             }}
           >
