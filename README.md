@@ -1,5 +1,15 @@
 # Educational Content Editor as a Service
 
+## Starting Moodle
+
+- `yarn moodle:start` starts a Moodle instance that can be used to test the LTI tool.
+- `yarn moodle:stop` stops the Moodle instance.
+
+## Starting the LTI Tool
+
+- `yarn mongodb:start` starts the MongoDB server.
+- `yarn dev` starts the Next.js server.
+
 ## Endpoints
 
 We expose two POST endpoints.
@@ -54,4 +64,3 @@ interface RenderProps {
 ## Integration
 
 - [Docker image](https://github.com/serlo/ece-as-a-service/pkgs/container/ece-as-a-service)
-- [Vercel deployment](https://ece-as-a-service.vercel.app/edit)
