@@ -27,6 +27,7 @@ Provider.setup(
 )
 
 Provider.onConnect(async (token, req, res) => {
+  const state = JSON.parse(res.locals.context.custom.state)
   // TODO: get url from somewhere
   const response = await fetch('http://localhost:3000/edit', {
     method: 'POST',
@@ -34,23 +35,21 @@ Provider.onConnect(async (token, req, res) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      // TODO: state
       ltik: res.locals.ltik,
+      state,
     }),
   })
   res.send(await response.text())
 })
 
 Provider.onDeepLinking(async (token, req, res) => {
-  console.log('hey ho')
   // TODO: get url from somewhere
-  const response = await fetch('http://localhost:3000/edit', {
+  const response = await fetch('http://localhost:3000/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      // TODO: state
       ltik: res.locals.ltik,
     }),
   })
@@ -68,7 +67,16 @@ void (async () => {
   server.post('/lti/save', async (req, res) => {
     const form = await Provider.DeepLinking.createDeepLinkingForm(
       res.locals.token,
-      [],
+      [
+        {
+          type: 'ltiResourceLink',
+          title: 'TITLE',
+          url: 'http://localhost:3000/lti',
+          custom: {
+            state: req.body,
+          },
+        },
+      ],
       { message: 'Successfully registered resource!' }
     )
     return res.send(form)
@@ -86,7 +94,7 @@ void (async () => {
   Provider.registerPlatform({
     url: 'http://localhost:8000',
     name: 'Moodle',
-    clientId: 'yPv7JvU5UcfBXTr',
+    clientId: 'TYPbLDjmJ3GcYZb',
     authenticationEndpoint: 'http://localhost:8000/mod/lti/auth.php',
     accesstokenEndpoint: 'http://localhost:8000/mod/lti/token.php',
     authConfig: {

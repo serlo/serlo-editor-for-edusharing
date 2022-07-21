@@ -5,13 +5,13 @@ import {
   useScopedStore,
 } from '@edtr-io/core'
 import {
+  hasPendingChanges as hasPendingChangesSelector,
   hasRedoActions,
   hasUndoActions,
-  hasPendingChanges as hasPendingChangesSelector,
-  undo,
+  persist,
   redo,
   serializeRootDocument,
-  persist,
+  undo,
 } from '@edtr-io/store'
 import { faRedoAlt } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -22,7 +22,7 @@ import { ReactNode, useRef } from 'react'
 
 import { kitchenSink } from '../fixtures/kitchen-sink'
 import { Layout } from '../layout'
-import { currentVersion, MigratableState, migrate } from '../migrations'
+import { MigratableState, migrate } from '../migrations'
 import { plugins } from '../plugins'
 import { getJsonBody } from '../utils/get-json-body'
 
@@ -46,34 +46,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       ...props,
-      state: migrate(
-        props.state ?? {
-          version: 0,
-          document: kitchenSink,
-        }
-      ),
+      state: migrate(props.state),
     },
   }
 }
 
 export interface EditProps {
-  state?: MigratableState
+  state: MigratableState
   ltik: string
 }
 
 export default function Edit(props: EditProps) {
   return (
     <>
-      <Editor
-        plugins={plugins}
-        initialState={props.state?.document ?? { plugin: 'rows' }}
-      >
+      <Editor plugins={plugins} initialState={props.state.document}>
         {(document) => {
           return (
-            <EditInner
-              {...props}
-              version={props.state?.version ?? currentVersion}
-            >
+            <EditInner {...props} version={props.state.version}>
               {document}
             </EditInner>
           )
