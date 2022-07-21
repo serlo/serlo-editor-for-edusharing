@@ -13,10 +13,10 @@
     "dev": "node server.js",
     "format": "prettier --write .",
     "lint": "next lint",
-    "start": "next start",
     "mongodb:start": "docker-compose up -d",
     "moodle:start": "./scripts/start-moodle.sh",
-    "moodle:stop" : "./scripts/stop-moodle.sh"
+    "moodle:stop": "./scripts/stop-moodle.sh",
+    "start": "next start"
   },
   "dependencies": {
     "@edtr-io/core": "^2.8.2",

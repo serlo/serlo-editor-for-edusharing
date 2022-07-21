@@ -35,7 +35,7 @@ Expects a POST request with the following JSON body:
 interface EditProps {
   // The (JSON) state of the document. Falls back to an empty document if not provided.
   state?: {
-    version: number, 
+    version: number
     document: { plugin: string; state?: unknown }
   }
   // The endpoint that will be used when the user initiates a save.
@@ -52,7 +52,7 @@ When the user clicks "Save", we do a POST request to the specified `saveUrl` wit
 interface SavePayload {
   // The (JSON) state of the document.
   state: {
-    version: number,
+    version: number
     document: { plugin: string; state?: unknown }
   }
   // The additional information that was specified via `savePayload`.
@@ -68,7 +68,7 @@ Expects a POST request with the following JSON body:
 interface RenderProps {
   // The (JSON) state of the document.
   state: {
-    version: number,
+    version: number
     document: { plugin: string; state?: unknown }
   }
 }
