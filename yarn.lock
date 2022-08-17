@@ -913,26 +913,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.1.1":
-  version: 6.1.1
-  resolution: "@fortawesome/fontawesome-common-types@npm:6.1.1"
-  checksum: 4db285557dd9d178e313a9596ad1c4ba84e9d47efb53dea3206de1bf98252574e0d95c3a0b114cc3cb5f162e2622a2cf8f037011fc98818ccade7bfb6c0c335b
-  languageName: node
-  linkType: hard
-
 "@fortawesome/fontawesome-common-types@npm:6.1.2":
   version: 6.1.2
   resolution: "@fortawesome/fontawesome-common-types@npm:6.1.2"
   checksum: 16ba97f73256adef5cd680a027e6dbd3e76f34ba9227f7bd9e8c372cb4f337c7ccbf41f35dcfbc22b11320bbb579d01daccf1aa7ae47df5d0b17260c0097bb30
-  languageName: node
-  linkType: hard
-
-"@fortawesome/fontawesome-svg-core@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.1.1"
-  dependencies:
-    "@fortawesome/fontawesome-common-types": 6.1.1
-  checksum: bf3b09a1ec3c5d6be30ea04c83dffb921c5a457c547fb1b99b814591489efabf939f669878cc5b48deb9771ef705209a1bb1b3088e66f6873cc9b34cbf4c781c
   languageName: node
   linkType: hard
 
@@ -945,33 +929,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/free-solid-svg-icons@npm:^6.1.1":
-  version: 6.1.1
-  resolution: "@fortawesome/free-solid-svg-icons@npm:6.1.1"
-  dependencies:
-    "@fortawesome/fontawesome-common-types": 6.1.1
-  checksum: 9c42f45af9e75410d9e20a110c4262ded1a778887dc3b1200c0576f6b226e6a5568fb85a862090b45b06060f878798ddde60b987ef56aafccbaa1e7a378dd17c
-  languageName: node
-  linkType: hard
-
 "@fortawesome/free-solid-svg-icons@npm:^6.1.2":
   version: 6.1.2
   resolution: "@fortawesome/free-solid-svg-icons@npm:6.1.2"
   dependencies:
     "@fortawesome/fontawesome-common-types": 6.1.2
   checksum: b7258cd092304f9bd1e557cd3a59e9ff560165631b04f16785da14ce3148873fa8e688d62f95d68f668be32e1207c47a1fe556978ae7e9573a5b0fec09fc0f0c
-  languageName: node
-  linkType: hard
-
-"@fortawesome/react-fontawesome@npm:^0.1.18":
-  version: 0.1.18
-  resolution: "@fortawesome/react-fontawesome@npm:0.1.18"
-  dependencies:
-    prop-types: ^15.8.1
-  peerDependencies:
-    "@fortawesome/fontawesome-svg-core": ~1 || ~6
-    react: ">=16.x"
-  checksum: eba711234541928e1877435905bcd94ab6aea1cf228833a55fc7c6a2fc18dd08d3f7f327ca4af0f3ba365188ad0869d7ecd31be5940d27f4e2bbe7e12cbcf520
   languageName: node
   linkType: hard
 
