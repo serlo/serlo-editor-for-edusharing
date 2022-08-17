@@ -27,14 +27,19 @@ Provider.setup(
 )
 
 Provider.onConnect(async (token, req, res) => {
-  const state = JSON.parse(res.locals.context.custom.state)
+  const { custom } = res.locals.context
+  const state = JSON.parse(custom.state)
+
   // TODO: get url from somewhere
-  const response = await fetch('http://localhost:3000/edit', {
+  const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      mayEdit: custom.mayEdit === 'true',
+      saveUrl: custom.saveUrl,
+      savePayload: custom.saveUrl,
       ltik: res.locals.ltik,
       state,
     }),

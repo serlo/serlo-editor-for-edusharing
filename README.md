@@ -23,30 +23,36 @@
   - Redirection URI(s): "http://localhost:3000/lti"
   - Enable "Supports Deep Linking (Content-Item Message)"
 
-## Endpoints
+## LTI Workflow
 
-We expose two POST endpoints.
+### Deep Linking
 
-### Editing documents: POST /edit
+On a Deep Linking request, we show a simple form where the user can create a new document. Returns with a Resource Link
+where `custom.state` is an empty document.
 
-Expects a POST request with the following JSON body:
+### Resource Link
+
+A resource link expects the following custom parameters:
 
 ```ts
-interface EditProps {
-  // The (JSON) state of the document. Falls back to an empty document if not provided.
-  state?: {
+interface CustomParameters {
+  // The editor state as created by the Deep Linking form or later save requests.
+  state: {
     version: number
     document: { plugin: string; state?: unknown }
   }
-  // The endpoint that will be used when the user initiates a save.
-  saveUrl: string
+  // Whether the user should be able to save the document
+  mayEdit?: 'true'
+  // The endpoint that will be used when the user initiates a save. Should be set when mayEdit is true.
+  saveUrl?: string
   // Arbitrary additional information that we should pass when the user iniates a save.
   // (e.g. user id, token, ...)
   savePayload?: unknown
 }
 ```
 
-When the user clicks "Save", we do a POST request to the specified `saveUrl` with the following JSON body:
+If `mayEdit` is false, we only render the document. If `mayEdit` is true, we also load the editor and show an edit button.
+When the user clicks "Save" after editing a document, we do a POST request to the specified `saveUrl` with the following JSON body:
 
 ```ts
 interface SavePayload {
@@ -57,20 +63,6 @@ interface SavePayload {
   }
   // The additional information that was specified via `savePayload`.
   payload: unknown
-}
-```
-
-### Rendering documents: POST /render
-
-Expects a POST request with the following JSON body:
-
-```ts
-interface RenderProps {
-  // The (JSON) state of the document.
-  state: {
-    version: number
-    document: { plugin: string; state?: unknown }
-  }
 }
 ```
 
