@@ -13,6 +13,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         version: 0,
         document: { plugin: 'rows' },
       }),
+      providerUrl: process.env.PROVIDER_URL,
     },
   }
 }
@@ -20,14 +21,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export interface CreateProps {
   state: MigratableState
   ltik: string
+  providerUrl: string
 }
 
-export default function Create({ ltik, state }: CreateProps) {
+export default function Create({ ltik, state, providerUrl }: CreateProps) {
   const formDiv = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     ;(async () => {
-      const response = await fetch(`${process.env.PROVIDER_URL}/lti/create`, {
+      const response = await fetch(`${providerUrl}/lti/create`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${ltik}`,
@@ -42,7 +44,7 @@ export default function Create({ ltik, state }: CreateProps) {
       const form = document.getElementById('ltijs_submit') as HTMLFormElement
       form.submit()
     })()
-  }, [ltik, state])
+  }, [ltik, providerUrl, state])
 
   return <div ref={formDiv} />
 }

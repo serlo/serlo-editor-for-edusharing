@@ -23,6 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }),
         ltik: '',
         mayEdit: true,
+        providerUrl: process.env.PROVIDER_URL,
       },
     }
   }
@@ -39,6 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       ...props,
       state: migrate(state),
+      providerUrl: process.env.PROVIDER_URL,
     },
   }
 }
