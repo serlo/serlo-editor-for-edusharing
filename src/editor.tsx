@@ -27,8 +27,6 @@ import { MigratableState } from './migrations'
 export interface EditorProps {
   state: MigratableState
   ltik: string
-  saveUrl?: string
-  savePayload?: unknown
 }
 
 export function Editor(props: EditorProps) {
@@ -49,9 +47,6 @@ function EditInner({
   children,
   ltik,
   state,
-  version,
-  saveUrl,
-  savePayload,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(false)
   const dispatch = useScopedDispatch()
@@ -148,16 +143,19 @@ function EditInner({
             )}
             disabled={!hasPendingChanges}
             onClick={async () => {
-              const response = await fetch('/lti/save-content', {
-                method: 'POST',
-                headers: {
-                  Authorization: `Bearer ${ltik}`,
-                },
-                body: JSON.stringify({
-                  version: state.version,
-                  document: serializeRootDocument()(store.getState()),
-                }),
-              })
+              const response = await fetch(
+                `${process.env.PROVIDER_URL}/lti/save-content`,
+                {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${ltik}`,
+                  },
+                  body: JSON.stringify({
+                    version: state.version,
+                    document: serializeRootDocument()(store.getState()),
+                  }),
+                }
+              )
               if (response.status === 200) {
                 dispatch(persist())
               }

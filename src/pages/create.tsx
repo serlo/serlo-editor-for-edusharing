@@ -27,7 +27,7 @@ export default function Create({ ltik, state }: CreateProps) {
 
   useEffect(() => {
     ;(async () => {
-      const response = await fetch('/lti/save', {
+      const response = await fetch(`${process.env.PROVIDER_URL}/lti/create`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${ltik}`,

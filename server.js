@@ -35,16 +35,13 @@ Provider.onConnect(async (token, req, res) => {
   const { custom } = res.locals.context
   const state = JSON.parse(custom.state)
 
-  // TODO: get url from somewhere
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      mayEdit: custom.mayEdit === 'true',
-      saveUrl: custom.saveUrl,
-      savePayload: custom.saveUrl,
+      mayEdit: !!custom.saveContent,
       ltik: res.locals.ltik,
       state,
     }),
@@ -73,7 +70,7 @@ void (async () => {
 
   server.use('/lti', Provider.app)
 
-  server.post('/lti/save', async (req, res) => {
+  server.post('/lti/create', async (req, res) => {
     const form = await Provider.DeepLinking.createDeepLinkingForm(
       res.locals.token,
       [
