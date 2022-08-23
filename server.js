@@ -5,10 +5,10 @@ const { Provider } = require('ltijs')
 const next = require('next')
 const fetch = require('node-fetch')
 const { Request } = require('node-fetch')
-const { Blob } = require("buffer")
-const { FormData, File } = require("formdata-node")
-const { Readable } = require("stream")
-const { FormDataEncoder } = require("form-data-encoder")
+const { Blob } = require('buffer')
+const { FormData, File } = require('formdata-node')
+const { Readable } = require('stream')
+const { FormDataEncoder } = require('form-data-encoder')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -97,8 +97,8 @@ void (async () => {
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    console.log(res.locals.token)
-    const { appId, nodeId, user, getContentApiUrl } = token.platformContext.custom
+    const { appId, nodeId, user, getContentApiUrl } =
+      token.platformContext.custom
     const jwtBody = {
       appId,
       nodeId,
@@ -111,10 +111,10 @@ void (async () => {
     })
     const url = new URL(getContentApiUrl)
     url.searchParams.append('jwt', message)
-    console.log(url.href)
+
     const response = await fetch(url)
     const text = await response.text()
-    console.log(`Content: ${text}`)
+
     return res.send(text)
   })
 
@@ -123,7 +123,8 @@ void (async () => {
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, postContentApiUrl } = token.platformContext.custom
+    const { appId, nodeId, user, postContentApiUrl } =
+      token.platformContext.custom
     const jwtBody = {
       appId,
       nodeId,
@@ -139,22 +140,21 @@ void (async () => {
     url.searchParams.append('jwt', message)
     url.searchParams.append('mimetype', 'application/json')
 
-    const blob = new File([req.body], "test.json")
-    
+    const blob = new File([req.body], 'test.json')
+
     const data = new FormData()
     data.set('file', blob)
+
     const encoder = new FormDataEncoder(data)
+
     const request = new Request(url, {
       method: 'POST',
       headers: encoder.headers,
       body: Readable.from(encoder.encode()),
     })
-    console.log(request)
-    console.log(request.headers)
-    console.log(request.body)
+
     const response = await fetch(request)
-    console.log(response.status)
-    console.log(await response.text())
+
     return res.send(response)
   })
 
