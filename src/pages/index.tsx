@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'
 
 import { kitchenSink } from '../fixtures/kitchen-sink'
 import { Layout } from '../layout'
-import { MigratableState, migrate } from '../migrations'
+import { migrate } from '../migrations'
 import { plugins } from '../plugins'
 import { getJsonBody } from '../utils/get-json-body'
 import { Renderer } from '@edtr-io/renderer'
