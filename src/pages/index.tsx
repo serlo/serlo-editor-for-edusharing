@@ -34,7 +34,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       Authorization: `Bearer ${props.ltik}`,
     },
   })
-  const state = await response.json()
+  console.log(response.status)
+  const stateRaw = await response.json()
+  console.log(stateRaw)
+  const state = stateRaw.size === 0 ? migrate({ version: 0, document: { plugin: "rows" }}) : stateRaw
+  console.log(state)
+  //const text = await response.text()
+  //console.log(`Content: ${text}`)
+  //const state = JSON.parse(text)
 
   return {
     props: {
