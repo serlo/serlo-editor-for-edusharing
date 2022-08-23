@@ -116,6 +116,8 @@ void (async () => {
   })
 
   server.post('/lti/save-content', async (req, res) => {
+    const { token } = res.locals
+
     const platform = await Provider.getPlatformById(token.platformId)
 
     const { appId, nodeId, user, saveContent } = token
