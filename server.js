@@ -1,3 +1,4 @@
+const { loadEnvConfig } = require('@next/env')
 const express = require('express')
 const { Provider } = require('ltijs')
 const next = require('next')
@@ -8,13 +9,16 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
+loadEnvConfig('./', process.env.NODE_ENV !== 'production')
+
 Provider.setup(
-  'LTIKEY', // Key used to sign cookies and tokens
+  process.env.PROVIDER_SECRET, // Key used to sign cookies and tokens
   {
-    // Database configuration
-    // TODO: use postgres instead?
-    url: 'mongodb://localhost/admin',
-    connection: { user: 'root', pass: 'example' },
+    url: process.env.MONGODB_URL,
+    connection: {
+      user: process.env.MONGODB_USERNAME,
+      pass: process.env.MONGODB_PASSWORD,
+    },
   },
   {
     // Options
@@ -95,16 +99,15 @@ void (async () => {
     console.log(`> Ready on http://localhost:${port}`)
   })
 
-  // TODO: Docker env variables? Or dynamic registration flow?
   Provider.registerPlatform({
-    url: 'http://localhost:8000',
-    name: 'Moodle',
-    clientId: 'TYPbLDjmJ3GcYZb',
-    authenticationEndpoint: 'http://localhost:8000/mod/lti/auth.php',
-    accesstokenEndpoint: 'http://localhost:8000/mod/lti/token.php',
+    url: process.env.PLATFORM_URL,
+    name: 'Platform',
+    clientId: process.env.PLATFORM_CLIENT_ID,
+    authenticationEndpoint: process.env.PLATFORM_AUTHENTICATION_ENDPOINT,
+    accesstokenEndpoint: process.env.PLATFORM_ACCESSTOKEN_ENDPOINT,
     authConfig: {
       method: 'JWK_SET',
-      key: 'http://localhost:8000/mod/lti/certs.php',
+      key: process.env.PLATFORM_JWK_SET,
     },
   })
 })()
