@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { useEffect, useRef } from 'react'
 import { MigratableState, migrate } from '../migrations'
+import { emptyDocument } from '../fixtures'
 import { getJsonBody } from '../utils/get-json-body'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -9,10 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       ...props,
-      state: migrate({
-        version: 0,
-        document: { plugin: 'rows' },
-      }),
+      state: migrate(emptyDocument),
       providerUrl: process.env.PROVIDER_URL,
     },
   }

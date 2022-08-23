@@ -4,6 +4,7 @@ import { kitchenSink } from '../fixtures/kitchen-sink'
 import { Layout } from '../layout'
 import { migrate } from '../migrations'
 import { plugins } from '../plugins'
+import { emptyDocument } from '../fixtures'
 import { getJsonBody } from '../utils/get-json-body'
 import { Renderer } from '@edtr-io/renderer'
 import dynamic from 'next/dynamic'
@@ -34,14 +35,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       Authorization: `Bearer ${props.ltik}`,
     },
   })
-  console.log(response.status)
+
   const stateRaw = await response.json()
-  console.log(stateRaw)
-  const state = stateRaw.size === 0 ? migrate({ version: 0, document: { plugin: "rows" }}) : stateRaw
-  console.log(state)
-  //const text = await response.text()
-  //console.log(`Content: ${text}`)
-  //const state = JSON.parse(text)
+  const state = stateRaw.size === 0 ? migrate(emptyDocument) : stateRaw
 
   return {
     props: {
