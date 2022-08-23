@@ -1,5 +1,6 @@
 const { loadEnvConfig } = require('@next/env')
 const express = require('express')
+const jwt = require('jsonwebtoken')
 const { Provider } = require('ltijs')
 const next = require('next')
 const fetch = require('node-fetch')
@@ -52,7 +53,6 @@ Provider.onConnect(async (token, req, res) => {
 })
 
 Provider.onDeepLinking(async (token, req, res) => {
-  // TODO: get url from somewhere
   const response = await fetch('http://localhost:3000/create', {
     method: 'POST',
     headers: {
@@ -80,7 +80,7 @@ void (async () => {
         {
           type: 'ltiResourceLink',
           title: 'TITLE',
-          url: 'http://localhost:3000/lti',
+          url: `${process.env.PROVIDER_URL}/lti`,
           custom: {
             state: req.body,
           },
@@ -89,6 +89,60 @@ void (async () => {
       { message: 'Successfully registered resource!' }
     )
     return res.send(form)
+  })
+
+  server.get('/lti/get-content', async (req, res) => {
+    const { token } = res.locals
+
+    const platform = await Provider.getPlatformById(token.platformId)
+
+    const { appId, nodeId, user, getContent } = token
+    const jwtBody = {
+      appId,
+      nodeId,
+      user,
+    }
+    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      keyid: await platform.platformKid(),
+    })
+
+    const url = new URL(getContent)
+    url.searchParams.append('jwt', message)
+
+    const response = await fetch(url)
+    return res.send(response)
+  })
+
+  server.post('/lti/save-content', async (req, res) => {
+    const platform = await Provider.getPlatformById(token.platformId)
+
+    const { appId, nodeId, user, saveContent } = token
+    const jwtBody = {
+      appId,
+      nodeId,
+      user,
+    }
+    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      keyid: await platform.platformKid(),
+    })
+
+    const url = new URL(saveContent)
+    url.searchParams.append('jwt', message)
+    url.searchParams.append('mimetype', 'application/json')
+
+    const blob = new Blob([req.body], { type: 'application/json' })
+    const data = new FormData()
+    data.append('file', blob, 'test.json')
+
+    const response = await fetch(url, {
+      method: 'post',
+      body: data,
+    })
+    return res.send(response)
   })
 
   server.all('*', (req, res) => {

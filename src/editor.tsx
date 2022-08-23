@@ -148,24 +148,19 @@ function EditInner({
             )}
             disabled={!hasPendingChanges}
             onClick={async () => {
-              if (!saveUrl) {
-                throw new Error('No saveUrl specified.')
-              }
-
-              const response = await fetch(saveUrl, {
+              const response = await fetch('/lti/save-content', {
                 method: 'POST',
                 headers: {
                   Authorization: `Bearer ${ltik}`,
                 },
                 body: JSON.stringify({
-                  state: {
-                    version,
-                    state: serializeRootDocument()(store.getState()),
-                  },
-                  payload: savePayload,
+                  version: state.version,
+                  document: serializeRootDocument()(store.getState()),
                 }),
               })
-              dispatch(persist())
+              if (response.status === 200) {
+                dispatch(persist())
+              }
             }}
           >
             <FontAwesomeIcon icon={faSave} /> Save

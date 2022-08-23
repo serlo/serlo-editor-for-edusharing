@@ -16,7 +16,6 @@ const Editor = dynamic<EditorProps>(() =>
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
     return {
-      // TODO: revert this
       props: {
         state: migrate({
           version: 0,
@@ -29,14 +28,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const props = await getJsonBody<PageProps>(context)
-  // TODO: validate props
-
-  console.log(props)
+  const response = await fetch('http://localhost:3000/lti/get-content', {
+    headers: {
+      Authorization: `Bearer ${props.ltik}`,
+    },
+  })
+  const state = await response.json()
 
   return {
     props: {
       ...props,
-      state: migrate(props.state),
+      state: migrate(state),
     },
   }
 }

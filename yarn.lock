@@ -982,7 +982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:12.2.5":
+"@next/env@npm:12.2.5, @next/env@npm:^12.2.5":
   version: 12.2.5
   resolution: "@next/env@npm:12.2.5"
   checksum: a44939e59b46d5951831529a43dba9daa2e4e467e8680ea96e21ae127d1bf7f11757aaf3a6cff8a51273abfe7af782903e1304405a481361c7ba3e66d47e3238
@@ -1242,6 +1242,7 @@ __metadata:
     "@fortawesome/fontawesome-svg-core": ^6.1.2
     "@fortawesome/free-solid-svg-icons": ^6.1.2
     "@fortawesome/react-fontawesome": ^0.2.0
+    "@next/env": ^12.2.5
     "@tailwindcss/typography": ^0.5.4
     "@types/react": ^17.0.48
     "@types/react-dom": ^17.0.17
@@ -1250,7 +1251,9 @@ __metadata:
     classnames: ^2.3.1
     eslint: ^8.22.0
     eslint-config-next: ^12.2.5
+    express: ^4.18.1
     immutable: ^4.1.0
+    jsonwebtoken: ^8.5.1
     ltijs: ^5.8.9
     next: ^12.2.5
     node-fetch: ^2.6.7
@@ -3073,7 +3076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^4.17.1":
+"express@npm:^4.17.1, express@npm:^4.18.1":
   version: 4.18.1
   resolution: "express@npm:4.18.1"
   dependencies:
