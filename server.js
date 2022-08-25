@@ -113,9 +113,8 @@ void (async () => {
     url.searchParams.append('jwt', message)
 
     const response = await fetch(url)
-    const text = await response.text()
 
-    return res.send(text)
+    return res.status(response.status).send(await response.text())
   })
 
   server.post('/lti/save-content', async (req, res) => {
@@ -155,7 +154,7 @@ void (async () => {
 
     const response = await fetch(request)
 
-    return res.send(response)
+    return res.status(response.status).send(await response.text())
   })
 
   server.all('*', (req, res) => {
