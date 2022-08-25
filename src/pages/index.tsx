@@ -36,8 +36,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   })
 
-  const stateRaw = await response.json()
-  const state = stateRaw.size === 0 ? migrate(emptyDocument) : stateRaw
+  const state =
+    response.status === 204 ? migrate(emptyDocument) : await response.json()
 
   return {
     props: {
