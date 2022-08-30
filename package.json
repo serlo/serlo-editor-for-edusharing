@@ -16,7 +16,7 @@
     "mongodb:start": "docker-compose up -d",
     "moodle:start": "./scripts/start-moodle.sh",
     "moodle:stop": "./scripts/stop-moodle.sh",
-    "start": "next start"
+    "start": "NODE_ENV=production node server.js"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
