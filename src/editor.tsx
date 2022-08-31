@@ -50,7 +50,7 @@ function EditInner({
   state,
   providerUrl,
 }: { children: ReactNode; version: number } & EditorProps) {
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(true)
   const dispatch = useScopedDispatch()
   const store = useScopedStore()
   const undoable = useScopedSelector(hasUndoActions())
