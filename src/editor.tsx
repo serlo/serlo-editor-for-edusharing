@@ -18,7 +18,7 @@ import { faRedoAlt } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames'
-import { ReactNode, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import { Layout } from './layout'
 import { plugins } from './plugins'
@@ -57,6 +57,10 @@ function EditInner({
   const redoable = useScopedSelector(hasRedoActions())
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
   const formDiv = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    window.onbeforeunload = hasPendingChanges ? () => '' : null
+  }, [hasPendingChanges])
 
   if (!isEditing) {
     return (
