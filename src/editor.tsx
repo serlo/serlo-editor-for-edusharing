@@ -6,6 +6,7 @@ import {
 } from '@edtr-io/core'
 import { Renderer } from '@edtr-io/renderer'
 import {
+  getPendingChanges,
   hasPendingChanges as hasPendingChangesSelector,
   hasRedoActions,
   hasUndoActions,
@@ -18,7 +19,8 @@ import { faRedoAlt } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { useDebounce } from 'rooks'
 
 import { Layout } from './layout'
 import { plugins } from './plugins'
@@ -55,8 +57,40 @@ function EditInner({
   const store = useScopedStore()
   const undoable = useScopedSelector(hasUndoActions())
   const redoable = useScopedSelector(hasRedoActions())
+  const pendingChanges = useScopedSelector(getPendingChanges())
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
   const formDiv = useRef<HTMLDivElement>(null)
+
+  const pendingSave = useRef(false)
+  const save = useCallback(async () => {
+    if (pendingSave.current) return
+    pendingSave.current = true
+
+    try {
+      const response = await fetch(`${providerUrl}/lti/save-content`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${ltik}`,
+        },
+        body: JSON.stringify({
+          version: state.version,
+          document: serializeRootDocument()(store.getState()),
+        }),
+      })
+      if (response.status === 200) {
+        dispatch(persist())
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
+    pendingSave.current = false
+  }, [dispatch, ltik, pendingSave, providerUrl, state.version, store])
+  const debouncedSave = useDebounce(save, 5000)
+
+  useEffect(() => {
+    void debouncedSave()
+  }, [debouncedSave, pendingChanges])
 
   useEffect(() => {
     window.onbeforeunload = hasPendingChanges ? () => '' : null
@@ -149,19 +183,7 @@ function EditInner({
             )}
             disabled={!hasPendingChanges}
             onClick={async () => {
-              const response = await fetch(`${providerUrl}/lti/save-content`, {
-                method: 'POST',
-                headers: {
-                  Authorization: `Bearer ${ltik}`,
-                },
-                body: JSON.stringify({
-                  version: state.version,
-                  document: serializeRootDocument()(store.getState()),
-                }),
-              })
-              if (response.status === 200) {
-                dispatch(persist())
-              }
+              await save()
             }}
           >
             <FontAwesomeIcon icon={faSave} /> Save
