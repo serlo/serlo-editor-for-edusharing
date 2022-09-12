@@ -63,12 +63,14 @@
     "react-is": "^17.0.2",
     "redux": "^4.2.0",
     "rooks": "^7.0.0",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.4",
     "@types/react": "^17.0.48",
     "@types/react-dom": "^17.0.17",
+    "@types/uuid": "^8.3.4",
     "autoprefixer": "^10.4.8",
     "eslint": "^8.22.0",
     "eslint-config-next": "^12.2.5",
