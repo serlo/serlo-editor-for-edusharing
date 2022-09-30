@@ -158,15 +158,9 @@ function EditInner({
         <p>Erstelle und speichere eine neue Version:</p>
         <input
           type="text"
-          className="mt-3 border-gray-500 rounded-md p-2"
+          className="mt-3 border-gray-300 focus-visible:outline-sky-800 rounded-md p-2 block w-full border"
           ref={commentInput}
           size={50}
-          style={{
-            border: '1px solid grey',
-            padding: '5px',
-            display: 'block',
-            width: '100%',
-          }}
         />
         <div className="text-right mt-3">
           <button
