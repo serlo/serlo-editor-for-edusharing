@@ -15,8 +15,6 @@ import {
   faCaretSquareDown,
   faCode,
   faCubes,
-  faFilm,
-  faImages,
   faNewspaper,
   faParagraph,
   faPhotoVideo,
