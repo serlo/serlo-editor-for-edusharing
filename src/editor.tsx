@@ -161,6 +161,7 @@ function EditInner({
           className="mt-3 border-gray-300 focus-visible:outline-sky-800 rounded-md p-2 block w-full border"
           ref={commentInput}
           size={50}
+          placeholder="Name der neuen Version"
         />
         <div className="text-right mt-3">
           <button
