@@ -21,6 +21,7 @@ import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import classNames from 'classnames'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
+import Modal from 'react-modal'
 
 import { Layout } from './layout'
 import { plugins } from './plugins'
@@ -53,6 +54,8 @@ function EditInner({
   providerUrl,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
+  const [isFirstSave, setIsFirstSave] = useState(true)
+  const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
   const dispatch = useScopedDispatch()
   const store = useScopedStore()
   const undoable = useScopedSelector(hasUndoActions())
@@ -60,32 +63,52 @@ function EditInner({
   const pendingChanges = useScopedSelector(getPendingChanges())
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
   const formDiv = useRef<HTMLDivElement>(null)
+  const commentInput = useRef<HTMLInputElement>(null)
 
   const pendingSave = useRef(false)
-  const save = useCallback(async () => {
-    if (pendingSave.current) return
-    pendingSave.current = true
+  const save = useCallback(
+    async (comment?: string) => {
+      if (pendingSave.current) return
+      pendingSave.current = true
 
-    try {
-      const response = await fetch(`${providerUrl}/lti/save-content`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${ltik}`,
-        },
-        body: JSON.stringify({
-          version: state.version,
-          document: serializeRootDocument()(store.getState()),
-        }),
-      })
-      if (response.status === 200) {
-        dispatch(persist())
+      try {
+        const saveUrl = new URL(`${providerUrl}/lti/save-content`)
+
+        if (isFirstSave || comment) {
+          saveUrl.searchParams.append(
+            'comment',
+            comment ?? 'Datei wurde durch den Serlo-Editor aktualisiert'
+          )
+        }
+
+        const response = await fetch(saveUrl.href, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${ltik}` },
+          body: JSON.stringify({
+            version: state.version,
+            document: serializeRootDocument()(store.getState()),
+          }),
+        })
+        if (response.status === 200) {
+          dispatch(persist())
+        }
+      } catch (error) {
+        console.error(error)
       }
-    } catch (error) {
-      console.error(error)
-    }
 
-    pendingSave.current = false
-  }, [dispatch, ltik, pendingSave, providerUrl, state.version, store])
+      pendingSave.current = false
+      setIsFirstSave(false)
+    },
+    [
+      dispatch,
+      ltik,
+      pendingSave,
+      providerUrl,
+      state.version,
+      store,
+      isFirstSave,
+    ]
+  )
   const debouncedSave = useDebounce(save, 5000)
 
   useEffect(() => {
@@ -109,12 +132,58 @@ function EditInner({
 
   return (
     <>
+      {renderSaveVersionModal()}
       {renderEditToolbar()}
       <Layout>{children}</Layout>
       {renderExtraEditorStyles()}
       <div ref={formDiv} />
     </>
   )
+
+  function renderSaveVersionModal() {
+    return (
+      <Modal
+        isOpen={saveVersionModalIsOpen}
+        onRequestClose={() => setSaveVersionModalIsOpen(false)}
+        style={{
+          content: {
+            top: '50%',
+            left: '50%',
+            bottom: 'auto',
+            right: 'auto',
+            transform: 'translate(-50%, -50%)',
+          },
+        }}
+      >
+        <p>Erstelle und speichere eine neue Version:</p>
+        <input
+          type="text"
+          className="mt-3 border-gray-300 focus-visible:outline-sky-800 rounded-md p-2 block w-full border"
+          ref={commentInput}
+          size={50}
+          placeholder="Name der neuen Version"
+        />
+        <div className="text-right mt-3">
+          <button
+            className="inline-block rounded-md p-2 mr-2 text-white bg-sky-800"
+            onClick={async () => {
+              await save(commentInput.current?.value)
+              setIsFirstSave(true)
+              setSaveVersionModalIsOpen(false)
+            }}
+          >
+            Speichern
+          </button>
+          <button
+            className="inline-block rounded-md p-2 border text-sky-800 border-gray-500"
+            onClick={() => setSaveVersionModalIsOpen(false)}
+          >
+            Schließen
+          </button>
+        </div>
+      </Modal>
+    )
+  }
 
   function renderRenderToolbar() {
     const buttonStyle =
@@ -187,6 +256,13 @@ function EditInner({
             }}
           >
             <FontAwesomeIcon icon={faSave} /> Save
+          </button>
+          <button
+            type="button"
+            className={classNames(buttonStyle, 'ml-12')}
+            onClick={() => setSaveVersionModalIsOpen(true)}
+          >
+            <FontAwesomeIcon icon={faSave} /> Versionskommentar
           </button>
         </div>
       </nav>

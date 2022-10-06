@@ -138,6 +138,11 @@ void (async () => {
     url.searchParams.append('jwt', message)
     url.searchParams.append('mimetype', 'application/json')
 
+    const comment = req.query['comment']
+    if (comment && typeof comment === 'string') {
+      url.searchParams.append('versionComment', comment)
+    }
+
     const blob = new File([req.body], 'test.json')
 
     const data = new FormData()
