@@ -52,7 +52,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const signed = jwt.sign(message, privateKey, {
     algorithm: 'RS256',
     expiresIn: 60,
+    keyid: '42',
   })
+
+  console.log(signed)
 
   return {
     props: {
