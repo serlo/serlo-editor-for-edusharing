@@ -69,3 +69,7 @@ interface SavePayload {
 ## Integration
 
 - [Docker image](https://github.com/serlo/ece-as-a-service/pkgs/container/ece-as-a-service)
+
+### Test with a local edusharing
+
+Copy [`.env.edusharing`](./.env.edusharing) to [`.env`](./.env) when you test this editor version against edu-sharing locally with `yarn dev`.
