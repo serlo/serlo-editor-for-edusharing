@@ -45,8 +45,7 @@ Provider.onConnect(async (token, req, res) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      // TODO: mayEdit: !!custom.saveContent,
-      mayEdit: true,
+      mayEdit: typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
     }),
   })
