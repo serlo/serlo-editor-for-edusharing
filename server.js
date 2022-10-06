@@ -73,6 +73,23 @@ void (async () => {
 
   server.use('/lti', Provider.app)
 
+  server.use('/platform/keys', async (_req, res) => {
+    res
+      .json({
+        keys: [
+          {
+            kty: 'RSA',
+            n: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+            e: 'AQAB',
+            kid: '42',
+            alg: 'RS256',
+            use: 'sig',
+          },
+        ],
+      })
+      .end()
+  })
+
   server.post('/lti/create', async (req, res) => {
     const form = await Provider.DeepLinking.createDeepLinkingForm(
       res.locals.token,
