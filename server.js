@@ -175,4 +175,19 @@ void (async () => {
       key: process.env.PLATFORM_JWK_SET,
     },
   })
+
+  await Provider.registerPlatform({
+    url: process.env.PROVIDER_URL,
+    name: 'Editor',
+    clientId: 'editor',
+    authenticationEndpoint: 'http://localhost:3000/platform/login',
+    accesstokenEndpoint: 'http://localhost:3000/platform/token',
+    authConfig: {
+      method: 'RSA_KEY',
+      key: Buffer.from(
+        process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+        'base64'
+      ).toString('utf-8'),
+    },
+  })
 })()
