@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // TODO: no idea where this should be coming from
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
-      '8c49a5fa-f955-405e-865f-3d7e959e809f',
+      '2',
     'https://purl.imsglobal.org/spec/lti/claim/message_type':
       'LtiDeepLinkingRequest',
     'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
