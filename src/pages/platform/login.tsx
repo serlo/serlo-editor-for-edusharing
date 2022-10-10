@@ -7,6 +7,8 @@ import { GetServerSideProps } from 'next'
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
 
+  console.log(context.query)
+
   const message = {
     iss: process.env.PROVIDER_URL,
     aud: ['editor'],
@@ -14,11 +16,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     sub: '0ae836b9-7fc9-4060-006f-27b2066ac545',
 
     iat: Date.now(),
-    nonce: v4(),
+    nonce: context.query.nonce,
 
     // TODO: no idea where this should be coming from
-    'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
-      '8c49a5fa-f955-405e-865f-3d7e959e809f',
+    'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
     'https://purl.imsglobal.org/spec/lti/claim/message_type':
       'LtiDeepLinkingRequest',
     'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
@@ -55,7 +56,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     keyid: '42',
   })
 
-  console.log(signed)
+  //console.log(4289080)
+  //console.log(jwt.verify(signed, 'hkjhk'))
 
   return {
     props: {
