@@ -9,6 +9,8 @@ const { Blob } = require('buffer')
 const { FormData, File } = require('formdata-node')
 const { Readable } = require('stream')
 const { FormDataEncoder } = require('form-data-encoder')
+const JSONWebKey = require('json-web-key')
+const { Buffer } = require('buffer')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -73,17 +75,21 @@ void (async () => {
 
   server.use('/lti', Provider.app)
 
+  // TODO: Use another library
   server.use('/platform/keys', async (_req, res) => {
     res
       .json({
         keys: [
           {
-            kty: 'RSA',
-            n: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
-            e: 'AQAB',
             kid: '42',
             alg: 'RS256',
             use: 'sig',
+            ...JSONWebKey.fromPEM(
+              Buffer.from(
+                process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+                'base64'
+              ).toString('utf-8')
+            ).toJSON(),
           },
         ],
       })
