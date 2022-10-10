@@ -7,11 +7,10 @@ import { GetServerSideProps } from 'next'
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
 
-  console.log(context.query)
-
   const message = {
-    iss: process.env.PROVIDER_URL,
-    aud: ['editor'],
+    iss: 'http://localhost:3000/',
+    // TODO: Should be a list
+    aud: 'editor',
     // TODO: no idea where this should be coming from
     sub: '0ae836b9-7fc9-4060-006f-27b2066ac545',
 
@@ -30,18 +29,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //   height: 320,
     //   width: 240,
     // },
-
     'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings': {
-      // TODO: host
-      deep_link_return_url: 'http://localhost:3000/platform/done',
       accept_types: ['ltiResourceLink'],
-      // accept_media_types: 'image/*,text/html',
-      // accept_presentation_document_targets: ['iframe', 'window', 'embed'],
-      // accept_multiple: true,
-      // auto_create: true,
-      // title: 'This is the default title',
-      // text: 'This is the default text',
-      // data: 'csrftoken:c7fbba78-7b75-46e3-9201-11e6d5f36f53',
+      accept_presentation_document_targets: ['frame', 'iframe', 'window'],
+      //accept_copy_advice: false,
+      accept_multiple: true,
+      //accept_unsigned: false,
+      auto_create: false,
+      //can_confirm: false,
+      deep_link_return_url: 'http://localhost:3000/platform/done',
+      title: 'OEH Redaktion',
+      text: '',
     },
   }
 
