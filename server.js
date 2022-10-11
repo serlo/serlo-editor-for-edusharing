@@ -194,9 +194,17 @@ void (async () => {
     console.log(`> Ready on http://localhost:${port}`)
   })
 
+  /*
+   * START: EDUSHARING PROXY
+   *
+   * Use a proxy for edusharing which fixes some bugs.
+   *
+   * TODO: Delete this code when not needed any more.
+   */
   const proxyServer = express()
   const edusharingHost = 'repository.127.0.0.1.nip.io:8100'
-  const proxyHost = 'localhost:3001'
+  const proxyPort = 3001
+  const proxyHost = `localhost:${proxyPort}`
 
   proxyServer.use(
     '/',
@@ -207,24 +215,28 @@ void (async () => {
             proxyRes.headers['content-type']
           )
         ) {
-          return proxyResData
-            .toString('utf8')
-            .replaceAll(edusharingHost, 'localhost:3001')
-            .replaceAll('https://localhost:3001', 'http://localhost:3001')
+          return (
+            proxyResData
+              .toString('utf8')
+              // Replace links from edusharing URL to proxy URl
+              .replaceAll(edusharingHost, proxyHost)
+              // HACK: Change HTTPS -> HTTP (occurs in some CSS)
+              .replaceAll('https://' + proxyHost, 'http://' + proxyHost)
+          )
         } else {
-          console.log(proxyRes.headers['content-type'])
           return proxyResData
         }
       },
       userResHeaderDecorator(headers) {
         if (typeof headers['location'] === 'string') {
+          // Fix redirects to a proxy URL
           headers['location'] = headers['location'].replaceAll(
             edusharingHost,
-            'localhost:3001'
+            proxyHost
           )
         }
 
-        // TODO: In edusharing x-frame-options must be deleted
+        // HACK: In edusharing x-frame-options must be deleted
         delete headers['x-frame-options']
 
         return headers
