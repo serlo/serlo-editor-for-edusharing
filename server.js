@@ -10,6 +10,8 @@ const { FormData, File } = require('formdata-node')
 const { Readable } = require('stream')
 const { FormDataEncoder } = require('form-data-encoder')
 const JSONWebKey = require('json-web-key')
+const proxy = require('express-http-proxy')
+
 const { Buffer } = require('buffer')
 
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -191,6 +193,50 @@ void (async () => {
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`)
   })
+
+  const proxyServer = express()
+  const edusharingHost = 'repository.127.0.0.1.nip.io:8100'
+  const proxyHost = 'localhost:3001'
+
+  proxyServer.use(
+    '/',
+    proxy(edusharingHost, {
+      userResDecorator(proxyRes, proxyResData) {
+        if (
+          ['text/html', 'application/json', 'text/css'].includes(
+            proxyRes.headers['content-type']
+          )
+        ) {
+          return proxyResData
+            .toString('utf8')
+            .replaceAll(edusharingHost, 'localhost:3001')
+            .replaceAll('https://localhost:3001', 'http://localhost:3001')
+        } else {
+          console.log(proxyRes.headers['content-type'])
+          return proxyResData
+        }
+      },
+      userResHeaderDecorator(headers) {
+        if (typeof headers['location'] === 'string') {
+          headers['location'] = headers['location'].replaceAll(
+            edusharingHost,
+            'localhost:3001'
+          )
+        }
+
+        // TODO: In edusharing x-frame-options must be deleted
+        delete headers['x-frame-options']
+
+        return headers
+      },
+    })
+  )
+
+  proxyServer.listen(3001, () => {
+    console.log('> Proxy for edusharing listening on http://localhost:3001')
+  })
+
+  /* END: Proxy-Settings */
 
   Provider.registerPlatform({
     url: process.env.PLATFORM_URL,
