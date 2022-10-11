@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function Platform() {
   const url = new URL(
-    'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
+    'http://localhost:3001/edu-sharing/rest/lti/v13/oidc/login_initiations'
   )
 
   // can be GET parameter now
@@ -60,7 +60,13 @@ export default function Platform() {
   }
 
   if (picking) {
-    return <iframe src={url.href} ref={iframeRef} />
+    return (
+      <iframe
+        src={url.href}
+        ref={iframeRef}
+        style={{ width: '100%', height: '100vh' }}
+      />
+    )
   }
 
   return <button onClick={() => setPicking(true)}>Pick</button>
