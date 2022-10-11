@@ -31,7 +31,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // },
     'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings': {
       accept_types: ['ltiResourceLink'],
-      accept_presentation_document_targets: ['frame', 'iframe', 'window'],
+      //accept_presentation_document_targets: ['frame', 'iframe', 'window'],
+      accept_presentation_document_targets: ['iframe'],
       //accept_copy_advice: false,
       accept_multiple: true,
       //accept_unsigned: false,
