@@ -76,7 +76,7 @@ const registry = [
     icon: createIcon(faNewspaper),
   },
   {
-    name: 'multimedia',
+    name: 'multimediaExplanation',
     title: 'Multimedia content associated with text',
     description:
       'edtr-io::Create an illustrating or explaining multimedia content associated with text.',
