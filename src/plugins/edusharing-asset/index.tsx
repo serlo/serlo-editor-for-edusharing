@@ -57,12 +57,29 @@ function EdusharingAsset({ state, editable, focused }: Props) {
   )
 
   function renderModal() {
+    // TODO: Add configurations
+    const url = new URL(
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
+    )
+
+    url.searchParams.append('iss', 'http://localhost:3000')
+    url.searchParams.append(
+      'target_link_uri',
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13'
+    )
+    url.searchParams.append('login_hint', 'editor')
+    url.searchParams.append('lti_message_hint', 'editor')
+    url.searchParams.append('client_id', 'editor')
+    url.searchParams.append('lti_deployment_id', '2')
+
     return (
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
         style={{
           content: {
+            width: '80%',
+            height: '80vh',
             top: '50%',
             left: '50%',
             bottom: 'auto',
@@ -71,7 +88,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
           },
         }}
       >
-        <h1>Hello World</h1>
+        <iframe src={url.href} className="w-full h-full" />
       </Modal>
     )
   }
