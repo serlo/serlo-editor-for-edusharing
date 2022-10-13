@@ -5,16 +5,6 @@ export default function Platform() {
     'http://localhost:3001/edu-sharing/rest/lti/v13/oidc/login_initiations'
   )
 
-  // can be GET parameter now
-  /*
-  const data = new URLSearchParams()
-  data.append('iss', 'http://localhost:3000')
-  data.append('target_link_uri', 'http://localhost:3000/platform/done')
-  data.append('login_hint', 'editor')
-  data.append('lti_message_hint', 'editor')
-  data.append('client_id', 'editor')
-  data.append('lti_deployment_id', '0')
-     */
   url.searchParams.append('iss', 'http://localhost:3000')
   url.searchParams.append(
     'target_link_uri',
@@ -39,21 +29,6 @@ export default function Platform() {
       }
     })
   }, [])
-
-  /*
-  useEffect(() => {
-    async function makeLogin() {
-      if (!picking) return
-      const response = await fetch(url.href, {
-        method: 'POST',
-        body: data,
-        redirect: 'manual',
-      })
-
-      console.log(await response.text())
-    }
-    void makeLogin()
-  })*/
 
   if (resourceLink) {
     const url = new URL(
