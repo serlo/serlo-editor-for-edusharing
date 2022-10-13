@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function Platform() {
   const url = new URL(
-    'http://localhost:3001/edu-sharing/rest/lti/v13/oidc/login_initiations'
+    'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
   )
 
   // can be GET parameter now
@@ -57,7 +57,7 @@ export default function Platform() {
 
   if (resourceLink) {
     const url = new URL(
-      'http://localhost:3001/edu-sharing/rest/lti/v13/oidc/login_initiations'
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
     )
 
     url.searchParams.append('iss', 'http://localhost:3000')
