@@ -211,9 +211,12 @@ void (async () => {
     proxy(edusharingHost, {
       userResDecorator(proxyRes, proxyResData) {
         if (
-          ['text/html', 'application/json', 'text/css'].includes(
-            proxyRes.headers['content-type']
-          )
+          [
+            'text/html',
+            'application/json',
+            'text/css',
+            'application/javascript',
+          ].includes(proxyRes.headers['content-type'])
         ) {
           return (
             proxyResData
@@ -222,6 +225,7 @@ void (async () => {
               .replaceAll(edusharingHost, proxyHost)
               // HACK: Change HTTPS -> HTTP (occurs in some CSS)
               .replaceAll('https://' + proxyHost, 'http://' + proxyHost)
+              .replaceAll('/lti/v13', 'lti/v13')
           )
         } else {
           return proxyResData
