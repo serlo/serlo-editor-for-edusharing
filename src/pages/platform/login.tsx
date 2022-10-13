@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
-
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 import { GetServerSideProps } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
