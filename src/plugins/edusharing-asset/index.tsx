@@ -28,7 +28,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
   const { embedUrl } = state
 
   React.useEffect(() => {
-    window.addEventListener('message', ({ data, source }) => {
+    function handleIFrameEvent({ data, source }: MessageEvent) {
       if (source !== iframeRef.current?.contentWindow) return
 
       if (typeof data === 'object' && typeof data.resourceLink === 'string') {
@@ -40,7 +40,11 @@ function EdusharingAsset({ state, editable, focused }: Props) {
 
         setModalIsOpen(false)
       }
-    })
+    }
+
+    window.addEventListener('message', handleIFrameEvent)
+
+    return () => window.removeEventListener('message', handleIFrameEvent)
   }, [state.embedUrl])
 
   // TODO: Shall we use <figure> here?
