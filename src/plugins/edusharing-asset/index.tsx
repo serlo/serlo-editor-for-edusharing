@@ -76,37 +76,23 @@ function EdusharingAsset({ state, editable, focused }: Props) {
   function renderEmbed() {
     if (!embedUrl.defined) return
 
-    const url = new URL(
-      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
-    )
+    const url = createLtiUrl({
+      targetLink: embedUrl.value,
+      messageHint: embedUrl.value,
+    })
 
-    url.searchParams.append('iss', 'http://localhost:3000')
-    url.searchParams.append('target_link_uri', embedUrl.value)
-    url.searchParams.append('login_hint', 'editor')
-    url.searchParams.append('lti_message_hint', embedUrl.value)
-    url.searchParams.append('client_id', 'editor')
-    url.searchParams.append('lti_deployment_id', '2')
-
-    return <iframe src={url.href} />
+    return <iframe src={url} />
   }
 
   function renderModal() {
     if (!modalIsOpen) return
 
-    // TODO: Add configurations
-    const url = new URL(
-      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
-    )
-
-    url.searchParams.append('iss', 'http://localhost:3000')
-    url.searchParams.append(
-      'target_link_uri',
-      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13'
-    )
-    url.searchParams.append('login_hint', 'editor')
-    url.searchParams.append('lti_message_hint', 'deep-link')
-    url.searchParams.append('client_id', 'editor')
-    url.searchParams.append('lti_deployment_id', '2')
+    // TODO: Config target link
+    const url = createLtiUrl({
+      targetLink:
+        'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13',
+      messageHint: 'deep-link',
+    })
 
     return (
       <Modal
@@ -124,8 +110,30 @@ function EdusharingAsset({ state, editable, focused }: Props) {
           },
         }}
       >
-        <iframe src={url.href} className="w-full h-full" ref={iframeRef} />
+        <iframe src={url} className="w-full h-full" ref={iframeRef} />
       </Modal>
     )
   }
+}
+
+function createLtiUrl({
+  targetLink,
+  messageHint,
+}: {
+  targetLink: string
+  messageHint: string
+}): string {
+  // Config everthing
+  const url = new URL(
+    'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
+  )
+
+  url.searchParams.append('iss', 'http://localhost:3000')
+  url.searchParams.append('target_link_uri', targetLink)
+  url.searchParams.append('login_hint', 'editor')
+  url.searchParams.append('lti_message_hint', messageHint)
+  url.searchParams.append('client_id', 'editor')
+  url.searchParams.append('lti_deployment_id', '2')
+
+  return url.href
 }
