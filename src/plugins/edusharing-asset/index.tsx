@@ -44,7 +44,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
 
   // TODO: Shall we use <figure> here?
   return (
-    <div className="w-full h-40 border border-gray-500 relative">
+    <div className="w-full h-40 border border-gray-500 flex justify-center items-center">
       {renderModal()}
       {embedUrl.defined ? (
         renderEmbed()
@@ -52,8 +52,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
         <>
           {/* TODO: Use fontawesome icon instead of edusharing logo?! */}
           <Image
-            className="absolute top-1/2 left-1/2 block m-0"
-            style={{ transform: 'translate(-50%, -50%)' }}
+            className="block"
             src="/edusharing.png"
             alt="Edusharing"
             width="100"
