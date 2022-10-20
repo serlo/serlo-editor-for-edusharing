@@ -5,6 +5,7 @@ import {
   EditorPluginProps,
   EditorPlugin,
 } from '@edtr-io/plugin'
+import clsx from 'clsx'
 import React from 'react'
 import Modal from 'react-modal'
 import Image from 'next/future/image'
@@ -44,7 +45,12 @@ function EdusharingAsset({ state, editable, focused }: Props) {
 
   // TODO: Shall we use <figure> here?
   return (
-    <div className="w-full h-40 border border-gray-500 flex justify-center items-center">
+    <div
+      className={clsx(
+        'w-full h-40 flex justify-center items-center',
+        (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
+      )}
+    >
       {renderModal()}
       {embedUrl.defined ? (
         renderEmbed()
