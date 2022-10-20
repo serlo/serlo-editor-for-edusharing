@@ -9,10 +9,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // TODO: verify token
   const decoded = jwt.decode(token, { complete: true })
+
+  // Test scheme
   const resourceLink =
     decoded.payload[
       'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
-    ][0]
+    ][0]['url']
 
   return {
     props: {
@@ -22,8 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 export default function Done({ resourceLink }) {
+  // TODO: Set target origin
   useEffect(() => {
-    parent.postMessage(resourceLink, '*')
+    parent.postMessage({ resourceLink }, '*')
   }, [resourceLink])
 
   return null

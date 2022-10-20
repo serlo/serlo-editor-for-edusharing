@@ -27,14 +27,14 @@ export default function Platform() {
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [picking, setPicking] = useState(false)
-  const [resourceLink, setResourceLink] = useState(null)
+  const [resourceLinkData, setResourceLinkData] = useState(null)
 
   useEffect(() => {
     window.addEventListener('message', (message) => {
       if (message.source !== iframeRef.current?.contentWindow) return
       const { data } = message
-      if (typeof data === 'object' && data.type === 'ltiResourceLink') {
-        setResourceLink(message.data)
+      if (typeof data === 'object' && typeof data.resourceLink === 'string') {
+        setResourceLinkData(message.data)
         setPicking(false)
       }
     })
@@ -55,22 +55,23 @@ export default function Platform() {
     void makeLogin()
   })*/
 
-  if (resourceLink) {
+  if (resourceLinkData) {
+    const { resourceLink } = resourceLinkData
     const url = new URL(
       'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
     )
 
     url.searchParams.append('iss', 'http://localhost:3000')
-    url.searchParams.append('target_link_uri', resourceLink['url'])
+    url.searchParams.append('target_link_uri', resourceLink)
     url.searchParams.append('login_hint', 'editor')
-    url.searchParams.append('lti_message_hint', resourceLink['url'])
+    url.searchParams.append('lti_message_hint', resourceLink)
     url.searchParams.append('client_id', 'editor')
     url.searchParams.append('lti_deployment_id', '2')
 
     return (
       <>
         <h1>State</h1>
-        <pre>{JSON.stringify(resourceLink, null, 2)}</pre>
+        <pre>{JSON.stringify(resourceLinkData, null, 2)}</pre>
         <h2>Eingebundene Ressource</h2>
         <iframe src={url.href} style={{ width: '100%', height: '50vh' }} />
       </>
