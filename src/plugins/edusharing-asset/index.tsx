@@ -68,7 +68,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
       'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13'
     )
     url.searchParams.append('login_hint', 'editor')
-    url.searchParams.append('lti_message_hint', 'editor')
+    url.searchParams.append('lti_message_hint', 'deep-link')
     url.searchParams.append('client_id', 'editor')
     url.searchParams.append('lti_deployment_id', '2')
 

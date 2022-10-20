@@ -52,10 +52,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
       : {
           'https://purl.imsglobal.org/spec/lti/claim/target_link_uri':
-            'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/8c30afff-9a2b-4f3b-a70f-7a364c19860a',
+            context.query['lti_message_hint'],
           'https://purl.imsglobal.org/spec/lti/claim/resource_link': {
             id: 'editor2',
             title: 'Hello World',
+          },
+          'https://purl.imsglobal.org/spec/lti/claim/launch_presentation': {
+            locale: 'en',
+            document_target: 'iframe',
           },
         }),
   }

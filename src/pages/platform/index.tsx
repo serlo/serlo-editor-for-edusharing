@@ -63,7 +63,7 @@ export default function Platform() {
     url.searchParams.append('iss', 'http://localhost:3000')
     url.searchParams.append('target_link_uri', resourceLink['url'])
     url.searchParams.append('login_hint', 'editor')
-    url.searchParams.append('lti_message_hint', 'resource-link')
+    url.searchParams.append('lti_message_hint', resourceLink['url'])
     url.searchParams.append('client_id', 'editor')
     url.searchParams.append('lti_deployment_id', '2')
 
