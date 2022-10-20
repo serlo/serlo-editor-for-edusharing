@@ -23,14 +23,31 @@ export const edusharingAssetPlugin: EditorPlugin<State> = {
 
 function EdusharingAsset({ state, editable, focused }: Props) {
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  const iframeRef = React.useRef<HTMLIFrameElement>()
   const { embedUrl } = state
+
+  React.useEffect(() => {
+    window.addEventListener('message', ({ data, source }) => {
+      if (source !== iframeRef.current?.contentWindow) return
+
+      if (typeof data === 'object' && typeof data.resourceLink === 'string') {
+        if (state.embedUrl.defined === false) {
+          state.embedUrl.create(data.resourceLink)
+        } else {
+          state.embedUrl.set(data.resourceLink)
+        }
+
+        setModalIsOpen(false)
+      }
+    })
+  }, [state.embedUrl])
 
   // TODO: Shall we use <figure> here?
   return (
     <div className="w-full h-40 border border-gray-500 relative">
       {renderModal()}
       {embedUrl.defined ? (
-        <iframe src={embedUrl.value} />
+        renderEmbed()
       ) : (
         <>
           {/* TODO: Use fontawesome icon instead of edusharing logo?! */}
@@ -56,7 +73,26 @@ function EdusharingAsset({ state, editable, focused }: Props) {
     </div>
   )
 
+  function renderEmbed() {
+    if (!embedUrl.defined) return
+
+    const url = new URL(
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
+    )
+
+    url.searchParams.append('iss', 'http://localhost:3000')
+    url.searchParams.append('target_link_uri', embedUrl.value)
+    url.searchParams.append('login_hint', 'editor')
+    url.searchParams.append('lti_message_hint', embedUrl.value)
+    url.searchParams.append('client_id', 'editor')
+    url.searchParams.append('lti_deployment_id', '2')
+
+    return <iframe src={url.href} />
+  }
+
   function renderModal() {
+    if (!modalIsOpen) return
+
     // TODO: Add configurations
     const url = new URL(
       'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
@@ -88,7 +124,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
           },
         }}
       >
-        <iframe src={url.href} className="w-full h-full" />
+        <iframe src={url.href} className="w-full h-full" ref={iframeRef} />
       </Modal>
     )
   }
