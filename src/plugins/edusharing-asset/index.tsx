@@ -94,6 +94,9 @@ function EdusharingAsset({ state, editable, focused }: Props) {
       messageHint: 'deep-link',
     })
 
+    // See https://reactcommunity.org/react-modal/accessibility/
+    Modal.setAppElement(document.getElementsByTagName('body')[0])
+
     return (
       <Modal
         isOpen={modalIsOpen}
