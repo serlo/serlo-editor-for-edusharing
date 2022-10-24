@@ -85,9 +85,9 @@ function EditInner({
         }
       } catch (error) {
         console.error(error)
+      } finally {
+        setIsSaving(false)
       }
-
-      setIsSaving(false)
     },
     [dispatch, ltik, providerUrl, state.version, store, isSaving]
   )

@@ -40,9 +40,7 @@ export function Toolbar({
       <>
         <ToolbarButton
           active
-          onClick={async () => {
-            setIsEditing(true)
-          }}
+          onClick={() => setIsEditing(true)}
           className="ml-12"
         >
           <FontAwesomeIcon icon={faEdit} /> Bearbeiten
