@@ -65,7 +65,6 @@ export function Toolbar({
     return (
       <>
         <button
-          type="button"
           className={clsx(toolbarButtonClasses, getButtonActiveClass(undoable))}
           disabled={!undoable}
           onClick={() => {
@@ -75,7 +74,6 @@ export function Toolbar({
           <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
         </button>
         <button
-          type="button"
           className={clsx(toolbarButtonClasses, getButtonActiveClass(redoable))}
           disabled={!redoable}
           onClick={() => {
@@ -85,7 +83,6 @@ export function Toolbar({
           <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
         </button>
         <button
-          type="button"
           className={clsx(
             toolbarButtonClasses,
             'ml-12',
@@ -99,11 +96,19 @@ export function Toolbar({
           <FontAwesomeIcon icon={faSave} /> Speichern
         </button>
         <button
-          type="button"
           className={clsx(toolbarButtonClasses, 'ml-12')}
           onClick={() => setSaveVersionModalIsOpen(true)}
         >
           <FontAwesomeIcon icon={faSave} /> Versionskommentar
+        </button>
+        <button
+          className={clsx(toolbarButtonClasses, getButtonActiveClass(undoable))}
+          disabled={!undoable}
+          onClick={() => {
+            dispatch(undo())
+          }}
+        >
+          <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
         </button>
       </>
     )
