@@ -1,5 +1,5 @@
 import {
-  Editor as E,
+  Editor as Edtr,
   useScopedDispatch,
   useScopedSelector,
   useScopedStore,
@@ -33,7 +33,7 @@ const defaultMessage =
 
 export function Editor(props: EditorProps) {
   return (
-    <E plugins={plugins} initialState={props.state.document}>
+    <Edtr plugins={plugins} initialState={{ plugin: 'rows', state: [] }}>
       {(document) => {
         return (
           <EditInner {...props} version={props.state.version}>
@@ -41,7 +41,7 @@ export function Editor(props: EditorProps) {
           </EditInner>
         )
       }}
-    </E>
+    </Edtr>
   )
 }
 
