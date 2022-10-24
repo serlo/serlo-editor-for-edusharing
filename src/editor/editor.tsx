@@ -52,6 +52,7 @@ function EditInner({
   providerUrl,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
 
   const dispatch = useScopedDispatch()
@@ -62,11 +63,10 @@ function EditInner({
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
   const formDiv = useRef<HTMLDivElement>(null)
 
-  const pendingSave = useRef(false)
   const save = useCallback(
     async (comment?: string) => {
-      if (pendingSave.current) return
-      pendingSave.current = true
+      if (isSaving) return
+      setIsSaving(true)
 
       try {
         const saveUrl = new URL(`${providerUrl}/lti/save-content`)
@@ -90,9 +90,9 @@ function EditInner({
         console.error(error)
       }
 
-      pendingSave.current = false
+      setIsSaving(false)
     },
-    [dispatch, ltik, pendingSave, providerUrl, state.version, store]
+    [dispatch, ltik, providerUrl, state.version, store, isSaving]
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -128,8 +128,8 @@ function EditInner({
         setSaveVersionModalIsOpen={setSaveVersionModalIsOpen}
         undoable={undoable}
         redoable={redoable}
-        hasPendingChanges={hasPendingChanges}
         save={save}
+        isSaving={isSaving}
       />
       <Layout>{children}</Layout>
       {renderExtraEditorStyles()}

@@ -1,5 +1,5 @@
 import { redo, undo } from '@edtr-io/store'
-import { faRedoAlt } from '@edtr-io/ui'
+import { faCheck, faRedoAlt, faSpinner } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { Dispatch, SetStateAction } from 'react'
@@ -12,8 +12,8 @@ export interface ToolbarProps {
   setSaveVersionModalIsOpen?: Dispatch<SetStateAction<boolean>>
   undoable?: boolean
   redoable?: boolean
-  hasPendingChanges?: boolean
   save?: (comment?: string) => Promise<void>
+  isSaving?: boolean
 }
 
 export function Toolbar({
@@ -22,14 +22,14 @@ export function Toolbar({
   setSaveVersionModalIsOpen,
   undoable,
   redoable,
-  hasPendingChanges,
   save,
+  isSaving,
 }: ToolbarProps) {
   const dispatch = useScopedDispatch()
 
   return (
     <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
-      <div className="max-w-6xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex">
+      <div className="max-w-6xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex justify-between">
         {mode === 'render' ? renderRenderButtons() : renderEditButtons()}
       </div>
     </nav>
@@ -54,36 +54,57 @@ export function Toolbar({
   function renderEditButtons() {
     return (
       <>
-        <ToolbarButton active={undoable} onClick={() => dispatch(undo())}>
-          <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
-        </ToolbarButton>
-        <ToolbarButton active={redoable} onClick={() => dispatch(redo())}>
-          <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
-        </ToolbarButton>
-        <ToolbarButton
-          className="ml-12"
-          active
-          onClick={() => setSaveVersionModalIsOpen(true)}
-        >
-          <FontAwesomeIcon icon={faComment} flip="horizontal" /> Version
-          benennen
-        </ToolbarButton>
-        <ToolbarButton
-          className="ml-12"
-          active={true}
-          onClick={async () => {
-            // TODO: I think save does not change hasPendingChanges right now?
-            // this triggers a confusing promt right now
-            await save()
-            // this will only work reliably if this tab was opened with window.open (not target="_blank") for example
-            setTimeout(() => {
-              window.close()
-            }, 10)
-          }}
-        >
-          <FontAwesomeIcon icon={faSave} /> Speichern & Schließen
-        </ToolbarButton>
+        <div>
+          <ToolbarButton active={undoable} onClick={() => dispatch(undo())}>
+            <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
+          </ToolbarButton>
+          <ToolbarButton active={redoable} onClick={() => dispatch(redo())}>
+            <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
+          </ToolbarButton>
+        </div>
+        {renderSaveInfo()}
+        <div>
+          <ToolbarButton
+            className="ml-12"
+            active
+            onClick={() => setSaveVersionModalIsOpen(true)}
+          >
+            <FontAwesomeIcon icon={faComment} flip="horizontal" /> Benannte
+            Version speichern
+          </ToolbarButton>
+          <ToolbarButton
+            className="ml-12"
+            active={true}
+            onClick={async () => {
+              // TODO: I think save does not change hasPendingChanges right now?
+              // this triggers a confusing promt right now
+              await save()
+              // this will only work reliably if this tab was opened with window.open (not target="_blank") for example
+              setTimeout(() => {
+                window.close()
+              }, 10)
+            }}
+          >
+            <FontAwesomeIcon icon={faSave} /> Speichern & Schließen
+          </ToolbarButton>
+        </div>
       </>
+    )
+  }
+
+  function renderSaveInfo() {
+    return (
+      <div className="text-white text-xs font-bold opacity-50 m-auto">
+        {isSaving ? (
+          <>
+            Autom. Speichern <FontAwesomeIcon icon={faSpinner} spin />
+          </>
+        ) : (
+          <>
+            Gespeichert <FontAwesomeIcon icon={faCheck} />
+          </>
+        )}
+      </div>
     )
   }
 }
