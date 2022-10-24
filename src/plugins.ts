@@ -22,6 +22,8 @@ import {
 } from '@edtr-io/ui'
 import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
 
+import { edusharingAssetPlugin } from './plugins/edusharing-asset'
+
 const registry = [
   {
     name: 'text',
@@ -34,6 +36,12 @@ const registry = [
     title: 'Quotation',
     description: 'Create indented text for quotations.',
     icon: createIcon(faQuoteRight),
+  },
+  {
+    name: 'edusharingAsset',
+    title: 'Edusharing Media Embed',
+    description: 'Embed a media element from edu-sharing',
+    icon: createIcon(faCubes),
   },
   {
     name: 'geogebra',
@@ -120,6 +128,7 @@ export const plugins = {
       plugin: 'text',
     },
   }),
+  edusharingAsset: edusharingAssetPlugin,
   geogebra: createGeogebraPlugin(),
   highlight: createHighlightPlugin(),
   inputExercise: createInputExercisePlugin({
