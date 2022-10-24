@@ -9,6 +9,7 @@ import clsx from 'clsx'
 import React from 'react'
 import Modal from 'react-modal'
 import Image from 'next/future/image'
+import { Button } from '../../components/button'
 
 const state = object({
   embedUrl: optional(string('')),
@@ -47,9 +48,8 @@ function EdusharingAsset({ state, editable, focused }: Props) {
     return () => window.removeEventListener('message', handleIFrameEvent)
   }, [state.embedUrl])
 
-  // TODO: Shall we use <figure> here?
   return (
-    <div
+    <figure
       className={clsx(
         'w-full h-40 flex justify-center items-center',
         (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
@@ -59,27 +59,20 @@ function EdusharingAsset({ state, editable, focused }: Props) {
       {embedUrl.defined ? (
         renderEmbed()
       ) : (
-        <>
-          {/* TODO: Use fontawesome icon instead of edusharing logo?! */}
-          <Image
-            className="block"
-            src="/edusharing.png"
-            alt="Edusharing"
-            width="100"
-            height="100"
-          />
-        </>
+        <Image
+          className="block opacity-50"
+          src="/edusharing.svg"
+          alt="Edusharing Logo"
+          width="100"
+          height="100"
+        />
       )}
       {editable && (!embedUrl.defined || focused) ? (
-        <button
-          onClick={() => setModalIsOpen(true)}
-          className="block rounded-md p-2 text-white bg-sky-800 absolute right-2 bottom-2"
-        >
-          {/* TODO: Add component for this button */}
+        <Button onClick={() => setModalIsOpen(true)}>
           Datei von edu-sharing einbinden
-        </button>
+        </Button>
       ) : null}
-    </div>
+    </figure>
   )
 
   function renderEmbed() {
