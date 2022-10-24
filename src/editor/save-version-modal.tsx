@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react'
 import Modal from 'react-modal'
 
 export interface SaveVersionModalProps {
@@ -16,13 +16,21 @@ export function SaveVersionModal({
 }: SaveVersionModalProps) {
   const commentInput = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        if (commentInput.current) commentInput.current?.focus()
+      }, 10)
+    }
+  }, [open])
+
   return (
     <Modal
       isOpen={open}
       onRequestClose={() => setOpen(false)}
       style={{
         content: {
-          top: '50%',
+          top: '25%',
           left: '50%',
           bottom: 'auto',
           right: 'auto',
@@ -39,6 +47,7 @@ export function SaveVersionModal({
         placeholder="Name der neuen Version"
       />
       <div className="text-right mt-3">
+        {/* TODO use button class after PR merge */}
         <button
           className="inline-block rounded-md p-2 mr-2 text-white bg-sky-800"
           onClick={async () => {
@@ -50,7 +59,7 @@ export function SaveVersionModal({
           Speichern
         </button>
         <button
-          className="inline-block rounded-md p-2 border text-sky-800 border-gray-500"
+          className="inline-block rounded-md p-2 border text-truegray-900 border-gray-500"
           onClick={() => setOpen(false)}
         >
           Schließen
