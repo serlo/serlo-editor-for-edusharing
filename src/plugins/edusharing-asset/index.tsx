@@ -6,10 +6,10 @@ import {
   EditorPlugin,
 } from '@edtr-io/plugin'
 import clsx from 'clsx'
-import React from 'react'
 import Modal from 'react-modal'
 import Image from 'next/future/image'
 import { Button } from '../../components/button'
+import { useEffect, useRef, useState } from 'react'
 
 const state = object({
   embedUrl: optional(string('')),
@@ -24,11 +24,11 @@ export const edusharingAssetPlugin: EditorPlugin<State> = {
 }
 
 function EdusharingAsset({ state, editable, focused }: Props) {
-  const [modalIsOpen, setModalIsOpen] = React.useState(false)
-  const iframeRef = React.useRef<HTMLIFrameElement>()
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement>()
   const { embedUrl } = state
 
-  React.useEffect(() => {
+  useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
       if (source !== iframeRef.current?.contentWindow) return
 
@@ -83,7 +83,7 @@ function EdusharingAsset({ state, editable, focused }: Props) {
       messageHint: embedUrl.value,
     })
 
-    return <iframe src={url} />
+    return <iframe className="pointer-events-none" src={url} />
   }
 
   function renderModal() {
