@@ -72,7 +72,7 @@ export function Toolbar({
             dispatch(undo())
           }}
         >
-          <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Undo
+          <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
         </button>
         <button
           type="button"
@@ -82,7 +82,7 @@ export function Toolbar({
             dispatch(redo())
           }}
         >
-          <FontAwesomeIcon icon={faRedoAlt} /> Redo
+          <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
         </button>
         <button
           type="button"
@@ -96,7 +96,7 @@ export function Toolbar({
             await save()
           }}
         >
-          <FontAwesomeIcon icon={faSave} /> Save
+          <FontAwesomeIcon icon={faSave} /> Speichern
         </button>
         <button
           type="button"
