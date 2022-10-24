@@ -78,7 +78,9 @@ export function Toolbar({
             onClick={async () => {
               // TODO: I think save does not change hasPendingChanges right now?
               // this triggers a confusing promt right now
-              await save()
+              await save(
+                'Diese Version wurde automatisch vom Serlo-Editor erstellt'
+              )
               // this will only work reliably if this tab was opened with window.open (not target="_blank") for example
               setTimeout(() => {
                 window.close()
