@@ -49,7 +49,6 @@ function EditInner({
   providerUrl,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
-  const [isFirstSave, setIsFirstSave] = useState(true)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
 
   const dispatch = useScopedDispatch()
@@ -69,13 +68,6 @@ function EditInner({
       try {
         const saveUrl = new URL(`${providerUrl}/lti/save-content`)
 
-        if (isFirstSave || comment) {
-          saveUrl.searchParams.append(
-            'comment',
-            comment ?? 'Datei wurde durch den Serlo-Editor aktualisiert'
-          )
-        }
-
         const response = await fetch(saveUrl.href, {
           method: 'POST',
           headers: { Authorization: `Bearer ${ltik}` },
@@ -92,17 +84,8 @@ function EditInner({
       }
 
       pendingSave.current = false
-      setIsFirstSave(false)
     },
-    [
-      dispatch,
-      ltik,
-      pendingSave,
-      providerUrl,
-      state.version,
-      store,
-      isFirstSave,
-    ]
+    [dispatch, ltik, pendingSave, providerUrl, state.version, store]
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -131,7 +114,6 @@ function EditInner({
         save={save}
         open={saveVersionModalIsOpen}
         setOpen={setSaveVersionModalIsOpen}
-        setIsFirstSave={setIsFirstSave}
       />
       <Toolbar
         mode="edit"

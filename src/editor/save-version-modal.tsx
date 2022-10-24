@@ -4,7 +4,6 @@ import Modal from 'react-modal'
 export interface SaveVersionModalProps {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
-  setIsFirstSave: Dispatch<SetStateAction<boolean>>
   save?: (comment?: string) => Promise<void>
 }
 
@@ -12,7 +11,6 @@ export function SaveVersionModal({
   open,
   save,
   setOpen,
-  setIsFirstSave,
 }: SaveVersionModalProps) {
   const commentInput = useRef<HTMLInputElement>(null)
 
@@ -52,7 +50,6 @@ export function SaveVersionModal({
           className="inline-block rounded-md p-2 mr-2 text-white bg-sky-800"
           onClick={async () => {
             await save(commentInput.current?.value)
-            setIsFirstSave(true)
             setOpen(false)
           }}
         >
