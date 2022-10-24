@@ -1250,7 +1250,7 @@ __metadata:
     "@types/uuid": ^8.3.4
     autoprefixer: ^10.4.8
     body-parser: ^1.20.0
-    classnames: ^2.3.1
+    clsx: ^1.2.1
     eslint: ^8.22.0
     eslint-config-next: ^12.2.5
     express: ^4.18.1
@@ -2250,13 +2250,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "classnames@npm:2.3.1"
-  checksum: 14db8889d56c267a591f08b0834989fe542d47fac659af5a539e110cc4266694e8de86e4e3bbd271157dbd831361310a8293e0167141e80b0f03a0f175c80960
-  languageName: node
-  linkType: hard
-
 "clean-stack@npm:^2.0.0":
   version: 2.2.0
   resolution: "clean-stack@npm:2.2.0"
@@ -2277,6 +2270,13 @@ __metadata:
   version: 1.1.1
   resolution: "clsx@npm:1.1.1"
   checksum: ff052650329773b9b245177305fc4c4dc3129f7b2be84af4f58dc5defa99538c61d4207be7419405a5f8f3d92007c954f4daba5a7b74e563d5de71c28c830063
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "clsx@npm:1.2.1"
+  checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
   languageName: node
   linkType: hard
 
