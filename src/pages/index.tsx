@@ -7,10 +7,10 @@ import { plugins } from '../plugins'
 import { getJsonBody } from '../utils/get-json-body'
 import { Renderer } from '@edtr-io/renderer'
 import dynamic from 'next/dynamic'
-import type { EditorProps } from '../editor'
+import type { EditorProps } from '../editor/editor'
 
 const Editor = dynamic<EditorProps>(() =>
-  import('../editor').then((mod) => mod.Editor)
+  import('../editor/editor').then((mod) => mod.Editor)
 )
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
