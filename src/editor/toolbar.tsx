@@ -2,9 +2,9 @@ import { redo, undo } from '@edtr-io/store'
 import { faRedoAlt } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
-import { Dispatch, SetStateAction, useState } from 'react'
-import clsx from 'clsx'
+import { Dispatch, SetStateAction } from 'react'
 import { useScopedDispatch } from '@edtr-io/core'
+import { ToolbarButton } from './toolbar-button'
 
 export interface ToolbarProps {
   mode: 'edit' | 'render'
@@ -27,13 +27,6 @@ export function Toolbar({
 }: ToolbarProps) {
   const dispatch = useScopedDispatch()
 
-  const getButtonActiveClass = (active: boolean) => {
-    return active ? 'opacity-90' : 'opacity-50 cursor-not-allowed'
-  }
-
-  const toolbarButtonClasses =
-    'px-1.5 py-1 border border-transparent rounded-xl shadow-sm text-white text-sm font-medium bg-sky-800/0 hover:bg-sky-800 hover:opacity-100 ml-1'
-
   return (
     <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
       <div className="max-w-6xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex">
@@ -45,18 +38,15 @@ export function Toolbar({
   function renderRenderButtons() {
     return (
       <>
-        <button
-          className={clsx(
-            toolbarButtonClasses,
-            'ml-12',
-            getButtonActiveClass(true)
-          )}
+        <ToolbarButton
+          active
           onClick={async () => {
             setIsEditing(true)
           }}
+          className="ml-12"
         >
           <FontAwesomeIcon icon={faEdit} /> Bearbeiten
-        </button>
+        </ToolbarButton>
       </>
     )
   }
@@ -64,52 +54,27 @@ export function Toolbar({
   function renderEditButtons() {
     return (
       <>
-        <button
-          className={clsx(toolbarButtonClasses, getButtonActiveClass(undoable))}
-          disabled={!undoable}
-          onClick={() => {
-            dispatch(undo())
-          }}
-        >
+        <ToolbarButton active={undoable} onClick={() => dispatch(undo())}>
           <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
-        </button>
-        <button
-          className={clsx(toolbarButtonClasses, getButtonActiveClass(redoable))}
-          disabled={!redoable}
-          onClick={() => {
-            dispatch(redo())
-          }}
-        >
+        </ToolbarButton>
+        <ToolbarButton active={redoable} onClick={() => dispatch(redo())}>
           <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
-        </button>
-        <button
-          className={clsx(
-            toolbarButtonClasses,
-            'ml-12',
-            getButtonActiveClass(hasPendingChanges)
-          )}
-          disabled={!hasPendingChanges}
-          onClick={async () => {
-            await save()
-          }}
+        </ToolbarButton>
+        {/* TODO: maybe remove or add notice about autosave */}
+        <ToolbarButton
+          className="ml-12"
+          active={hasPendingChanges}
+          onClick={async () => await save()}
         >
           <FontAwesomeIcon icon={faSave} /> Speichern
-        </button>
-        <button
-          className={clsx(toolbarButtonClasses, 'ml-12')}
+        </ToolbarButton>
+        <ToolbarButton
+          className="ml-12"
+          active
           onClick={() => setSaveVersionModalIsOpen(true)}
         >
           <FontAwesomeIcon icon={faSave} /> Versionskommentar
-        </button>
-        <button
-          className={clsx(toolbarButtonClasses, getButtonActiveClass(undoable))}
-          disabled={!undoable}
-          onClick={() => {
-            dispatch(undo())
-          }}
-        >
-          <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
-        </button>
+        </ToolbarButton>
       </>
     )
   }
