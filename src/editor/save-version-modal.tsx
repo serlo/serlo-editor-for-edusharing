@@ -28,11 +28,12 @@ export function SaveVersionModal({
       onRequestClose={() => setOpen(false)}
       style={{
         content: {
-          top: '25%',
+          marginTop: '4rem',
           left: '50%',
           bottom: 'auto',
           right: 'auto',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translateX(-50%)',
+          zIndex: '99',
         },
       }}
     >
@@ -45,21 +46,21 @@ export function SaveVersionModal({
         placeholder="Name der neuen Version"
       />
       <div className="text-right mt-3">
-        {/* TODO use button class after PR merge */}
+        {/* TODO use button class after PR merge, add hover effect */}
         <button
-          className="inline-block rounded-md p-2 mr-2 text-white bg-sky-800"
+          className="inline-block rounded-md p-2 mr-2 border text-sky-800 border-sky-800"
+          onClick={() => setOpen(false)}
+        >
+          Schließen
+        </button>
+        <button
+          className="inline-block rounded-md p-2 text-white bg-sky-800"
           onClick={async () => {
             await save(commentInput.current?.value)
             setOpen(false)
           }}
         >
           Speichern
-        </button>
-        <button
-          className="inline-block rounded-md p-2 border text-truegray-900 border-gray-500"
-          onClick={() => setOpen(false)}
-        >
-          Schließen
         </button>
       </div>
     </Modal>
