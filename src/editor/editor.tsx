@@ -28,6 +28,9 @@ export interface EditorProps {
   providerUrl: string
 }
 
+const defaultMessage =
+  'Diese Version wurde automatisch vom Serlo-Editor erstellt'
+
 export function Editor(props: EditorProps) {
   return (
     <E plugins={plugins} initialState={props.state.document}>
@@ -67,6 +70,10 @@ function EditInner({
 
       try {
         const saveUrl = new URL(`${providerUrl}/lti/save-content`)
+
+        if (comment) {
+          saveUrl.searchParams.append('comment', comment ?? defaultMessage)
+        }
 
         const response = await fetch(saveUrl.href, {
           method: 'POST',

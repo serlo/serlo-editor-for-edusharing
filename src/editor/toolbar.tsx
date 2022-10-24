@@ -1,7 +1,7 @@
 import { redo, undo } from '@edtr-io/store'
 import { faRedoAlt } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
+import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { Dispatch, SetStateAction } from 'react'
 import { useScopedDispatch } from '@edtr-io/core'
 import { ToolbarButton } from './toolbar-button'
@@ -60,20 +60,28 @@ export function Toolbar({
         <ToolbarButton active={redoable} onClick={() => dispatch(redo())}>
           <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
         </ToolbarButton>
-        {/* TODO: maybe remove or add notice about autosave */}
-        <ToolbarButton
-          className="ml-12"
-          active={hasPendingChanges}
-          onClick={async () => await save()}
-        >
-          <FontAwesomeIcon icon={faSave} /> Speichern
-        </ToolbarButton>
         <ToolbarButton
           className="ml-12"
           active
           onClick={() => setSaveVersionModalIsOpen(true)}
         >
-          <FontAwesomeIcon icon={faSave} /> Versionskommentar
+          <FontAwesomeIcon icon={faComment} flip="horizontal" /> Version
+          benennen
+        </ToolbarButton>
+        <ToolbarButton
+          className="ml-12"
+          active={true}
+          onClick={async () => {
+            // TODO: I think save does not change hasPendingChanges right now?
+            // this triggers a confusing promt right now
+            await save()
+            // this will only work reliably if this tab was opened with window.open (not target="_blank") for example
+            setTimeout(() => {
+              window.close()
+            }, 10)
+          }}
+        >
+          <FontAwesomeIcon icon={faSave} /> Speichern & Schließen
         </ToolbarButton>
       </>
     )

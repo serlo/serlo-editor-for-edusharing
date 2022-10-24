@@ -1,10 +1,5 @@
-import { redo, undo } from '@edtr-io/store'
-import { faRedoAlt } from '@edtr-io/ui'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
-import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
+import { ReactNode } from 'react'
 import clsx from 'clsx'
-import { useScopedDispatch } from '@edtr-io/core'
 
 export interface ToolbarButtonProps {
   children: ReactNode
