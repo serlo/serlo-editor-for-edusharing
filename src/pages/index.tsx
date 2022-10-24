@@ -2,9 +2,8 @@ import { GetServerSideProps } from 'next'
 
 import { kitchenSink } from '../fixtures/kitchen-sink'
 import { Layout } from '../layout'
-import { migrate } from '../migrations'
+import { migrate, emptyDocument } from '../storage-format'
 import { plugins } from '../plugins'
-import { emptyDocument } from '../fixtures'
 import { getJsonBody } from '../utils/get-json-body'
 import { Renderer } from '@edtr-io/renderer'
 import dynamic from 'next/dynamic'
@@ -18,10 +17,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.method !== 'POST') {
     return {
       props: {
-        state: migrate({
-          version: 0,
-          document: kitchenSink,
-        }),
+        state: migrate({ ...emptyDocument, document: kitchenSink }),
         ltik: '',
         mayEdit: true,
         providerUrl: process.env.PROVIDER_URL,

@@ -25,10 +25,10 @@ import Modal from 'react-modal'
 
 import { Layout } from './layout'
 import { plugins } from './plugins'
-import { MigratableState } from './migrations'
+import { StorageFormat, documentType } from './storage-format'
 
 export interface EditorProps {
-  state: MigratableState
+  state: StorageFormat
   ltik: string
   providerUrl: string
 }
@@ -81,13 +81,16 @@ function EditInner({
           )
         }
 
+        const body: StorageFormat = {
+          type: documentType,
+          version: state.version,
+          document: serializeRootDocument()(store.getState()),
+        }
+
         const response = await fetch(saveUrl.href, {
           method: 'POST',
           headers: { Authorization: `Bearer ${ltik}` },
-          body: JSON.stringify({
-            version: state.version,
-            document: serializeRootDocument()(store.getState()),
-          }),
+          body: JSON.stringify(body),
         })
         if (response.status === 200) {
           dispatch(persist())

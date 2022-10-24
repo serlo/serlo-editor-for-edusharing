@@ -1,7 +1,6 @@
 import { GetServerSideProps } from 'next'
 import { useEffect, useRef } from 'react'
-import { MigratableState, migrate } from '../migrations'
-import { emptyDocument } from '../fixtures'
+import { StorageFormat, migrate, emptyDocument } from '../storage-format'
 import { getJsonBody } from '../utils/get-json-body'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -17,7 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 export interface CreateProps {
-  state: MigratableState
+  state: StorageFormat
   ltik: string
   providerUrl: string
 }
