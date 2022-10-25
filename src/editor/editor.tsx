@@ -79,6 +79,7 @@ function EditInner({
             version: state.version,
             document: serializeRootDocument()(store.getState()),
           }),
+          keepalive: true,
         })
         if (response.status === 200) {
           dispatch(persist())
@@ -98,8 +99,12 @@ function EditInner({
   }, [debouncedSave, pendingChanges])
 
   useEffect(() => {
-    window.onbeforeunload = hasPendingChanges ? () => '' : null
-  }, [hasPendingChanges])
+    window.onbeforeunload = () => {
+      if (hasPendingChanges) {
+        void save('Datei wurde durch den Serlo-Editor aktualisiert')
+      }
+    }
+  }, [hasPendingChanges, save])
 
   if (!isEditing) {
     return (
