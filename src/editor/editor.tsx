@@ -30,7 +30,7 @@ export interface EditorProps {
 
 export function Editor(props: EditorProps) {
   return (
-    <Edtr plugins={plugins} initialState={{ plugin: 'rows', state: [] }}>
+    <Edtr plugins={plugins} initialState={props.state.document}>
       {(document) => {
         return (
           <EditInner {...props} version={props.state.version}>
