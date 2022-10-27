@@ -30,7 +30,7 @@ export interface EditorProps {
 
 export function Editor(props: EditorProps) {
   return (
-    <Edtr plugins={plugins} initialState={{ plugin: 'rows', state: [] }}>
+    <Edtr plugins={plugins} initialState={props.state.document}>
       {(document) => {
         return (
           <EditInner {...props} version={props.state.version}>
@@ -81,6 +81,7 @@ function EditInner({
         const response = await fetch(saveUrl.href, {
           method: 'POST',
           headers: { Authorization: `Bearer ${ltik}` },
+          keepalive: true,
           body: JSON.stringify(body),
         })
         if (response.status === 200) {
@@ -101,8 +102,12 @@ function EditInner({
   }, [debouncedSave, pendingChanges])
 
   useEffect(() => {
-    window.onbeforeunload = hasPendingChanges ? () => '' : null
-  }, [hasPendingChanges])
+    window.onbeforeunload = () => {
+      if (hasPendingChanges) {
+        void save('Datei wurde durch den Serlo-Editor aktualisiert')
+      }
+    }
+  }, [hasPendingChanges, save])
 
   if (!isEditing) {
     return (
