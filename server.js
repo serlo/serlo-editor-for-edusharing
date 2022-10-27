@@ -132,6 +132,10 @@ void (async () => {
       keyid: await platform.platformKid(),
     })
     const url = new URL(getContentApiUrl)
+    // TODO: Use a method here
+    if (proccess.env.EDUSHARING_NETWORK_HOST) {
+      url.host = proccess.env.EDUSHARING_NETWORK_HOST
+    }
     url.searchParams.append('jwt', message)
 
     const response = await fetch(url)
@@ -158,6 +162,10 @@ void (async () => {
     })
 
     const url = new URL(postContentApiUrl)
+    // TODO: Use a method here
+    if (proccess.env.EDUSHARING_NETWORK_HOST) {
+      url.host = proccess.env.EDUSHARING_NETWORK_HOST
+    }
     url.searchParams.append('jwt', message)
     url.searchParams.append('mimetype', 'application/json')
 
