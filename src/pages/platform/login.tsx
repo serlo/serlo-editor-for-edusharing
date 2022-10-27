@@ -5,8 +5,6 @@ import { GetServerSideProps } from 'next'
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
 
-  console.log(context.query)
-
   const isDeeplinkRequest = context.query['lti_message_hint'] === 'deep-link'
   const message = {
     iss: 'http://localhost:3000/',
@@ -27,11 +25,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     'https://purl.imsglobal.org/spec/lti/claim/roles': [],
     'https://purl.imsglobal.org/spec/lti/claim/context': { id: 'editor' },
 
-    // 'https://purl.imsglobal.org/spec/lti/claim/launch_presentation': {
-    //   document_target: 'iframe',
-    //   height: 320,
-    //   width: 240,
-    // },
     ...(isDeeplinkRequest
       ? {
           'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings':
@@ -57,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             title: 'Hello World',
           },
           'https://purl.imsglobal.org/spec/lti/claim/launch_presentation': {
-            locale: 'en',
+            locale: 'de',
             document_target: 'iframe',
           },
         }),
@@ -73,9 +66,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     expiresIn: 60,
     keyid: '42',
   })
-
-  //console.log(4289080)
-  //console.log(jwt.verify(signed, 'hkjhk'))
 
   return {
     props: {

@@ -18,12 +18,12 @@ import { useDebounce } from 'rooks'
 
 import { Layout } from '../layout'
 import { plugins } from '../plugins'
-import { MigratableState } from '../migrations'
+import { StorageFormat, documentType } from '../storage-format'
 import { Toolbar } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 
 export interface EditorProps {
-  state: MigratableState
+  state: StorageFormat
   ltik: string
   providerUrl: string
 }
@@ -72,14 +72,17 @@ function EditInner({
           saveUrl.searchParams.append('comment', comment)
         }
 
+        const body: StorageFormat = {
+          type: documentType,
+          version: state.version,
+          document: serializeRootDocument()(store.getState()),
+        }
+
         const response = await fetch(saveUrl.href, {
           method: 'POST',
           headers: { Authorization: `Bearer ${ltik}` },
-          body: JSON.stringify({
-            version: state.version,
-            document: serializeRootDocument()(store.getState()),
-          }),
           keepalive: true,
+          body: JSON.stringify(body),
         })
         if (response.status === 200) {
           dispatch(persist())

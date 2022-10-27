@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app'
+import 'katex/dist/katex.min.css'
 
 import '../styles.css'
 
