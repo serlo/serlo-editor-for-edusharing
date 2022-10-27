@@ -132,6 +132,10 @@ void (async () => {
       keyid: await platform.platformKid(),
     })
     const url = new URL(getContentApiUrl)
+    // TODO: Use a method here
+    if (proccess.env.EDUSHARING_NETWORK_HOST) {
+      url.host = proccess.env.EDUSHARING_NETWORK_HOST
+    }
     url.searchParams.append('jwt', message)
 
     const response = await fetch(url)
@@ -158,6 +162,10 @@ void (async () => {
     })
 
     const url = new URL(postContentApiUrl)
+    // TODO: Use a method here
+    if (proccess.env.EDUSHARING_NETWORK_HOST) {
+      url.host = proccess.env.EDUSHARING_NETWORK_HOST
+    }
     url.searchParams.append('jwt', message)
     url.searchParams.append('mimetype', 'application/json')
 
@@ -192,7 +200,7 @@ void (async () => {
     console.log(`> Ready on http://localhost:${port}`)
   })
 
-  Provider.registerPlatform({
+  await Provider.registerPlatform({
     url: process.env.PLATFORM_URL,
     name: 'Platform',
     clientId: process.env.PLATFORM_CLIENT_ID,
@@ -201,21 +209,6 @@ void (async () => {
     authConfig: {
       method: 'JWK_SET',
       key: process.env.PLATFORM_JWK_SET,
-    },
-  })
-
-  await Provider.registerPlatform({
-    url: process.env.PROVIDER_URL,
-    name: 'Editor',
-    clientId: 'editor',
-    authenticationEndpoint: 'http://localhost:3000/platform/login',
-    accesstokenEndpoint: 'http://localhost:3000/platform/token',
-    authConfig: {
-      method: 'RSA_KEY',
-      key: Buffer.from(
-        process.env.EDITOR_PLATFORM_PUBLIC_KEY,
-        'base64'
-      ).toString('utf-8'),
     },
   })
 })()
