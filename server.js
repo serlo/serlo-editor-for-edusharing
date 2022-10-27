@@ -192,7 +192,7 @@ void (async () => {
     console.log(`> Ready on http://localhost:${port}`)
   })
 
-  Provider.registerPlatform({
+  await Provider.registerPlatform({
     url: process.env.PLATFORM_URL,
     name: 'Platform',
     clientId: process.env.PLATFORM_CLIENT_ID,
