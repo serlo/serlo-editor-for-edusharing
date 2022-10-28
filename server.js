@@ -54,6 +54,19 @@ Provider.onConnect(async (token, req, res) => {
   res.send(await response.text())
 })
 
+Provider.onDeepLinking(async (token, req, res) => {
+  const response = await fetch('http://localhost:3000/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      ltik: res.locals.ltik,
+    }),
+  })
+  res.send(await response.text())
+})
+
 void (async () => {
   await app.prepare()
   await Provider.deploy({ serverless: true })
