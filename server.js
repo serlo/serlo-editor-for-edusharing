@@ -133,8 +133,8 @@ void (async () => {
     })
     const url = new URL(getContentApiUrl)
     // TODO: Use a method here
-    if (proccess.env.EDUSHARING_NETWORK_HOST) {
-      url.host = proccess.env.EDUSHARING_NETWORK_HOST
+    if (process.env.EDUSHARING_NETWORK_HOST) {
+      url.host = process.env.EDUSHARING_NETWORK_HOST
     }
     url.searchParams.append('jwt', message)
 
@@ -163,8 +163,8 @@ void (async () => {
 
     const url = new URL(postContentApiUrl)
     // TODO: Use a method here
-    if (proccess.env.EDUSHARING_NETWORK_HOST) {
-      url.host = proccess.env.EDUSHARING_NETWORK_HOST
+    if (process.env.EDUSHARING_NETWORK_HOST) {
+      url.host = process.env.EDUSHARING_NETWORK_HOST
     }
     url.searchParams.append('jwt', message)
     url.searchParams.append('mimetype', 'application/json')
