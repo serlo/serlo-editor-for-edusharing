@@ -8,7 +8,7 @@ import {
 import clsx from 'clsx'
 import Modal from 'react-modal'
 import Image from 'next/future/image'
-import { Button } from '../../components/button'
+import { Button } from '../components/button'
 import { useEffect, useRef, useState } from 'react'
 
 const state = object({
