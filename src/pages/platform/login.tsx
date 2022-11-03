@@ -9,8 +9,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     iss: process.env.PROVIDER_URL,
     // TODO: Should be a list
     aud: process.env.EDITOR_CLIENT_ID,
-    // TODO: no idea where this should be coming from
-    sub: '0ae836b9-7fc9-4060-006f-27b2066ac545',
+    // TODO: Set this to the current user
+    sub: 'admin',
 
     iat: Date.now(),
     nonce: context.query.nonce,
