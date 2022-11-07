@@ -82,7 +82,7 @@ void (async () => {
       .json({
         keys: [
           {
-            kid: '42',
+            kid: process.env.EDITOR_KEY_ID,
             alg: 'RS256',
             use: 'sig',
             ...JSONWebKey.fromPEM(
