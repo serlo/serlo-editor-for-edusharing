@@ -10,12 +10,16 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
+    "_prettier": "prettier .",
     "build": "next build",
     "dev": "node server.js",
     "format": "run-p -l --aggregate-output \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
-    "format:prettier": "prettier --write .",
-    "lint": "next lint",
+    "format:prettier": "yarn _prettier --write",
+    "lint": "run-p -ln \"lint:*\"",
+    "lint:eslint": "yarn _eslint",
+    "lint:prettier": "yarn _prettier --check",
+    "lint:tsc": "tsc --noEmit",
     "mongodb:start": "docker-compose up -d",
     "start": "NODE_ENV=production node server.js"
   },
