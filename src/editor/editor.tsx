@@ -52,6 +52,7 @@ function EditInner({
   ltik,
   state,
   providerUrl,
+  edusharingConfig,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -119,7 +120,10 @@ function EditInner({
       <>
         <Toolbar mode="render" setIsEditing={setIsEditing} />
         <Layout>
-          <Renderer plugins={createPlugins} state={state.document} />
+          <Renderer
+            plugins={createPlugins(edusharingConfig)}
+            state={state.document}
+          />
         </Layout>
       </>
     )
