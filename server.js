@@ -20,7 +20,7 @@ const handle = app.getRequestHandler()
 loadEnvConfig('./', process.env.NODE_ENV !== 'production')
 
 Provider.setup(
-  process.env.PROVIDER_SECRET, // Key used to sign cookies and tokens
+  process.env.PLATFORM_SECRET, //
   {
     url: process.env.MONGODB_URL,
     connection: {
