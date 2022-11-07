@@ -1,27 +1,9 @@
 # Educational Content Editor as a Service
 
-## Starting Moodle
-
-- `yarn moodle:start` starts a Moodle instance that can be used to test the LTI tool.
-- `yarn moodle:stop` stops the Moodle instance.
-
-## Starting the LTI Tool
+## Starting the editor locally
 
 - `yarn mongodb:start` starts the MongoDB server.
 - `yarn dev` starts the Next.js server.
-
-## Adding the LTI Tool to Moodle
-
-- Go to "Site Administration" > "Plugins" > "External tool" > "Manage tools" > "configure a tool manually".
-- Fill in the following values:
-  - Tool name: "ECE"
-  - Tool URL: "http://localhost:3000/lti"
-  - LTI version: "LTI 1.3"
-  - Public key type: "Keyset URL"
-  - Public keyset: "http://host.docker.internal:3000/lti/keys"
-  - Initiate login URL: "http://localhost:3000/lti/login"
-  - Redirection URI(s): "http://localhost:3000/lti"
-  - Enable "Supports Deep Linking (Content-Item Message)"
 
 ## LTI Workflow
 

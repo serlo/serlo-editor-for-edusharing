@@ -14,8 +14,6 @@
     "format": "prettier --write .",
     "lint": "next lint",
     "mongodb:start": "docker-compose up -d",
-    "moodle:start": "./scripts/start-moodle.sh",
-    "moodle:stop": "./scripts/stop-moodle.sh",
     "start": "NODE_ENV=production node server.js"
   },
   "resolutions": {
