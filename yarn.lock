@@ -1265,7 +1265,7 @@ __metadata:
     node-fetch: ^2.6.7
     postcss: ^8.4.16
     prettier: ^2.7.1
-    prettier-plugin-packagejson: ^2.2.18
+    prettier-plugin-packagejson: ^2.3.0
     raw-body: ^2.5.1
     react: ^17.0.2
     react-dnd: ^14.0.5
@@ -5489,14 +5489,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier-plugin-packagejson@npm:^2.2.18":
-  version: 2.2.18
-  resolution: "prettier-plugin-packagejson@npm:2.2.18"
+"prettier-plugin-packagejson@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "prettier-plugin-packagejson@npm:2.3.0"
   dependencies:
     sort-package-json: 1.57.0
   peerDependencies:
     prettier: ">= 1.16.0"
-  checksum: aee11632b4a75d357cad0e25e537491580e0d4bd9ee54a1ad68f3363e0e4e0204450fcd405368737ce92edfde568e5ac80108ab5e6a4e415bebc6af816fcf06b
+  peerDependenciesMeta:
+    prettier:
+      optional: true
+  checksum: fbcf81cedcfd030440c106d502f121deb9acff2d50c2173ec202eccea66c7de03618eafe3d2a4011b73d76d7d41355edcb2fc11b3030e02a1f2ade91220f4a8a
   languageName: node
   linkType: hard
 
