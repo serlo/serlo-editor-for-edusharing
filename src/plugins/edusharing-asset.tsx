@@ -8,22 +8,31 @@ import {
 import clsx from 'clsx'
 import Modal from 'react-modal'
 import Image from 'next/future/image'
-import { Button } from '../../components/button'
+import { Button } from '../components/button'
 import { useEffect, useRef, useState } from 'react'
 
 const state = object({
   embedUrl: optional(string('')),
 })
-type State = typeof state
-type Props = EditorPluginProps<State>
 
-export const edusharingAssetPlugin: EditorPlugin<State> = {
-  Component: EdusharingAsset,
-  state,
-  config: {},
+export function createEdusharingAssetPlugin(
+  config: EdusharingConfig
+): EditorPlugin<State, EdusharingConfig> {
+  return { Component: EdusharingAsset, state, config }
 }
 
-function EdusharingAsset({ state, editable, focused }: Props) {
+export interface EdusharingConfig {
+  clientId: string
+  deepLinkUrl: string
+  deploymentId: string
+  loginInitiationUrl: string
+  providerUrl: string
+}
+
+type State = typeof state
+type Props = EditorPluginProps<State, EdusharingConfig>
+
+function EdusharingAsset({ state, editable, focused, config }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
   const { embedUrl } = state
@@ -89,10 +98,8 @@ function EdusharingAsset({ state, editable, focused }: Props) {
   function renderModal() {
     if (!modalIsOpen) return
 
-    // TODO: Config target link
     const url = createLtiUrl({
-      targetLink:
-        'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13',
+      targetLink: config.deepLinkUrl,
       messageHint: 'deep-link',
     })
 
@@ -119,26 +126,24 @@ function EdusharingAsset({ state, editable, focused }: Props) {
       </Modal>
     )
   }
-}
 
-function createLtiUrl({
-  targetLink,
-  messageHint,
-}: {
-  targetLink: string
-  messageHint: string
-}): string {
-  // Config everthing
-  const url = new URL(
-    'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/oidc/login_initiations'
-  )
+  function createLtiUrl({
+    targetLink,
+    messageHint,
+  }: {
+    targetLink: string
+    messageHint: string
+  }): string {
+    // Config everthing
+    const url = new URL(config.loginInitiationUrl)
 
-  url.searchParams.append('iss', 'http://localhost:3000')
-  url.searchParams.append('target_link_uri', targetLink)
-  url.searchParams.append('login_hint', 'editor')
-  url.searchParams.append('lti_message_hint', messageHint)
-  url.searchParams.append('client_id', 'editor')
-  url.searchParams.append('lti_deployment_id', '2')
+    url.searchParams.append('iss', config.providerUrl)
+    url.searchParams.append('target_link_uri', targetLink)
+    url.searchParams.append('login_hint', config.clientId)
+    url.searchParams.append('lti_message_hint', messageHint)
+    url.searchParams.append('client_id', config.clientId)
+    url.searchParams.append('lti_deployment_id', config.deploymentId)
 
-  return url.href
+    return url.href
+  }
 }

@@ -17,20 +17,25 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
 import { Layout } from '../layout'
-import { plugins } from '../plugins'
+import { createPlugins } from '../plugins'
 import { StorageFormat, documentType } from '../storage-format'
 import { Toolbar } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
+import { EdusharingConfig } from '../plugins/edusharing-asset'
 
 export interface EditorProps {
   state: StorageFormat
   ltik: string
   providerUrl: string
+  edusharingConfig: EdusharingConfig
 }
 
 export function Editor(props: EditorProps) {
   return (
-    <Edtr plugins={plugins} initialState={props.state.document}>
+    <Edtr
+      plugins={createPlugins(props.edusharingConfig)}
+      initialState={props.state.document}
+    >
       {(document) => {
         return (
           <EditInner {...props} version={props.state.version}>
@@ -47,6 +52,7 @@ function EditInner({
   ltik,
   state,
   providerUrl,
+  edusharingConfig,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -114,7 +120,10 @@ function EditInner({
       <>
         <Toolbar mode="render" setIsEditing={setIsEditing} />
         <Layout>
-          <Renderer plugins={plugins} state={state.document} />
+          <Renderer
+            plugins={createPlugins(edusharingConfig)}
+            state={state.document}
+          />
         </Layout>
       </>
     )

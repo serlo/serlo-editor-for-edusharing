@@ -22,7 +22,10 @@ import {
 } from '@edtr-io/ui'
 import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
 
-import { edusharingAssetPlugin } from './plugins/edusharing-asset'
+import {
+  EdusharingConfig,
+  createEdusharingAssetPlugin,
+} from './plugins/edusharing-asset'
 
 const registry = [
   {
@@ -121,46 +124,48 @@ const registry = [
   },
 ]
 
-export const plugins = {
-  anchor: createAnchorPlugin(),
-  blockquote: createBlockquotePlugin({
-    content: {
-      plugin: 'text',
-    },
-  }),
-  edusharingAsset: edusharingAssetPlugin,
-  geogebra: createGeogebraPlugin(),
-  highlight: createHighlightPlugin(),
-  inputExercise: createInputExercisePlugin({
-    feedback: {
-      plugin: 'text',
-      config: {
-        registry: [],
+export function createPlugins(config: EdusharingConfig) {
+  return {
+    anchor: createAnchorPlugin(),
+    blockquote: createBlockquotePlugin({
+      content: {
+        plugin: 'text',
       },
-    },
-  }),
-  multimediaExplanation: createMultimediaExplanationPlugin({
-    explanation: { plugin: 'rows' },
-    plugins: [
-      {
-        name: 'geogebra',
-        title: 'GeoGebra Applet',
+    }),
+    edusharingAsset: createEdusharingAssetPlugin(config),
+    geogebra: createGeogebraPlugin(),
+    highlight: createHighlightPlugin(),
+    inputExercise: createInputExercisePlugin({
+      feedback: {
+        plugin: 'text',
+        config: {
+          registry: [],
+        },
       },
-    ],
-  }),
-  rows: createRowsPlugin({
-    content: { plugin: 'text' },
-    plugins: registry,
-  }),
-  scMcExercise: createScMcExercisePlugin({
-    content: { plugin: 'text', config: { registry: [] } },
-    feedback: { plugin: 'text', config: { registry: [] } },
-  }),
-  serloInjection: createSerloInjectionPlugin(),
-  spoiler: createSpoilerPlugin({
-    content: { plugin: 'rows' },
-  }),
-  text: createTextPlugin({
-    registry,
-  }),
+    }),
+    multimediaExplanation: createMultimediaExplanationPlugin({
+      explanation: { plugin: 'rows' },
+      plugins: [
+        {
+          name: 'geogebra',
+          title: 'GeoGebra Applet',
+        },
+      ],
+    }),
+    rows: createRowsPlugin({
+      content: { plugin: 'text' },
+      plugins: registry,
+    }),
+    scMcExercise: createScMcExercisePlugin({
+      content: { plugin: 'text', config: { registry: [] } },
+      feedback: { plugin: 'text', config: { registry: [] } },
+    }),
+    serloInjection: createSerloInjectionPlugin(),
+    spoiler: createSpoilerPlugin({
+      content: { plugin: 'rows' },
+    }),
+    text: createTextPlugin({
+      registry,
+    }),
+  }
 }

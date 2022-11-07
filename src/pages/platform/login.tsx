@@ -4,26 +4,28 @@ import { GetServerSideProps } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
-
   const isDeeplinkRequest = context.query['lti_message_hint'] === 'deep-link'
   const message = {
-    iss: 'http://localhost:3000/',
+    iss: process.env.EDITOR_URL,
     // TODO: Should be a list
-    aud: 'editor',
-    // TODO: no idea where this should be coming from
-    sub: '0ae836b9-7fc9-4060-006f-27b2066ac545',
+    aud: process.env.EDITOR_CLIENT_ID,
+    // TODO: Set this to the current user
+    sub: 'admin',
 
     iat: Date.now(),
     nonce: context.query.nonce,
 
     // TODO: no idea where this should be coming from
-    'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
+    'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
+      process.env.EDITOR_DEPLOYMENT_ID,
     'https://purl.imsglobal.org/spec/lti/claim/message_type': isDeeplinkRequest
       ? 'LtiDeepLinkingRequest'
       : 'LtiResourceLinkRequest',
     'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
     'https://purl.imsglobal.org/spec/lti/claim/roles': [],
-    'https://purl.imsglobal.org/spec/lti/claim/context': { id: 'editor' },
+    'https://purl.imsglobal.org/spec/lti/claim/context': {
+      id: process.env.EDITOR_CLIENT_ID,
+    },
 
     ...(isDeeplinkRequest
       ? {
@@ -37,8 +39,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
               //accept_unsigned: false,
               auto_create: false,
               //can_confirm: false,
-              deep_link_return_url: 'http://localhost:3000/platform/done',
-              title: 'OEH Redaktion',
+              deep_link_return_url: `${process.env.EDITOR_URL}/platform/done`,
+              title: '',
               text: '',
             },
         }
@@ -46,8 +48,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           'https://purl.imsglobal.org/spec/lti/claim/target_link_uri':
             context.query['lti_message_hint'],
           'https://purl.imsglobal.org/spec/lti/claim/resource_link': {
-            id: 'editor2',
-            title: 'Hello World',
+            id: `${process.env.EDITOR_CLIENT_ID}${process.env.EDITOR_DEPLOYMENT_ID}`,
+            title: '',
           },
           'https://purl.imsglobal.org/spec/lti/claim/launch_presentation': {
             locale: 'de',
