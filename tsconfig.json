@@ -8,6 +8,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "incremental": true,
+    "tsBuildInfoFile": ".next/tsconfig.tsbuildinfo",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
