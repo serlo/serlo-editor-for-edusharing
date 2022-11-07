@@ -17,12 +17,13 @@ const Editor = dynamic<EditorProps>(() =>
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
+  const providerUrl = process.env.PROVIDER_URL
   const edusharingConfig: EdusharingConfig = {
     clientId: process.env.EDITOR_CLIENT_ID,
     deepLinkUrl: process.env.EDITOR_TARGET_DEEP_LINK_URL,
     deploymentId: process.env.EDITOR_DEPLOYMENT_ID,
     loginInitiationUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
-    providerUrl: process.env.PROVIDER_URL,
+    providerUrl,
   }
 
   if (context.req.method !== 'POST') {
@@ -31,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
         state: migrate({ ...emptyDocument, document: kitchenSink }),
         ltik: '',
         mayEdit: true,
-        providerUrl: process.env.PROVIDER_URL,
+        providerUrl,
         edusharingConfig,
       },
     }
@@ -51,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     props: {
       ...props,
       state: migrate(state),
-      providerUrl: process.env.PROVIDER_URL,
+      providerUrl,
       edusharingConfig,
     },
   }

@@ -103,7 +103,7 @@ void (async () => {
         {
           type: 'ltiResourceLink',
           title: 'TITLE',
-          url: `${process.env.PROVIDER_URL}/lti`,
+          url: `${process.env.EDITOR_URL}/lti`,
           custom: {
             state: req.body,
           },

@@ -6,7 +6,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
   const isDeeplinkRequest = context.query['lti_message_hint'] === 'deep-link'
   const message = {
-    iss: process.env.PROVIDER_URL,
+    iss: process.env.EDITOR_URL,
     // TODO: Should be a list
     aud: process.env.EDITOR_CLIENT_ID,
     // TODO: Set this to the current user
@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
               //accept_unsigned: false,
               auto_create: false,
               //can_confirm: false,
-              deep_link_return_url: `${process.env.PROVIDER_URL}/platform/done`,
+              deep_link_return_url: `${process.env.EDITOR_URL}/platform/done`,
               title: '',
               text: '',
             },

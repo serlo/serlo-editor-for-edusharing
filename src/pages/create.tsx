@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       ...props,
       state: migrate(emptyDocument),
-      providerUrl: process.env.PROVIDER_URL,
+      providerUrl: process.env.EDITOR_URL,
     },
   }
 }
