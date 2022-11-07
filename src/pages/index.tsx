@@ -17,7 +17,7 @@ const Editor = dynamic<EditorProps>(() =>
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context
 ) => {
-  const providerUrl = process.env.PROVIDER_URL
+  const providerUrl = process.env.EDITOR_URL
   const edusharingConfig: EdusharingConfig = {
     clientId: process.env.EDITOR_CLIENT_ID,
     deepLinkUrl: process.env.EDITOR_TARGET_DEEP_LINK_URL,
