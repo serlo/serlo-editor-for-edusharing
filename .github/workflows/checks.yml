@@ -8,7 +8,7 @@ on:
 
 jobs:
   yarn:
-    name: Check that the cache of yarn matches checksums in lockfile
+    name: Cache of yarn matches checksums in lockfile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
