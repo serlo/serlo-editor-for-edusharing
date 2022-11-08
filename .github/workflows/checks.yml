@@ -1,0 +1,18 @@
+name: Checks, linting and tests for CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  yarn:
+    name: Check that the cache of yarn matches checksums in lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - run: yarn --immutable --immutable-cache --check-cache
