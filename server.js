@@ -126,6 +126,7 @@ void (async () => {
       appId,
       nodeId,
       user,
+      version
     }
     const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
       algorithm: 'RS256',
