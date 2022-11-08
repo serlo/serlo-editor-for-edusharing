@@ -1,4 +1,3 @@
 /.next/
 /.yarn/
-/moodle/
-/moodle-docker/
+server.js

@@ -1,0 +1,66 @@
+name: Checks, linting and tests for CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  yarn:
+    name: Cache of yarn matches checksums in lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: yarn --immutable --immutable-cache --check-cache
+
+  build:
+    name: Build succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+      - run: yarn --immutable --immutable-cache
+      - run: yarn build
+
+  prettier:
+    name: All source files are well formated with prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+      - run: yarn --immutable --immutable-cache
+      - run: yarn lint:prettier --loglevel debug
+
+  tsc:
+    name: TypeScript compiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+      - run: yarn --immutable --immutable-cache
+      - run: yarn lint:tsc
+
+  eslint:
+    name: ESLint has no errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+      - run: yarn --immutable --immutable-cache
+      - run: yarn lint:eslint
