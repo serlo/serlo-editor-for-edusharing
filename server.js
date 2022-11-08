@@ -120,7 +120,7 @@ void (async () => {
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, getContentApiUrl } =
+    const { appId, nodeId, user, getContentApiUrl, version } =
       token.platformContext.custom
     const jwtBody = {
       appId,
