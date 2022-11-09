@@ -9,8 +9,9 @@
 
 ### Deep Linking
 
-On a Deep Linking request, we show a simple form where the user can create a new document. Returns with a Resource Link
-where `custom.state` is an empty document.
+On a Deep Linking request, we show a simple form where the user can create a new
+document. Returns with a Resource Link where `custom.state` is an empty
+document.
 
 ### Resource Link
 
@@ -33,8 +34,10 @@ interface CustomParameters {
 }
 ```
 
-If `mayEdit` is false, we only render the document. If `mayEdit` is true, we also load the editor and show an edit button.
-When the user clicks "Save" after editing a document, we do a POST request to the specified `saveUrl` with the following JSON body:
+If `mayEdit` is false, we only render the document. If `mayEdit` is true, we
+also load the editor and show an edit button. When the user clicks "Save" after
+editing a document, we do a POST request to the specified `saveUrl` with the
+following JSON body:
 
 ```ts
 interface SavePayload {
