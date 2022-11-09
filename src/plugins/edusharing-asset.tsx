@@ -62,7 +62,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   return (
     <figure
       className={clsx(
-        'w-full h-40 flex justify-center items-center',
+        'w-full h-96 flex justify-center items-center',
         (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
       )}
     >
