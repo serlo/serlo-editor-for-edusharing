@@ -50,6 +50,7 @@ Provider.onConnect(async (token, req, res) => {
       mayEdit:
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
+      user: custom.user
     }),
   })
   res.send(await response.text())

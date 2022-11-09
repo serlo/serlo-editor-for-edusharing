@@ -4,13 +4,17 @@ import { GetServerSideProps } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
-  const isDeeplinkRequest = context.query['lti_message_hint'] === 'deep-link'
+
+  // TODO: Use session to give information further
+  // TODO: Proper parsing
+  const messageHintParam = context.query['lti_message_hint'] as string
+  const messageHint = JSON.parse(messageHintParam) as MessageHint
   const message = {
     iss: process.env.EDITOR_URL,
     // TODO: Should be a list
     aud: process.env.EDITOR_CLIENT_ID,
     // TODO: Set this to the current user
-    sub: 'admin',
+    sub: messageHint.user,
 
     iat: Date.now(),
     nonce: context.query.nonce,
@@ -18,16 +22,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // TODO: no idea where this should be coming from
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
       process.env.EDITOR_DEPLOYMENT_ID,
-    'https://purl.imsglobal.org/spec/lti/claim/message_type': isDeeplinkRequest
-      ? 'LtiDeepLinkingRequest'
-      : 'LtiResourceLinkRequest',
+    'https://purl.imsglobal.org/spec/lti/claim/message_type':
+      messageHint.type === 'deep-link'
+        ? 'LtiDeepLinkingRequest'
+        : 'LtiResourceLinkRequest',
     'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
     'https://purl.imsglobal.org/spec/lti/claim/roles': [],
     'https://purl.imsglobal.org/spec/lti/claim/context': {
       id: process.env.EDITOR_CLIENT_ID,
     },
 
-    ...(isDeeplinkRequest
+    ...(messageHint.type === 'deep-link'
       ? {
           'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings':
             {
@@ -46,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
       : {
           'https://purl.imsglobal.org/spec/lti/claim/target_link_uri':
-            context.query['lti_message_hint'],
+            messageHint.resourceLink,
           'https://purl.imsglobal.org/spec/lti/claim/resource_link': {
             id: `${process.env.EDITOR_CLIENT_ID}${process.env.EDITOR_DEPLOYMENT_ID}`,
             title: '',
@@ -91,4 +96,18 @@ export default function Login({ jwt, redirectUri, state }) {
       <input type="hidden" name="state" value={state} />
     </form>
   )
+}
+
+// TODO: Find a better place for this
+export type MessageHint = DeepLinkMessage | ResourceLinkMessage
+
+interface DeepLinkMessage {
+  type: 'deep-link'
+  user: string
+}
+
+interface ResourceLinkMessage {
+  type: 'resource-link'
+  user: string
+  resourceLink: string
 }
