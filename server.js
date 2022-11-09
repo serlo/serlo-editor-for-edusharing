@@ -56,19 +56,6 @@ Provider.onConnect(async (token, req, res) => {
   res.send(await response.text())
 })
 
-Provider.onDeepLinking(async (token, req, res) => {
-  const response = await fetch('http://localhost:3000/create', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      ltik: res.locals.ltik,
-    }),
-  })
-  res.send(await response.text())
-})
-
 void (async () => {
   await app.prepare()
   await Provider.deploy({ serverless: true })
@@ -96,24 +83,6 @@ void (async () => {
         ],
       })
       .end()
-  })
-
-  server.post('/lti/create', async (req, res) => {
-    const form = await Provider.DeepLinking.createDeepLinkingForm(
-      res.locals.token,
-      [
-        {
-          type: 'ltiResourceLink',
-          title: 'TITLE',
-          url: `${process.env.EDITOR_URL}/lti`,
-          custom: {
-            state: req.body,
-          },
-        },
-      ],
-      { message: 'Successfully registered resource!' }
-    )
-    return res.send(form)
   })
 
   server.get('/lti/get-content', async (req, res) => {
