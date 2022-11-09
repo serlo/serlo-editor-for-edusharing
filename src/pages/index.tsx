@@ -48,6 +48,11 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   const state =
     response.status === 204 ? migrate(emptyDocument) : await response.json()
 
+  // TODO: We definitely need to have a more clean implementation here
+  if (props.user) {
+    edusharingConfig.user = props.user
+  }
+
   return {
     props: {
       ...props,
@@ -60,6 +65,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 
 export interface PageProps extends EditorProps {
   mayEdit: boolean
+  user?: string
 }
 
 export default function Page(props: PageProps) {

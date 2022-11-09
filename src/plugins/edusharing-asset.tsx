@@ -10,6 +10,7 @@ import Modal from 'react-modal'
 import Image from 'next/future/image'
 import { Button } from '../components/button'
 import { useEffect, useRef, useState } from 'react'
+import { MessageHint } from '../pages/platform/login'
 
 const state = object({
   embedUrl: optional(string('')),
@@ -27,6 +28,7 @@ export interface EdusharingConfig {
   deploymentId: string
   loginInitiationUrl: string
   providerUrl: string
+  user?: string
 }
 
 type State = typeof state
@@ -60,7 +62,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   return (
     <figure
       className={clsx(
-        'w-full h-40 flex justify-center items-center',
+        'w-full h-96 flex justify-center items-center',
         (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
       )}
     >
@@ -89,7 +91,11 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
 
     const url = createLtiUrl({
       targetLink: embedUrl.value,
-      messageHint: embedUrl.value,
+      messageHint: {
+        type: 'resource-link',
+        user: getUser(),
+        resourceLink: embedUrl.value,
+      },
     })
 
     return <iframe className="pointer-events-none" src={url} />
@@ -100,7 +106,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
 
     const url = createLtiUrl({
       targetLink: config.deepLinkUrl,
-      messageHint: 'deep-link',
+      messageHint: { type: 'deep-link', user: getUser() },
     })
 
     // See https://reactcommunity.org/react-modal/accessibility/
@@ -132,7 +138,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     messageHint,
   }: {
     targetLink: string
-    messageHint: string
+    messageHint: MessageHint
   }): string {
     // Config everthing
     const url = new URL(config.loginInitiationUrl)
@@ -140,10 +146,17 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     url.searchParams.append('iss', config.providerUrl)
     url.searchParams.append('target_link_uri', targetLink)
     url.searchParams.append('login_hint', config.clientId)
-    url.searchParams.append('lti_message_hint', messageHint)
+    url.searchParams.append(
+      'lti_message_hint',
+      encodeURIComponent(JSON.stringify(messageHint))
+    )
     url.searchParams.append('client_id', config.clientId)
     url.searchParams.append('lti_deployment_id', config.deploymentId)
 
     return url.href
+  }
+
+  function getUser() {
+    return config.user ?? 'anonymous'
   }
 }
