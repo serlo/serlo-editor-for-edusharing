@@ -12,6 +12,7 @@ COPY .eslintrc.json .
 COPY next.config.js .
 COPY next-env.d.ts .
 COPY postcss.config.js .
+COPY public .
 COPY server.js .
 COPY tailwind.config.js .
 COPY tsconfig.json .
