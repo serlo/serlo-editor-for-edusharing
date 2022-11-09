@@ -74,6 +74,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.4",
+    "@types/body-parser": "^1.19.2",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/react": "^17.0.48",
     "@types/react-dom": "^17.0.17",
