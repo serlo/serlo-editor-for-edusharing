@@ -98,7 +98,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       },
     })
 
-    return <iframe className="pointer-events-none" src={url} />
+    return <iframe className="pointer-events-none h-full" src={url} />
   }
 
   function renderModal() {
