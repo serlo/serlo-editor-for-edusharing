@@ -38,6 +38,25 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
   const { embedUrl } = state
+  const [embedHtml, setEmbedHtml] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchEmbedHtml() {
+      if (!embedUrl.defined) return
+
+      const nodeId = new URL(embedUrl.value).pathname.replace(
+        '/edu-sharing/rest/lti/v13/lti13/',
+        ''
+      )
+
+      const response = await fetch(`/get-embed-html?nodeId=${nodeId}`)
+      const result = await response.json()
+
+      setEmbedHtml(result['detailsSnippet'])
+    }
+
+    void fetchEmbedHtml()
+  }, [embedUrl.defined, embedUrl.value])
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -87,18 +106,9 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   )
 
   function renderEmbed() {
-    if (!embedUrl.defined) return
+    if (embedHtml == null) return
 
-    const url = createLtiUrl({
-      targetLink: embedUrl.value,
-      messageHint: {
-        type: 'resource-link',
-        user: getUser(),
-        resourceLink: embedUrl.value,
-      },
-    })
-
-    return <iframe className="pointer-events-none h-full" src={url} />
+    return <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
   }
 
   function renderModal() {

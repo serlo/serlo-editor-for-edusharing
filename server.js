@@ -115,6 +115,27 @@ void (async () => {
     return res.status(response.status).send(await response.text())
   })
 
+  server.get('/get-embed-html', async (req, res) => {
+    const nodeId = req.query["nodeId"]
+
+    console.log(nodeId)
+
+    const url = `http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`
+
+    console.log(url)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Authorization': 'Basic ' + Buffer.from("admin:admin").toString('base64')
+      },
+    })
+
+    res.send(await response.text())
+  })
+
   server.post('/lti/save-content', async (req, res) => {
     const { token } = res.locals
 
