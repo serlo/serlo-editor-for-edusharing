@@ -90,13 +90,14 @@ void (async () => {
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, getContentApiUrl, version } =
+    const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
       token.platformContext.custom
     const jwtBody = {
       appId,
       nodeId,
       user,
-      ...(version != null ? { version } : {})
+      ...(version != null ? { version } : {}),
+      dataToken
     }
     const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
       algorithm: 'RS256',
@@ -120,12 +121,13 @@ void (async () => {
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, postContentApiUrl } =
+    const { appId, nodeId, user, postContentApiUrl, dataToken } =
       token.platformContext.custom
     const jwtBody = {
       appId,
       nodeId,
       user,
+      dataToken
     }
     const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
       algorithm: 'RS256',
