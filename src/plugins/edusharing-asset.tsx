@@ -44,11 +44,13 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     async function fetchEmbedHtml() {
       if (!embedUrl.defined) return
 
+      // TODO: Better parsing of nodeId
       const nodeId = new URL(embedUrl.value).pathname.replace(
         '/edu-sharing/rest/lti/v13/lti13/',
         ''
       )
 
+      // TODO: Is there a better way to fetch the data?
       const response = await fetch(`/get-embed-html?nodeId=${nodeId}`)
       const result = await response.json()
 
@@ -56,7 +58,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     }
 
     void fetchEmbedHtml()
-  }, [embedUrl.defined, embedUrl.value])
+  }, [embedUrl.defined ? embedUrl.value : null])
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -81,7 +83,8 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   return (
     <figure
       className={clsx(
-        'w-full h-96 flex justify-center items-center',
+        'flex justify-center items-center',
+        !embedUrl.defined && 'w-full h-40',
         (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
       )}
     >
@@ -108,6 +111,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   function renderEmbed() {
     if (embedHtml == null) return
 
+    // TODO: Sanatize embed html?!
     return <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
   }
 
