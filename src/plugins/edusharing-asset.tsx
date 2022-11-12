@@ -111,8 +111,11 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   function renderEmbed() {
     if (embedHtml == null) return
 
+    // TODO: Remove fix when not needed any more...
+    const fixedEmbedHtml = embedHtml.replaceAll('width:0px;', '')
+
     // TODO: Sanatize embed html?!
-    return <div dangerouslySetInnerHTML={{ __html: embedHtml }} />
+    return <div dangerouslySetInnerHTML={{ __html: fixedEmbedHtml }} />
   }
 
   function renderModal() {
