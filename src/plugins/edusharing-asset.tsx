@@ -38,6 +38,27 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
   const { embedUrl } = state
+  const [embedHtml, setEmbedHtml] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchEmbedHtml() {
+      if (!embedUrl.defined) return
+
+      // TODO: Better parsing of nodeId
+      const nodeId = new URL(embedUrl.value).pathname.replace(
+        '/edu-sharing/rest/lti/v13/lti13/',
+        ''
+      )
+
+      // TODO: Is there a better way to fetch the data?
+      const response = await fetch(`/get-embed-html?nodeId=${nodeId}`)
+      const result = await response.json()
+
+      setEmbedHtml(result['detailsSnippet'])
+    }
+
+    void fetchEmbedHtml()
+  }, [embedUrl.defined ? embedUrl.value : null])
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -62,7 +83,8 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   return (
     <figure
       className={clsx(
-        'w-full h-96 flex justify-center items-center',
+        'flex justify-center items-center',
+        !embedUrl.defined && 'w-full h-40',
         (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
       )}
     >
@@ -87,18 +109,18 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   )
 
   function renderEmbed() {
-    if (!embedUrl.defined) return
+    if (embedHtml == null) return
 
-    const url = createLtiUrl({
-      targetLink: embedUrl.value,
-      messageHint: {
-        type: 'resource-link',
-        user: getUser(),
-        resourceLink: embedUrl.value,
-      },
-    })
+    // TODO: Remove fix when not needed any more...
+    const fixedEmbedHtml = embedHtml.replaceAll('width:0px;', '')
 
-    return <iframe className="pointer-events-none" src={url} />
+    // TODO: Sanatize embed html?!
+    return (
+      <div
+        className="not-prose"
+        dangerouslySetInnerHTML={{ __html: fixedEmbedHtml }}
+      />
+    )
   }
 
   function renderModal() {

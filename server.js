@@ -64,6 +64,22 @@ void (async () => {
 
   server.use('/lti', Provider.app)
 
+  server.get('/get-embed-html', async (req, res) => {
+    const nodeId = req.query["nodeId"]
+    const url = `http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Authorization': 'Basic ' + Buffer.from("admin:admin").toString('base64')
+      },
+    })
+
+    res.json(await response.json())
+  })
+
   // TODO: Use another library
   server.use('/platform/keys', async (_req, res) => {
     res
