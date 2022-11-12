@@ -66,9 +66,13 @@ void (async () => {
 
   server.get('/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
-    const url = `http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`
+    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`)
 
-    const response = await fetch(url, {
+    if (process.env.EDUSHARING_NETWORK_HOST) {
+      url.host = process.env.EDUSHARING_NETWORK_HOST
+    }
+
+    const response = await fetch(url.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
