@@ -52,6 +52,11 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   if (props.user) {
     edusharingConfig.user = props.user
   }
+  if (props.dataToken) {
+    edusharingConfig.dataToken = props.dataToken
+  }
+
+
 
   return {
     props: {
@@ -66,6 +71,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 export interface PageProps extends EditorProps {
   mayEdit: boolean
   user?: string
+  dataToken?: string
 }
 
 export default function Page(props: PageProps) {

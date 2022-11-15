@@ -50,7 +50,8 @@ Provider.onConnect(async (token, req, res) => {
       mayEdit:
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
-      user: custom.user
+      user: custom.user,
+      dataToken: custom.dataToken
     }),
   })
   res.send(await response.text())
@@ -66,19 +67,48 @@ void (async () => {
 
   server.get('/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
-    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`)
+
+    const dataToken = req.query["dataToken"]
+
+    //@TODO aud and deployment_id from serlo platform config
+    const jwtBody = {
+      "aud" : "editor",
+      "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : "2",
+      "dataToken" : dataToken
+    }
+
+    const { token } = res.locals
+
+    //@TODO hard coded platformId
+    var allPlatforms = await Provider.getAllPlatforms()
+    var platform = null;
+    for(const p of allPlatforms) {
+      console.log(p.platformClientId())
+      var platformClientId = await p.platformClientId();
+      if(platformClientId === "editor"){
+        platform = p;
+      }
+    }
+    //const platform = await Provider.getPlatformById("d15b03fddf1953a8923cd29ad4851d88")
+
+    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      //this line causes on repo the following error java.lang.RuntimeException: no public key found for key: 6fa923b6e2ea88e6beb5c1341b809945
+      keyid: await platform.platformKid(),
+      //this line causes on repo "invalid key length" error 
+      //keyid: "42",
+    })
+
+    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details/-home-/${nodeId}?displayMode=inline&jwt=${message}`)
+    console.log("uRl:"+url)
 
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
     }
 
     const response = await fetch(url.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Authorization': 'Basic ' + Buffer.from("admin:admin").toString('base64')
-      },
+      method: 'GET'
     })
 
     res.json(await response.json())
@@ -138,6 +168,7 @@ void (async () => {
 
   server.post('/lti/save-content', async (req, res) => {
     const { token } = res.locals
+    console.log("token.platformId:"+token.platformId)
 
     const platform = await Provider.getPlatformById(token.platformId)
 

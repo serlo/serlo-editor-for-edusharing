@@ -29,6 +29,7 @@ export interface EdusharingConfig {
   loginInitiationUrl: string
   providerUrl: string
   user?: string
+  dataToken?: string
 }
 
 type State = typeof state
@@ -50,8 +51,10 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
         ''
       )
 
+      const dataToken = config.dataToken;
+
       // TODO: Is there a better way to fetch the data?
-      const response = await fetch(`/get-embed-html?nodeId=${nodeId}`)
+      const response = await fetch(`/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}`)
       const result = await response.json()
 
       setEmbedHtml(result['detailsSnippet'])
@@ -128,7 +131,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
 
     const url = createLtiUrl({
       targetLink: config.deepLinkUrl,
-      messageHint: { type: 'deep-link', user: getUser() },
+      messageHint: { type: 'deep-link', user: getUser(), dataToken: getDataToken() },
     })
 
     // See https://reactcommunity.org/react-modal/accessibility/
@@ -180,5 +183,9 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
 
   function getUser() {
     return config.user ?? 'anonymous'
+  }
+
+  function getDataToken() {
+    return config.dataToken ?? ''
   }
 }
