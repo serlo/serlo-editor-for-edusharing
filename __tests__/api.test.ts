@@ -11,18 +11,18 @@ describe('Editor tests', () => {
         expect(result).toBeDefined()
     })
 
-    test.todo('/lti/keys', async () => {
+    test('/lti/keys', async () => {
         const result = await fetch(`${url}/platform/keys`)
         console.log(result)
 
         expect(result).toBeDefined()
     })
 
-    test.todo('Calls for LTI lke keyset URLs', () => {
+    test('Calls for LTI lke keyset URLs', () => {
         
     })
 
-    test.todo('Deeplink-Call?!', () => {
+    test('Deeplink-Call?!', () => {
         
     })
 })
