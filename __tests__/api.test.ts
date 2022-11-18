@@ -1,28 +1,36 @@
 import fetch from 'node-fetch'
 
-describe('Editor tests', () => {
+type KeyResponse = { keys: Array<IKey> }
+interface IKey {
+    kid: string;
+    alg: 'RS256';
+    use: 'sig';
+    kty: 'RSA';
+    n: string;
+    e: string;
+}
+
+describe('Calls for LTI request tests', () => {
     const port = parseInt(process.env.PORT, 10) || 3000
     const url = `http://localhost:${port}`
 
     test('/platform/keys', async () => {
-        const result = await fetch(`${url}/platform/keys`)
-        console.log(result)
+        const response = await fetch(`${url}/platform/keys`)
+        const json: KeyResponse = await response.json()
         
-        expect(result).toBeDefined()
+        expect(response.status).toBe(200)
+        expect(json.keys.length).toBeGreaterThan(0)
+        expect(json.keys[0].kid).toEqual('42')
+        expect(json.keys[0].n.length).toBeGreaterThan(0)
     })
 
     test('/lti/keys', async () => {
-        const result = await fetch(`${url}/platform/keys`)
-        console.log(result)
+        const response = await fetch(`${url}/lti/keys`)
+        const json: KeyResponse = await response.json()
 
-        expect(result).toBeDefined()
-    })
-
-    test('Calls for LTI lke keyset URLs', () => {
-        
-    })
-
-    test('Deeplink-Call?!', () => {
-        
+        expect(response.status).toBe(200)
+        expect(json.keys.length).toBeGreaterThan(0)
+        expect(json.keys[0].n.length).toBeGreaterThan(0)
+        expect(json.keys[1].n.length).toBeGreaterThan(0)
     })
 })
