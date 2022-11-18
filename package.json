@@ -22,7 +22,7 @@
     "lint:tsc": "tsc --noEmit",
     "mongodb:start": "docker-compose up -d",
     "start": "NODE_ENV=production node server.js",
-    "test": "start-server-and-test dev http://localhost:3000 jest --coverage"
+    "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
