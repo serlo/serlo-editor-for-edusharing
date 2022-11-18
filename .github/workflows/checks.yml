@@ -64,3 +64,15 @@ jobs:
           node-version: 16
       - run: yarn --immutable --immutable-cache
       - run: yarn lint:eslint
+
+  test:
+    name: Jest integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+      - run: yarn --immutable --immutable-cache
+      - run: yarn test
