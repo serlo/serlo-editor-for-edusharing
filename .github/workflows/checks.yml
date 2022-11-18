@@ -75,4 +75,6 @@ jobs:
           cache: yarn
           node-version: 16
       - run: yarn --immutable --immutable-cache
+      - run: docker-compose up -d
       - run: yarn test
+      - run: docker-compose down
