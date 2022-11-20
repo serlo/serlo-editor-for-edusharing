@@ -55,8 +55,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   if (props.dataToken) {
     edusharingConfig.dataToken = props.dataToken
   }
-
-
+  if (props.ltik) {
+    edusharingConfig.ltik = props.ltik
+  }
 
   return {
     props: {

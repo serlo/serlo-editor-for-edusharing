@@ -28,6 +28,7 @@ export interface EdusharingConfig {
   deploymentId: string
   loginInitiationUrl: string
   providerUrl: string
+  ltik?: string
   user?: string
   dataToken?: string
 }
@@ -51,10 +52,15 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
         ''
       )
 
-      const dataToken = config.dataToken;
+      const dataToken = config.dataToken
 
       // TODO: Is there a better way to fetch the data?
-      const response = await fetch(`/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}`)
+      const response = await fetch(
+        `/lti/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}`,
+        {
+          headers: { Authorization: `Bearer ${config.ltik}` },
+        }
+      )
       const result = await response.json()
 
       setEmbedHtml(result['detailsSnippet'])
@@ -131,7 +137,11 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
 
     const url = createLtiUrl({
       targetLink: config.deepLinkUrl,
-      messageHint: { type: 'deep-link', user: getUser(), dataToken: getDataToken() },
+      messageHint: {
+        type: 'deep-link',
+        user: getUser(),
+        dataToken: getDataToken(),
+      },
     })
 
     // See https://reactcommunity.org/react-modal/accessibility/

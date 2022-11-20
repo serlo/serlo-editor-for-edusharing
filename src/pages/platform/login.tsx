@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     iat: Date.now(),
     nonce: context.query.nonce,
-    
+
     dataToken: messageHint.dataToken,
 
     // TODO: no idea where this should be coming from
