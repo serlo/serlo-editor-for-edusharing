@@ -11,6 +11,7 @@ import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
 import { createTextPlugin } from '@edtr-io/plugin-text'
 import {
   createIcon,
+  faAnchor,
   faCaretSquareDown,
   faCode,
   faCubes,
@@ -119,6 +120,12 @@ const registry = [
     description:
       'Interactive multiple-choise exercise (one or more correct answers)',
     icon: createIcon(faPuzzlePiece),
+  },
+  {
+    name: 'anchor',
+    title: 'Sprungmarke',
+    description: 'Sprungmarke als Ziel für Anker-Links.',
+    icon: createIcon(faAnchor),
   },
 ]
 
