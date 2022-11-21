@@ -14,6 +14,7 @@ import {
   faCaretSquareDown,
   faCode,
   faCubes,
+  faEquals,
   faNewspaper,
   faParagraph,
   faPhotoVideo,
@@ -29,6 +30,7 @@ import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './plugins/edusharing-asset'
+import { equationsPlugin } from './plugins/equations'
 import { serloTablePlugin } from './serlo-table'
 
 const registry = [
@@ -51,6 +53,12 @@ const registry = [
     icon: createIcon(faCubes),
   },
   {
+    name: 'equations',
+    title: 'Terme und Gleichungen',
+    description: 'Erstelle Termumformungen und löse mehrzeilige Gleichungen.',
+    icon: createIcon(faEquals),
+  },
+  {
     name: 'geogebra',
     title: 'GeoGebra Applet',
     description: 'Embed interactive GeoGebra materials',
@@ -58,16 +66,10 @@ const registry = [
   },
   {
     name: 'highlight',
-    title: 'Source Code',
-    description: 'Source code with syntax highlighting',
+    title: 'Quelltext',
+    description: 'Code mit Syntax-Highlighting',
     icon: createIcon(faCode),
   },
-  // {
-  //   name: 'equations',
-  //   title: 'Terms and equations',
-  //   description: 'Term manipulations, commented multiline equations.',
-  // icon: createIcon(faEquals),
-  // },
   // {
   //   name: 'image',
   //   title: 'Image',
@@ -139,6 +141,7 @@ export function createPlugins(config: EdusharingConfig) {
     }),
     box: createBoxPlugin(),
     edusharingAsset: createEdusharingAssetPlugin(config),
+    equations: equationsPlugin,
     geogebra: createGeogebraPlugin(),
     highlight: createHighlightPlugin(),
     inputExercise: createInputExercisePlugin({
