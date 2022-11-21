@@ -18,7 +18,6 @@ import {
   faNewspaper,
   faParagraph,
   faPhotoVideo,
-  faQuoteRight,
 } from '@edtr-io/ui'
 import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
 
@@ -33,12 +32,6 @@ const registry = [
     title: 'Text',
     description: 'Compose content using rich text and math formulas.',
     icon: createIcon(faParagraph),
-  },
-  {
-    name: 'blockquote',
-    title: 'Quotation',
-    description: 'Create indented text for quotations.',
-    icon: createIcon(faQuoteRight),
   },
   {
     name: 'edusharingAsset',
@@ -68,17 +61,13 @@ const registry = [
   //   name: 'equations',
   //   title: 'Terms and equations',
   //   description: 'Write term manipulations and solve multiline equations.',
+  // icon: createIcon(faEquals),
   // },
   // {
   //   name: 'image',
   //   title: 'Image',
   //   description: 'Upload images.',
   //   icon: createIcon(faImages),
-  // },
-  // {
-  //   name: 'important',
-  //   title: 'Important Statement',
-  //   description: 'A box to highlight important statements.',
   // },
   {
     name: 'serloInjection',
@@ -100,14 +89,15 @@ const registry = [
     icon: createIcon(faCaretSquareDown),
   },
   // {
-  //   name: 'table',
-  //   title: 'Table',
-  //   description: 'Create tables using Markdown.',
+  //   name: 'serloTable',
+  //   title: editorStrings.edtrIo.serloTable,
+  //   description: editorStrings.edtrIo.serloTableDesc,
+  //   icon: createIcon(faTable),
   // },
   // {
   //   name: 'video',
-  //   title: 'Video',
-  //   description: 'Embed YouTube, Vimeo, Wikimedia Commons or BR videos.',
+  //   title: editorStrings.edtrIo.video,
+  //   description: editorStrings.edtrIo.videoDesc,
   //   icon: createIcon(faFilm),
   // },
   {
