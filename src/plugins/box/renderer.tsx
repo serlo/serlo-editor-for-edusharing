@@ -15,6 +15,13 @@ import { faScroll } from '@fortawesome/free-solid-svg-icons/faScroll'
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
+const boxStrings = {
+  type: 'Art der Box',
+  titlePlaceholder: '(optionaler Titel)',
+  anchorId: 'Sprungmarke (anchor id)',
+  emptyContentWarning: 'Boxen ohne Inhalt werden nicht angezeigt',
+}
+
 const boxTypeStyle: Record<
   string,
   { icon?: IconDefinition; borderColorClass?: string; colorClass?: string }
@@ -143,13 +150,13 @@ export function BoxRenderer(props: BoxProps) {
     return props.renderIntoSettings(
       <>
         <b className="mx-side text-base-plus block mt-6 ml-0 mb-4">
-          Type of box:
+          {boxStrings.type}
         </b>
         <ul className="pb-8">{renderSettingsLis()}</ul>
 
         {anchorId.value === '' ? null : (
           <p className="mb-4">
-            <b>Anchor ID: </b>#{anchorId.value}
+            <b>{boxStrings.anchorId}: </b>#{anchorId.value}
           </p>
         )}
       </>
@@ -190,7 +197,7 @@ export function BoxRenderer(props: BoxProps) {
     return contentIsEmpty ? (
       <div className="text-right mt-1">
         <span className="bg-amber-100 p-0.5 text-sm">
-          ⚠️ Boxes without content will not be displayed
+          ⚠️ {boxStrings.emptyContentWarning}
         </span>
       </div>
     ) : null
