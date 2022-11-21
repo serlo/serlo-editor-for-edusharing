@@ -6,6 +6,7 @@ const jestConfig: Config.InitialOptions = {
   coverageDirectory: 'coverage',
   testPathIgnorePatterns: ['/node_modules/'],
   preset: 'ts-jest',
+  setupFiles: ['<rootDir>/jest.setupFiles.ts'],
 }
 
 export default jestConfig

@@ -1,8 +1,6 @@
-import { loadEnvConfig } from '@next/env'
 import fetch from 'node-fetch'
 
 describe('Calls for LTI request tests', () => {
-  loadEnvConfig(process.cwd())
   const url = process.env.EDITOR_URL
 
   test('/platform/keys', async () => {
