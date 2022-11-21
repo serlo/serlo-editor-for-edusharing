@@ -11,7 +11,6 @@ import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
 import { createTextPlugin } from '@edtr-io/plugin-text'
 import {
   createIcon,
-  faAnchor,
   faCaretSquareDown,
   faCode,
   faCubes,
@@ -19,7 +18,10 @@ import {
   faParagraph,
   faPhotoVideo,
 } from '@edtr-io/ui'
-import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPuzzlePiece,
+  faVectorSquare,
+} from '@fortawesome/free-solid-svg-icons'
 
 import {
   EdusharingConfig,
@@ -30,8 +32,14 @@ const registry = [
   {
     name: 'text',
     title: 'Text',
-    description: 'Compose content using rich text and math formulas.',
+    description: 'Rich text with Headers, formatting, math formulas, …',
     icon: createIcon(faParagraph),
+  },
+  {
+    name: 'box',
+    title: 'Container',
+    description: 'Container for examples, quotes, warnings, theorems, notes, …',
+    icon: createIcon(faVectorSquare),
   },
   {
     name: 'edusharingAsset',
@@ -42,50 +50,44 @@ const registry = [
   {
     name: 'geogebra',
     title: 'GeoGebra Applet',
-    description: 'Embed GeoGebra Materials applets via URL or ID.',
+    description: 'Embed interactive GeoGebra materials',
     icon: createIcon(faCubes),
   },
   {
     name: 'highlight',
     title: 'Source Code',
-    description: 'Highlight the syntax of source code.',
+    description: 'Source code with syntax highlighting',
     icon: createIcon(faCode),
-  },
-  {
-    name: 'anchor',
-    title: 'Anchor',
-    description: 'Insert an anchor.',
-    icon: createIcon(faAnchor),
   },
   // {
   //   name: 'equations',
   //   title: 'Terms and equations',
-  //   description: 'Write term manipulations and solve multiline equations.',
+  //   description: 'Term manipulations, commented multiline equations.',
   // icon: createIcon(faEquals),
   // },
   // {
   //   name: 'image',
   //   title: 'Image',
-  //   description: 'Upload images.',
+  //   description: 'Images with captions',
   //   icon: createIcon(faImages),
   // },
   {
     name: 'serloInjection',
     title: 'serlo.org Content',
-    description: 'Embed serlo.org content via their ID.',
+    description: 'Embedded content from serlo.org',
     icon: createIcon(faNewspaper),
   },
   {
     name: 'multimediaExplanation',
-    title: 'Multimedia content associated with text',
+    title: 'Multimedia content with text',
     description:
-      'edtr-io::Create an illustrating or explaining multimedia content associated with text.',
+      'Illustrating or explaining multimedia content with associated text.',
     icon: createIcon(faPhotoVideo),
   },
   {
     name: 'spoiler',
     title: 'Spoiler',
-    description: 'A collapsible box.',
+    description: 'Container that hides content until opened by the user',
     icon: createIcon(faCaretSquareDown),
   },
   // {
@@ -103,13 +105,14 @@ const registry = [
   {
     name: 'inputExercise',
     title: 'Input exercise',
-    description: 'Create a input exercise.',
+    description: 'Interactive exercise (text or numbers as answers)',
     icon: createIcon(faPuzzlePiece),
   },
   {
     name: 'scMcExercise',
     title: 'Choice exercise',
-    description: 'Create a single- or multiple-exercise.',
+    description:
+      'Interactive multiple-choise exercise (one or more correct answers)',
     icon: createIcon(faPuzzlePiece),
   },
 ]

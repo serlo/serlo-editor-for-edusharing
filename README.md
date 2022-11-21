@@ -3,7 +3,7 @@
 ## Starting the editor locally
 
 - `yarn mongodb:start` starts the MongoDB server.
-- `yarn dev` starts the Next.js server.
+- `yarn dev` starts the Next.js server on http://localhost:3000/.
 
 ## LTI Workflow
 
