@@ -74,16 +74,16 @@ export function BoxRenderer(props: BoxProps) {
   }
 
   const boxTypes = {
-    blank: 'Blank',
-    example: 'Example',
-    quote: 'Quote',
-    approach: 'Approach',
-    remember: 'Remember',
-    attention: 'Attention',
-    note: 'Note',
+    blank: 'Blanko',
+    example: 'Beispiel',
+    quote: 'Zitat',
+    approach: 'Vorgehen',
+    remember: 'Merke',
+    attention: 'Vorsicht',
+    note: 'Beachte',
     definition: 'Definition',
-    theorem: 'Theorem',
-    proof: 'Proof',
+    theorem: 'Satz',
+    proof: 'Beweis',
   }
 
   return (
@@ -104,7 +104,7 @@ export function BoxRenderer(props: BoxProps) {
           </>
         )}
       </figure>
-      {renderWarning()}
+      {/* {renderWarning()} */}
       {renderSettings()}
     </>
   )
@@ -193,13 +193,13 @@ export function BoxRenderer(props: BoxProps) {
     anchorId.set(`box${Math.floor(10000 + Math.random() * 90000)}`)
   }
 
-  function renderWarning() {
-    return contentIsEmpty ? (
-      <div className="text-right mt-1">
-        <span className="bg-amber-100 p-0.5 text-sm">
-          ⚠️ {boxStrings.emptyContentWarning}
-        </span>
-      </div>
-    ) : null
-  }
+  // function renderWarning() {
+  //   return contentIsEmpty ? (
+  //     <div className="text-right mt-1">
+  //       <span className="bg-amber-100 p-0.5 text-sm">
+  //         ⚠️ {boxStrings.emptyContentWarning}
+  //       </span>
+  //     </div>
+  //   ) : null
+  // }
 }
