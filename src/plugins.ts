@@ -38,31 +38,31 @@ const registry = [
   {
     name: 'text',
     title: 'Text',
-    description: 'Rich text with Headers, formatting, math formulas, …',
+    description: 'Schreibe Text und Matheformeln, und formatiere sie.',
     icon: createIcon(faParagraph),
   },
   {
     name: 'box',
-    title: 'Container',
-    description: 'Container for examples, quotes, warnings, theorems, notes, …',
+    title: 'Box',
+    description: 'Rahmen für deine Beispiele, Zitate, Warnungen, Beweise, …',
     icon: createIcon(faVectorSquare),
   },
   {
     name: 'edusharingAsset',
-    title: 'Edusharing Media Embed',
-    description: 'Embed a media element from edu-sharing',
+    title: 'Edusharing Inhalte',
+    description: 'Inhalte von edu-sharing einbinden',
     icon: createIcon(faCubes),
   },
   {
     name: 'equations',
     title: 'Terme und Gleichungen',
-    description: 'Erstelle Termumformungen und löse mehrzeilige Gleichungen.',
+    description: 'Termumformungen und mehrzeilige Gleichungen',
     icon: createIcon(faEquals),
   },
   {
     name: 'geogebra',
     title: 'GeoGebra Applet',
-    description: 'Embed interactive GeoGebra materials',
+    description: 'Inhalte von GeoGebra einbinden',
     icon: createIcon(faCubes),
   },
   {
@@ -73,27 +73,26 @@ const registry = [
   },
   // {
   //   name: 'image',
-  //   title: 'Image',
-  //   description: 'Images with captions',
+  //   title: 'Bild',
+  //   description: 'Bilder anzeigen (hochladen oder per URL)',
   //   icon: createIcon(faImages),
   // },
   {
     name: 'serloInjection',
-    title: 'serlo.org Content',
-    description: 'Embedded content from serlo.org',
+    title: 'serlo.org Inhalt',
+    description: 'Inhalte von serlo.org einbinden',
     icon: createIcon(faNewspaper),
   },
   {
     name: 'multimediaExplanation',
-    title: 'Multimedia content with text',
-    description:
-      'Illustrating or explaining multimedia content with associated text.',
+    title: 'Erklärung mit Multimedia-Inhalt',
+    description: 'Multimedia-Inhalt mit zugehöriger Erklärung',
     icon: createIcon(faPhotoVideo),
   },
   {
     name: 'spoiler',
     title: 'Spoiler',
-    description: 'Container that hides content until opened by the user',
+    description: 'Ausklappbare Box (z.B. für Exkurse)',
     icon: createIcon(faCaretSquareDown),
   },
   {
@@ -104,21 +103,21 @@ const registry = [
   },
   // {
   //   name: 'video',
-  //   title: editorStrings.edtrIo.video,
-  //   description: editorStrings.edtrIo.videoDesc,
+  //   title: 'Video',
+  //   description: 'Videos einbetten (YouTube, Vimeo, Wikimedia Commons oder BR)',
   //   icon: createIcon(faFilm),
   // },
   {
     name: 'inputExercise',
-    title: 'Input exercise',
-    description: 'Interactive exercise (text or numbers as answers)',
+    title: 'Aufgabe mit Eingabefeld',
+    description: 'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
     icon: createIcon(faPuzzlePiece),
   },
   {
     name: 'scMcExercise',
-    title: 'Choice exercise',
+    title: 'Multiple-Choice-Aufgabe',
     description:
-      'Interactive multiple-choise exercise (one or more correct answers)',
+      'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
     icon: createIcon(faPuzzlePiece),
   },
   {
