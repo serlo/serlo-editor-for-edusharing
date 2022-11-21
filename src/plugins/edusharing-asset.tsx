@@ -7,7 +7,7 @@ import {
 } from '@edtr-io/plugin'
 import clsx from 'clsx'
 import Modal from 'react-modal'
-import Image from 'next/future/image'
+import Image from 'next/image'
 import { Button } from '../components/button'
 import { useEffect, useRef, useState } from 'react'
 import { MessageHint } from '../pages/platform/login'
