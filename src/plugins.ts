@@ -4,7 +4,7 @@ import { createGeogebraPlugin } from '@edtr-io/plugin-geogebra'
 import { createHighlightPlugin } from '@edtr-io/plugin-highlight'
 import { createInputExercisePlugin } from '@edtr-io/plugin-input-exercise'
 import { createMultimediaExplanationPlugin } from '@edtr-io/plugin-multimedia-explanation'
-import { createRowsPlugin } from '@edtr-io/plugin-rows'
+import { createRowsPlugin, RowsConfig } from '@edtr-io/plugin-rows'
 import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
 import { createSerloInjectionPlugin } from '@edtr-io/plugin-serlo-injection'
 import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
@@ -22,6 +22,7 @@ import {
   faPuzzlePiece,
   faVectorSquare,
 } from '@fortawesome/free-solid-svg-icons'
+import { createBoxPlugin } from './plugins/box'
 
 import {
   EdusharingConfig,
@@ -117,6 +118,15 @@ const registry = [
   },
 ]
 
+export function getPluginRegistry(
+  type: string,
+  include?: string[]
+): RowsConfig['plugins'] {
+  return include
+    ? registry.filter((plugin) => include.includes(plugin.name))
+    : registry
+}
+
 export function createPlugins(config: EdusharingConfig) {
   return {
     anchor: createAnchorPlugin(),
@@ -125,6 +135,7 @@ export function createPlugins(config: EdusharingConfig) {
         plugin: 'text',
       },
     }),
+    box: createBoxPlugin(),
     edusharingAsset: createEdusharingAssetPlugin(config),
     geogebra: createGeogebraPlugin(),
     highlight: createHighlightPlugin(),
