@@ -1,14 +1,13 @@
+import { loadEnvConfig } from '@next/env'
 import fetch from 'node-fetch'
 
 describe('Calls for LTI request tests', () => {
-  const port = parseInt(process.env.PORT, 10) || 3000
-  const url = `http://localhost:${port}`
+  loadEnvConfig(process.cwd())
+  const url = process.env.EDITOR_URL
 
   test('/platform/keys', async () => {
-    const response = await fetch(`${url}/platform/keys`)
-
-    expect(response.status).toBe(200)
-    expect(await response.json()).toEqual({
+    // Arrange
+    const expected = {
       keys: [
         {
           kid: '42',
@@ -19,14 +18,20 @@ describe('Calls for LTI request tests', () => {
           e: 'AQAB',
         },
       ],
-    })
+    }
+
+    // Act
+    const response = await fetch(`${url}/platform/keys`)
+    const result = await response.json()
+
+    // Assert
+    expect(response.status).toBe(200)
+    expect(result).toEqual(expected)
   })
 
   test('/lti/keys', async () => {
-    const response = await fetch(`${url}/lti/keys`)
-
-    expect(response.status).toBe(200)
-    expect(await response.json()).toEqual({
+    // Arrange
+    const expected = {
       keys: [
         {
           kty: 'RSA',
@@ -37,6 +42,14 @@ describe('Calls for LTI request tests', () => {
           use: 'sig',
         },
       ],
-    })
+    }
+
+    // Act
+    const response = await fetch(`${url}/lti/keys`)
+    const result = await response.json()
+
+    // Assert
+    expect(response.status).toBe(200)
+    expect(result).toEqual(expected)
   })
 })
