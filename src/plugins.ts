@@ -17,6 +17,7 @@ import {
   faNewspaper,
   faParagraph,
   faPhotoVideo,
+  faTable,
 } from '@edtr-io/ui'
 import {
   faPuzzlePiece,
@@ -28,6 +29,7 @@ import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './plugins/edusharing-asset'
+import { serloTablePlugin } from './serlo-table'
 
 const registry = [
   {
@@ -91,12 +93,12 @@ const registry = [
     description: 'Container that hides content until opened by the user',
     icon: createIcon(faCaretSquareDown),
   },
-  // {
-  //   name: 'serloTable',
-  //   title: editorStrings.edtrIo.serloTable,
-  //   description: editorStrings.edtrIo.serloTableDesc,
-  //   icon: createIcon(faTable),
-  // },
+  {
+    name: 'serloTable',
+    title: 'Tabelle',
+    description: 'Schöne Tabellen erstellen.',
+    icon: createIcon(faTable),
+  },
   // {
   //   name: 'video',
   //   title: editorStrings.edtrIo.video,
@@ -164,6 +166,7 @@ export function createPlugins(config: EdusharingConfig) {
       content: { plugin: 'text', config: { registry: [] } },
       feedback: { plugin: 'text', config: { registry: [] } },
     }),
+    serloTable: serloTablePlugin,
     serloInjection: createSerloInjectionPlugin(),
     spoiler: createSpoilerPlugin({
       content: { plugin: 'rows' },

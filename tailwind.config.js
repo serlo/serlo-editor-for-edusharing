@@ -3,6 +3,14 @@ module.exports = {
   content: ['src/**/*.tsx'],
   plugins: [require('@tailwindcss/typography')],
   theme: {
-    extend: {},
+    extend: {
+      borderWidth: {
+        3: '3px',
+        6: '6px',
+      },
+    },
+    screens: {
+      mobile: '500px',
+    },
   },
 }
