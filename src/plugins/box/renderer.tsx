@@ -13,8 +13,12 @@ import { faMapSigns } from '@fortawesome/free-solid-svg-icons/faMapSigns'
 import { faQuoteRight } from '@fortawesome/free-solid-svg-icons/faQuoteRight'
 import { faScroll } from '@fortawesome/free-solid-svg-icons/faScroll'
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
-const boxTypeStyle = {
+const boxTypeStyle: Record<
+  string,
+  { icon?: IconDefinition; borderColorClass?: string; colorClass?: string }
+> = {
   blank: {},
   example: {},
   quote: { icon: faQuoteRight },
