@@ -71,12 +71,6 @@ const registry = [
     description: 'Code mit Syntax-Highlighting',
     icon: createIcon(faCode),
   },
-  // {
-  //   name: 'image',
-  //   title: 'Bild',
-  //   description: 'Bilder anzeigen (hochladen oder per URL)',
-  //   icon: createIcon(faImages),
-  // },
   {
     name: 'serloInjection',
     title: 'serlo.org Inhalt',
@@ -101,12 +95,6 @@ const registry = [
     description: 'Schöne Tabellen erstellen.',
     icon: createIcon(faTable),
   },
-  // {
-  //   name: 'video',
-  //   title: 'Video',
-  //   description: 'Videos einbetten (YouTube, Vimeo, Wikimedia Commons oder BR)',
-  //   icon: createIcon(faFilm),
-  // },
   {
     name: 'inputExercise',
     title: 'Aufgabe mit Eingabefeld',

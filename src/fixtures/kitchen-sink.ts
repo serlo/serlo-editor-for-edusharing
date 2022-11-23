@@ -7,7 +7,7 @@ export const kitchenSink = {
         {
           type: 'h',
           level: 1,
-          children: [{ text: 'Kitchen Sink' }],
+          children: [{ text: 'Pluginübersicht' }],
         },
       ],
     },

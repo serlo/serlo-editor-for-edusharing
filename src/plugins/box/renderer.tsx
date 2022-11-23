@@ -104,7 +104,6 @@ export function BoxRenderer(props: BoxProps) {
           </>
         )}
       </figure>
-      {/* {renderWarning()} */}
       {renderSettings()}
     </>
   )
@@ -192,14 +191,4 @@ export function BoxRenderer(props: BoxProps) {
   function generateAnchorId() {
     anchorId.set(`box${Math.floor(10000 + Math.random() * 90000)}`)
   }
-
-  // function renderWarning() {
-  //   return contentIsEmpty ? (
-  //     <div className="text-right mt-1">
-  //       <span className="bg-amber-100 p-0.5 text-sm">
-  //         ⚠️ {boxStrings.emptyContentWarning}
-  //       </span>
-  //     </div>
-  //   ) : null
-  // }
 }
