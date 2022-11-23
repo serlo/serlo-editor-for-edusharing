@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import { expect } from '@jest/globals'
 
 describe('Calls for LTI request tests', () => {
   const url = process.env.EDITOR_URL
