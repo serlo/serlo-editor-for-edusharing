@@ -22,7 +22,8 @@
     "lint:tsc": "tsc --noEmit",
     "mongodb:start": "docker-compose up -d",
     "start": "NODE_ENV=production node server.js",
-    "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'"
+    "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'",
+    "cypress:open": "cypress open"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
@@ -82,6 +83,7 @@
     "@types/react": "^17.0.52",
     "@types/react-dom": "^17.0.18",
     "autoprefixer": "^10.4.13",
+    "cypress": "^11.1.0",
     "eslint": "^8.28.0",
     "eslint-config-next": "^12.3.3",
     "jest": "^29.3.1",
