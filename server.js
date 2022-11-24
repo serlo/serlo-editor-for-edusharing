@@ -67,6 +67,8 @@ void (async () => {
   server.get('/lti/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
     const { token } = res.locals
+    console.log("token", token)
+
     const platform = await Provider.getPlatformById(token.platformId)
 
     const jwtBody = {
@@ -90,6 +92,8 @@ void (async () => {
     }
 
     const response = await fetch(url.href)
+
+    console.log("response", response.status)
 
     res.json(await response.json())
   })
