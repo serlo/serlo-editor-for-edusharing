@@ -8,7 +8,5 @@ describe('empty spec', () => {
 
     cy.visit(url)
     cy.contains(/Kitchen Sink/i)
-
-    expect(process.env.EDITOR_URL).not.undefined
   })
 })
