@@ -87,8 +87,10 @@ void (async () => {
       keyid: process.env.EDITOR_KEY_ID,
     })
 
-    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details/-home-/${nodeId}?displayMode=inline&jwt=${encodeURIComponent(message)}`)
-    console.log("uRl:"+url)
+    const url = new URL(process.env.EDITOR_EDUSHARING_DETAILS_URL + nodeId)
+
+    url.searchParams.append("displayMode", "inline")
+    url.searchParams.append("jwt", encodeURIComponent(message))
 
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
