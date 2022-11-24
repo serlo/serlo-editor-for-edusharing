@@ -80,6 +80,7 @@ void (async () => {
       process.env.EDITOR_PLATFORM_PRIVATE_KEY,
       'base64'
     ).toString('utf-8')
+
     const message = jwt.sign(jwtBody, privateKey, {
       algorithm: 'RS256',
       expiresIn: 60,
@@ -96,14 +97,9 @@ void (async () => {
     const response = await fetch(url.href, { method: "GET", headers: {
       "Accept": "application/json"}
     })
-    const text = await response.text()
 
-    console.log("status", response.status)
-    console.log("body-length", text.length)
-    console.log("body", text)
-
-    // TODO: Header
-    res.send(text)
+    // TODO: Error handling
+    res.json(await response.json())
   })
 
   // TODO: Use another library
