@@ -7,6 +7,6 @@ describe('empty spec', () => {
     const url = process.env.EDITOR_URL ?? 'http://localhost:3000'
 
     cy.visit(url)
-    cy.contains(/Kitchen Sink/i)
+    cy.contains(/Rich Text/i)
   })
 })
