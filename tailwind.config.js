@@ -1,7 +1,16 @@
 module.exports = {
+  mode: 'jit',
   content: ['src/**/*.tsx'],
-  theme: {
-    extend: {},
-  },
   plugins: [require('@tailwindcss/typography')],
+  theme: {
+    extend: {
+      borderWidth: {
+        3: '3px',
+        6: '6px',
+      },
+    },
+    screens: {
+      mobile: '500px',
+    },
+  },
 }

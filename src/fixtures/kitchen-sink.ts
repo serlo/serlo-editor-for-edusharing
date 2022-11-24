@@ -7,7 +7,7 @@ export const kitchenSink = {
         {
           type: 'h',
           level: 1,
-          children: [{ text: 'Kitchen Sink' }],
+          children: [{ text: 'Pluginübersicht' }],
         },
       ],
     },
@@ -27,15 +27,15 @@ export const kitchenSink = {
         {
           type: 'p',
           children: [
-            { text: 'The editor supports ' },
-            { text: 'rich text', strong: true },
+            { text: 'Der Editor unterstützt ' },
+            { text: 'formatierte Texte', strong: true },
             { text: ' with ' },
             {
               type: 'a',
-              href: 'https://google.com',
+              href: 'https://serlo.org',
               children: [{ text: 'links' }],
             },
-            { text: ' etc.', strong: true },
+            { text: ' usw.', strong: true },
           ],
         },
       ],
@@ -46,20 +46,15 @@ export const kitchenSink = {
         {
           type: 'h',
           level: 2,
-          children: [{ text: 'Blockquote' }],
+          children: [{ text: 'Quelltext' }],
         },
       ],
     },
     {
-      plugin: 'blockquote',
+      plugin: 'highlight',
       state: {
-        plugin: 'text',
-        state: [
-          {
-            type: 'p',
-            children: [{ text: 'The editor supports ' }],
-          },
-        ],
+        code: "console.log('Hallo Welt!')",
+        language: 'javascript',
       },
     },
     {
@@ -68,15 +63,46 @@ export const kitchenSink = {
         {
           type: 'h',
           level: 2,
-          children: [{ text: 'Highlight' }],
+          children: [{ text: 'Zitat' }],
         },
       ],
     },
     {
-      plugin: 'highlight',
+      plugin: 'box',
       state: {
-        code: "console.log('Hello, world')",
-        language: 'javascript',
+        type: 'quote',
+        title: {
+          plugin: 'text',
+          state: [
+            {
+              type: 'p',
+              children: [
+                {
+                  text: 'Sir Isaac Newton',
+                },
+              ],
+            },
+          ],
+        },
+        anchorId: 'box82025',
+        content: {
+          plugin: 'rows',
+          state: [
+            {
+              plugin: 'text',
+              state: [
+                {
+                  type: 'p',
+                  children: [
+                    {
+                      text: 'Was wir wissen, ist ein Tropfen, was wir nicht wissen, ein Ozean.',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       },
     },
     {
@@ -106,13 +132,13 @@ export const kitchenSink = {
     {
       plugin: 'spoiler',
       state: {
-        title: 'Spoiler',
+        title: 'Spoilertitel',
         content: {
           plugin: 'rows',
           state: [
             {
               plugin: 'text',
-              state: [{ type: 'p', children: [{ text: 'Spoiler' }] }],
+              state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
             },
           ],
         },
@@ -124,7 +150,7 @@ export const kitchenSink = {
         {
           type: 'h',
           level: 2,
-          children: [{ text: 'Input Exercise' }],
+          children: [{ text: 'Aufgabe mit Eingabefeld' }],
         },
       ],
     },

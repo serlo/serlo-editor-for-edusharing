@@ -4,7 +4,7 @@ import { createGeogebraPlugin } from '@edtr-io/plugin-geogebra'
 import { createHighlightPlugin } from '@edtr-io/plugin-highlight'
 import { createInputExercisePlugin } from '@edtr-io/plugin-input-exercise'
 import { createMultimediaExplanationPlugin } from '@edtr-io/plugin-multimedia-explanation'
-import { createRowsPlugin } from '@edtr-io/plugin-rows'
+import { createRowsPlugin, RowsConfig } from '@edtr-io/plugin-rows'
 import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
 import { createSerloInjectionPlugin } from '@edtr-io/plugin-serlo-injection'
 import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
@@ -15,114 +15,115 @@ import {
   faCaretSquareDown,
   faCode,
   faCubes,
+  faEquals,
   faNewspaper,
   faParagraph,
   faPhotoVideo,
-  faQuoteRight,
+  faTable,
 } from '@edtr-io/ui'
-import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPuzzlePiece,
+  faVectorSquare,
+} from '@fortawesome/free-solid-svg-icons'
+import { createBoxPlugin } from './plugins/box'
 
 import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './plugins/edusharing-asset'
+import { equationsPlugin } from './plugins/equations'
+import { serloTablePlugin } from './serlo-table'
 
 const registry = [
   {
     name: 'text',
     title: 'Text',
-    description: 'Compose content using rich text and math formulas.',
+    description: 'Schreibe Text und Matheformeln, und formatiere sie.',
     icon: createIcon(faParagraph),
   },
   {
-    name: 'blockquote',
-    title: 'Quotation',
-    description: 'Create indented text for quotations.',
-    icon: createIcon(faQuoteRight),
+    name: 'box',
+    title: 'Box',
+    description: 'Rahmen für deine Beispiele, Zitate, Warnungen, Beweise, …',
+    icon: createIcon(faVectorSquare),
   },
   {
     name: 'edusharingAsset',
-    title: 'Edusharing Media Embed',
-    description: 'Embed a media element from edu-sharing',
+    title: 'Edusharing Inhalte',
+    description: 'Inhalte von edu-sharing einbinden',
     icon: createIcon(faCubes),
+  },
+  {
+    name: 'equations',
+    title: 'Terme und Gleichungen',
+    description: 'Termumformungen und mehrzeilige Gleichungen',
+    icon: createIcon(faEquals),
   },
   {
     name: 'geogebra',
     title: 'GeoGebra Applet',
-    description: 'Embed GeoGebra Materials applets via URL or ID.',
+    description: 'Inhalte von GeoGebra einbinden',
     icon: createIcon(faCubes),
   },
   {
     name: 'highlight',
-    title: 'Source Code',
-    description: 'Highlight the syntax of source code.',
+    title: 'Quelltext',
+    description: 'Code mit Syntax-Highlighting',
     icon: createIcon(faCode),
   },
   {
-    name: 'anchor',
-    title: 'Anchor',
-    description: 'Insert an anchor.',
-    icon: createIcon(faAnchor),
-  },
-  // {
-  //   name: 'equations',
-  //   title: 'Terms and equations',
-  //   description: 'Write term manipulations and solve multiline equations.',
-  // },
-  // {
-  //   name: 'image',
-  //   title: 'Image',
-  //   description: 'Upload images.',
-  //   icon: createIcon(faImages),
-  // },
-  // {
-  //   name: 'important',
-  //   title: 'Important Statement',
-  //   description: 'A box to highlight important statements.',
-  // },
-  {
     name: 'serloInjection',
-    title: 'serlo.org Content',
-    description: 'Embed serlo.org content via their ID.',
+    title: 'serlo.org Inhalt',
+    description: 'Inhalte von serlo.org einbinden',
     icon: createIcon(faNewspaper),
   },
   {
     name: 'multimediaExplanation',
-    title: 'Multimedia content associated with text',
-    description:
-      'edtr-io::Create an illustrating or explaining multimedia content associated with text.',
+    title: 'Erklärung mit Multimedia-Inhalt',
+    description: 'Multimedia-Inhalt mit zugehöriger Erklärung',
     icon: createIcon(faPhotoVideo),
   },
   {
     name: 'spoiler',
     title: 'Spoiler',
-    description: 'A collapsible box.',
+    description: 'Ausklappbare Box (z.B. für Exkurse)',
     icon: createIcon(faCaretSquareDown),
   },
-  // {
-  //   name: 'table',
-  //   title: 'Table',
-  //   description: 'Create tables using Markdown.',
-  // },
-  // {
-  //   name: 'video',
-  //   title: 'Video',
-  //   description: 'Embed YouTube, Vimeo, Wikimedia Commons or BR videos.',
-  //   icon: createIcon(faFilm),
-  // },
+  {
+    name: 'serloTable',
+    title: 'Tabelle',
+    description: 'Schöne Tabellen erstellen.',
+    icon: createIcon(faTable),
+  },
   {
     name: 'inputExercise',
-    title: 'Input exercise',
-    description: 'Create a input exercise.',
+    title: 'Aufgabe mit Eingabefeld',
+    description: 'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
     icon: createIcon(faPuzzlePiece),
   },
   {
     name: 'scMcExercise',
-    title: 'Choice exercise',
-    description: 'Create a single- or multiple-exercise.',
+    title: 'Multiple-Choice-Aufgabe',
+    description:
+      'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
     icon: createIcon(faPuzzlePiece),
   },
+  {
+    name: 'anchor',
+    title: 'Sprungmarke',
+    description: 'Sprungmarke als Ziel für Anker-Links.',
+    icon: createIcon(faAnchor),
+  },
 ]
+
+export function getPluginRegistry(
+  type: string,
+  include?: string[]
+): RowsConfig['plugins'] {
+  return include
+    ? registry.filter((plugin) => include.includes(plugin.name))
+    : registry
+}
 
 export function createPlugins(config: EdusharingConfig) {
   return {
@@ -132,7 +133,9 @@ export function createPlugins(config: EdusharingConfig) {
         plugin: 'text',
       },
     }),
+    box: createBoxPlugin(),
     edusharingAsset: createEdusharingAssetPlugin(config),
+    equations: equationsPlugin,
     geogebra: createGeogebraPlugin(),
     highlight: createHighlightPlugin(),
     inputExercise: createInputExercisePlugin({
@@ -160,6 +163,7 @@ export function createPlugins(config: EdusharingConfig) {
       content: { plugin: 'text', config: { registry: [] } },
       feedback: { plugin: 'text', config: { registry: [] } },
     }),
+    serloTable: serloTablePlugin,
     serloInjection: createSerloInjectionPlugin(),
     spoiler: createSpoilerPlugin({
       content: { plugin: 'rows' },
