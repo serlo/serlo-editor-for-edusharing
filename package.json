@@ -24,6 +24,7 @@
     "mongodb:stop": "docker-compose down",
     "start": "NODE_ENV=production node server.js",
     "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'",
+    "e2etest": "yarn mongodb:start && yarn dev",
     "cypress:open": "cypress open"
   },
   "resolutions": {
