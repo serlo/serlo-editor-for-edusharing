@@ -19,6 +19,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     iat: Date.now(),
     nonce: context.query.nonce,
 
+    dataToken: messageHint.dataToken,
+
     // TODO: no idea where this should be coming from
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
       process.env.EDITOR_DEPLOYMENT_ID,
@@ -104,10 +106,12 @@ export type MessageHint = DeepLinkMessage | ResourceLinkMessage
 interface DeepLinkMessage {
   type: 'deep-link'
   user: string
+  dataToken: string
 }
 
 interface ResourceLinkMessage {
   type: 'resource-link'
   user: string
+  dataToken: string
   resourceLink: string
 }

@@ -64,23 +64,41 @@ void (async () => {
 
   server.use('/lti', Provider.app)
 
-  server.get('/get-embed-html', async (req, res) => {
+  server.get('/lti/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
-    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`)
+    const { token } = res.locals
+
+    const jwtBody = {
+      aud: process.env.EDITOR_CLIENT_ID,
+      "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
+      expiresIn: 60,
+      dataToken: token.platformContext.custom.dataToken
+    }
+
+    // TODO: Duplicate code
+    const privateKey = Buffer.from(
+      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      'base64'
+    ).toString('utf-8')
+
+    const message = jwt.sign(jwtBody, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      keyid: process.env.EDITOR_KEY_ID,
+    })
+
+    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details/-home-/${nodeId}?displayMode=inline&jwt=${encodeURIComponent(message)}`)
+    console.log("uRl:"+url)
 
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
     }
 
-    const response = await fetch(url.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Authorization': 'Basic ' + Buffer.from("admin:admin").toString('base64')
-      },
+    const response = await fetch(url.href, { method: "GET", headers: {
+      "Accept": "application/json"}
     })
 
+    // TODO: Error handling
     res.json(await response.json())
   })
 
