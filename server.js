@@ -67,35 +67,43 @@ void (async () => {
   server.get('/lti/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
     const { token } = res.locals
-    console.log("token", token)
-
-    const platform = await Provider.getPlatformById(token.platformId)
 
     const jwtBody = {
-      aud: process.env.PLATFORM_CLIENT_ID,
+      aud: process.env.EDITOR_CLIENT_ID,
       "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
       dataToken: token.platformContext.custom.dataToken
     }
 
-    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
+    // TODO: Duplicate code
+    const privateKey = Buffer.from(
+      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      'base64'
+    ).toString('utf-8')
+    const message = jwt.sign(jwtBody, privateKey, {
       algorithm: 'RS256',
       expiresIn: 60,
-      keyid: await platform.platformKid(),
+      keyid: process.env.EDITOR_KEY_ID,
     })
 
-    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details/-home-/${nodeId}?displayMode=inline&jwt=${message}`)
+    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details/-home-/${nodeId}?displayMode=inline&jwt=${encodeURIComponent(message)}`)
     console.log("uRl:"+url)
 
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
     }
 
-    const response = await fetch(url.href)
+    const response = await fetch(url.href, { method: "GET", headers: {
+      "Accept": "application/json"}
+    })
+    const text = await response.text()
 
-    console.log("response", response.status)
+    console.log("status", response.status)
+    console.log("body-length", text.length)
+    console.log("body", text)
 
-    res.json(await response.json())
+    // TODO: Header
+    res.send(text)
   })
 
   // TODO: Use another library
