@@ -94,17 +94,15 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
-          # build: yarn build
-          start: |
-            yarn --immutable --immutable-cache
-            yarn mongodb:start
-            yarn start
-            yarn mongodb:stop
-            
+          install: false
+          start: yarn --immutable --immutable-cache && yarn mongodb:start && yarn start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
+
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-outcome
-          path: | 
+          path: |
             cypress/screenshots
             cypress/videos
