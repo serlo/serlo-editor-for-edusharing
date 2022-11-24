@@ -75,9 +75,9 @@ jobs:
           cache: yarn
           node-version: 16
       - run: yarn --immutable --immutable-cache
-      - run: docker-compose up -d
+      - run: yarn mongodb:start
       - run: yarn test
-      - run: docker-compose down
+      - run: yarn mongodb:stop
 
   # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
   cypress-run:
@@ -85,20 +85,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
 
       # Install NPM dependencies, cache them correctly and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
-          build: yarn build
-          start: yarn dev
-      - uses: actions/upload-artifact@v2
+          # build: yarn build
+          start: |
+            yarn --immutable --immutable-cache
+            yarn mongodb:start
+            yarn start
+            yarn mongodb:stop
+            
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-      - uses: actions/upload-artifact@v2
-        if: failure()
-        with:
-          name: cypress-videos
-          path: cypress/videos
+          name: cypress-outcome
+          path: | 
+            cypress/screenshots
+            cypress/videos
