@@ -4,6 +4,7 @@ import nextEnv from '@next/env'
 const { loadEnvConfig } = nextEnv
 
 loadEnvConfig(process.cwd())
+const edusharingPort = 8100
 
 const app = express()
 
@@ -28,7 +29,7 @@ app.get('/', (_req, res) => {
   res.setHeader('Content-type', 'text/html').send(`
     <!DOCTYPE html>
     <html>
-    <head><title>Serlo Editor Test-Umgebung</title><head>
+    <head><title>Embedding of Serlo editor via iframe</title><head>
     <body>
       <h1>Test Seite</h1>
       <iframe src="${url.href}" style="width: 100%; height: 90vh;"/>
@@ -37,8 +38,11 @@ app.get('/', (_req, res) => {
   `)
 })
 
-app.listen(3001, () => {
-  console.log('ready')
+app.listen(edusharingPort, () => {
+  console.log('INFO: Mocked version of edusharing is ready.')
+  console.log(
+    `Open http://localhost:${edusharingPort}/ to open the Serlo Editor via LTI`
+  )
 })
 
 export {}
