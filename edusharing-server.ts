@@ -9,21 +9,20 @@ const edusharingPort = 8100
 const app = express()
 
 app.get('/', (_req, res) => {
-  res.setHeader('Content-type', 'text/html').send(
-    autoFormHtml({
-      targetUrl: process.env.EDITOR_URL + 'lti/login',
-      params: {
-        target_link_uri: 'http://localhost:3000/lti',
-        iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
+  createAutoFromResponse({
+    res,
+    targetUrl: process.env.EDITOR_URL + 'lti/login',
+    params: {
+      target_link_uri: 'http://localhost:3000/lti',
+      iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
 
-        // Test whether this is optional
-        login_hint: 'admin',
-        lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
-        lti_deployment_id: '1',
-        client_id: 'qsa2DgKBJ2WgoJO',
-      },
-    })
-  )
+      // Test whether this is optional
+      login_hint: 'admin',
+      lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
+      lti_deployment_id: '1',
+      client_id: 'qsa2DgKBJ2WgoJO',
+    },
+  })
 })
 
 app.get('/edu-sharing/rest/ltiplatform/v13/auth', (req, res) => {
@@ -39,11 +38,13 @@ app.listen(edusharingPort, () => {
   )
 })
 
-function autoFormHtml({
+function createAutoFromResponse({
+  res,
   method = 'GET',
   targetUrl,
   params,
 }: {
+  res: express.Response
   method?: 'GET' | 'POST'
   targetUrl: string
   params: Record<string, string>
@@ -56,7 +57,9 @@ function autoFormHtml({
     })
     .join('\n')
 
-  return `
+  res.setHeader('Content-Type', 'text/html')
+  res.send(
+    `
     <!DOCTYPE html>
     <html>
     <head><title>Redirect to ${targetUrl}</title></head>
@@ -70,6 +73,7 @@ function autoFormHtml({
     </body>
     </html>
   `.trim()
+  )
 }
 
 export {}
