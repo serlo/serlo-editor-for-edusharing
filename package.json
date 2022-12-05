@@ -22,6 +22,7 @@
     "lint:tsc": "tsc --noEmit",
     "mongodb:start": "docker-compose up -d",
     "start": "NODE_ENV=production node server.js",
+    "start:edusharing": "ts-node --esm edusharing-server.ts",
     "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'"
   },
   "resolutions": {
