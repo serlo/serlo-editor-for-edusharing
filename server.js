@@ -72,7 +72,10 @@ void (async () => {
       aud: process.env.EDITOR_CLIENT_ID,
       "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
-      dataToken: token.platformContext.custom.dataToken
+      dataToken: token.platformContext.custom.dataToken,
+      'https://purl.imsglobal.org/spec/lti/claim/context': {
+        id: process.env.EDITOR_CLIENT_ID,
+      }
     }
 
     // TODO: Duplicate code
