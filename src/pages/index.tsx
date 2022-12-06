@@ -76,7 +76,7 @@ export interface PageProps extends EditorProps {
   mayEdit: boolean
   user?: string
   dataToken?: string
-  nodeId: string
+  nodeId?: string
 }
 
 export default function Page(props: PageProps) {
