@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 
   const props = await getJsonBody<PageProps>(context)
-  const response = await fetch('http://localhost:3000/lti/get-content', {
+  const response = await fetch(process.env.EDITOR_URL + 'lti/get-content', {
     headers: {
       Authorization: `Bearer ${props.ltik}`,
     },
