@@ -142,7 +142,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
         type: 'deep-link',
         user: getUser(),
         dataToken: getDataToken(),
-        nodeId: getNodeId()
+        nodeId: getNodeId(),
       },
     })
 

@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
-  
+
   // TODO: Use session to give information further
   // TODO: Proper parsing
   const messageHintParam = context.query['lti_message_hint'] as string
