@@ -31,6 +31,7 @@ export interface EdusharingConfig {
   ltik?: string
   user?: string
   dataToken?: string
+  nodeId?: string
 }
 
 type State = typeof state
@@ -141,6 +142,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
         type: 'deep-link',
         user: getUser(),
         dataToken: getDataToken(),
+        nodeId: getNodeId()
       },
     })
 
@@ -197,5 +199,9 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
 
   function getDataToken() {
     return config.dataToken ?? ''
+  }
+
+  function getNodeId() {
+    return config.nodeId ?? ''
   }
 }
