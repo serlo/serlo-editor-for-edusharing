@@ -8,6 +8,7 @@
   "repository": "serlo/ece-as-a-service",
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
+  "type": "commonjs",
   "scripts": {
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
