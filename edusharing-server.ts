@@ -1,9 +1,8 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import nextEnv from '@next/env'
+import { loadEnvConfig } from '@next/env'
 import JSONWebKey from 'json-web-key'
-
-const { loadEnvConfig } = nextEnv
+import { emptyDocument } from './src/storage-format'
 
 loadEnvConfig(process.cwd())
 const edusharingPort = 8100
@@ -120,6 +119,10 @@ app.get('/edu-sharing/rest/lti/v13/jwks', (_req, res) => {
       ],
     })
     .end()
+})
+
+app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
+  res.json(emptyDocument).end()
 })
 
 app.get('*', (req, res) => {
