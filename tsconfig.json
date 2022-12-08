@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -17,8 +17,9 @@
     "jsx": "preserve"
   },
   "ts-node": {
-    "esm": true,
-    "moduleTypes": { "edusharing-server.ts": "esm" }
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
