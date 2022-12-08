@@ -135,7 +135,7 @@ app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-  console.log(`Call to ${req.url} registered`)
+  console.error(`Call to ${req.url} registered`)
   res.sendStatus(404)
 })
 
