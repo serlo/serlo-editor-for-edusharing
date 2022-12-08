@@ -58,6 +58,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   if (props.ltik) {
     edusharingConfig.ltik = props.ltik
   }
+  if (props.nodeId) {
+    edusharingConfig.nodeId = props.nodeId
+  }
 
   return {
     props: {
@@ -73,6 +76,7 @@ export interface PageProps extends EditorProps {
   mayEdit: boolean
   user?: string
   dataToken?: string
+  nodeId?: string
 }
 
 export default function Page(props: PageProps) {

@@ -39,7 +39,7 @@ Provider.setup(
 
 Provider.onConnect(async (token, req, res) => {
   const { custom } = res.locals.context
-
+  
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
@@ -49,7 +49,8 @@ Provider.onConnect(async (token, req, res) => {
       mayEdit:
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
-      user: custom.user
+      user: custom.user,
+      nodeId: custom.nodeId
     }),
   })
   res.send(await response.text())
@@ -71,10 +72,7 @@ void (async () => {
       aud: process.env.EDITOR_CLIENT_ID,
       "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
-      dataToken: token.platformContext.custom.dataToken,
-      'https://purl.imsglobal.org/spec/lti/claim/context': {
-        id: process.env.EDITOR_CLIENT_ID,
-      }
+      dataToken: token.platformContext.custom.dataToken
     }
 
     // TODO: Duplicate code

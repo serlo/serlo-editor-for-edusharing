@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
     'https://purl.imsglobal.org/spec/lti/claim/roles': [],
     'https://purl.imsglobal.org/spec/lti/claim/context': {
-      id: process.env.EDITOR_CLIENT_ID,
+      id: messageHint.nodeId,
     },
 
     ...(messageHint.type === 'deep-link'
@@ -107,6 +107,7 @@ interface DeepLinkMessage {
   type: 'deep-link'
   user: string
   dataToken: string
+  nodeId: string
 }
 
 interface ResourceLinkMessage {
@@ -114,4 +115,5 @@ interface ResourceLinkMessage {
   user: string
   dataToken: string
   resourceLink: string
+  nodeId: string
 }
