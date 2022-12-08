@@ -1,6 +1,7 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import nextEnv from '@next/env'
+import JSONWebKey from 'json-web-key'
 
 const { loadEnvConfig } = nextEnv
 
@@ -99,6 +100,26 @@ app.get('/edu-sharing/rest/ltiplatform/v13/auth', (req, res) => {
     targetUrl: process.env.EDITOR_URL + '/lti',
     params: { id_token: signed, state: req.query['nonce'].toString() },
   })
+})
+
+app.get('/edu-sharing/rest/lti/v13/jwks', (_req, res) => {
+  res
+    .json({
+      keys: [
+        {
+          kid: 'key',
+          alg: 'RS256',
+          use: 'sig',
+          ...JSONWebKey.fromPEM(
+            Buffer.from(
+              process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+              'base64'
+            ).toString('utf-8')
+          ).toJSON(),
+        },
+      ],
+    })
+    .end()
 })
 
 app.get('*', (req, res) => {
