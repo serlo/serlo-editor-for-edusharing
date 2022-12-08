@@ -149,6 +149,7 @@ function createAutoFromResponse({
     </html>
   `.trim()
   )
+  res.end()
 }
 
 export {}
