@@ -125,6 +125,15 @@ app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
   res.json(emptyDocument).end()
 })
 
+app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
+  console.log(
+    `[${new Date().toISOString()}]: Save registered with comment ${
+      req.query['versionComment']
+    }`
+  )
+  res.sendStatus(200).end()
+})
+
 app.get('*', (req, res) => {
   console.log(`Call to ${req.url} registered`)
   res.sendStatus(404)
