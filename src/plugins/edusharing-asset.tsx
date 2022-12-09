@@ -13,7 +13,12 @@ import { useEffect, useRef, useState } from 'react'
 import { MessageHint } from '../pages/platform/login'
 
 const state = object({
-  embedUrl: optional(string('')),
+  edusharingAsset: optional(
+    object({
+      repositoryId: string(''),
+      nodeId: string(''),
+    })
+  ),
 })
 
 export function createEdusharingAssetPlugin(
@@ -40,24 +45,21 @@ type Props = EditorPluginProps<State, EdusharingConfig>
 function EdusharingAsset({ state, editable, focused, config }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
-  const { embedUrl } = state
+  const { edusharingAsset } = state
   const [embedHtml, setEmbedHtml] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchEmbedHtml() {
-      if (!embedUrl.defined) return
+      if (!edusharingAsset.defined) return
 
-      // TODO: Better parsing of nodeId
-      const nodeId = new URL(embedUrl.value).pathname.replace(
-        '/edu-sharing/rest/lti/v13/lti13/',
-        ''
-      )
+      const nodeId = edusharingAsset.nodeId.value
+      const repositoryId = edusharingAsset.repositoryId.value
 
       const dataToken = config.dataToken
 
       // TODO: Is there a better way to fetch the data?
       const response = await fetch(
-        `/lti/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}`,
+        `/lti/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}&repositoryId=${repositoryId}`,
         {
           headers: { Authorization: `Bearer ${config.ltik}` },
         }
@@ -68,17 +70,26 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     }
 
     void fetchEmbedHtml()
-  }, [embedUrl.defined ? embedUrl.value : null])
+  }, [edusharingAsset.defined])
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
       if (source !== iframeRef.current?.contentWindow) return
 
-      if (typeof data === 'object' && typeof data.resourceLink === 'string') {
-        if (state.embedUrl.defined === false) {
-          state.embedUrl.create(data.resourceLink)
+      if (typeof data === 'object' && typeof data.nodeId === 'string') {
+        const newEdusharingAsset = {
+          nodeId: data.nodeId,
+          repositoryId: data.repositoryId,
+        }
+
+        if (state.edusharingAsset.defined === false) {
+          state.edusharingAsset.create(newEdusharingAsset)
         } else {
-          state.embedUrl.set(data.resourceLink)
+          // TODO: Better implementation
+          state.edusharingAsset.nodeId.set(newEdusharingAsset.nodeId)
+          state.edusharingAsset.repositoryId.set(
+            newEdusharingAsset.repositoryId
+          )
         }
 
         setModalIsOpen(false)
@@ -88,18 +99,18 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     window.addEventListener('message', handleIFrameEvent)
 
     return () => window.removeEventListener('message', handleIFrameEvent)
-  }, [state.embedUrl])
+  }, [state.edusharingAsset])
 
   return (
     <figure
       className={clsx(
         'flex justify-center items-center',
-        !embedUrl.defined && 'w-full h-40',
-        (focused || !embedUrl.defined) && 'border border-gray-400 p-1'
+        !edusharingAsset.defined && 'w-full h-40',
+        (focused || !edusharingAsset.defined) && 'border border-gray-400 p-1'
       )}
     >
       {renderModal()}
-      {embedUrl.defined ? (
+      {edusharingAsset.defined ? (
         renderEmbed()
       ) : (
         <Image
@@ -110,7 +121,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
           height="100"
         />
       )}
-      {editable && (!embedUrl.defined || focused) ? (
+      {editable && (!edusharingAsset.defined || focused) ? (
         <Button onClick={() => setModalIsOpen(true)}>
           Datei von edu-sharing einbinden
         </Button>
