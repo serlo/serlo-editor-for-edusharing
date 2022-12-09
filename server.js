@@ -66,13 +66,17 @@ void (async () => {
 
   server.get('/lti/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
+    const repositoryId = req.query["repositoryId"]
     const { token } = res.locals
 
     const jwtBody = {
       aud: process.env.EDITOR_CLIENT_ID,
       "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
-      dataToken: token.platformContext.custom.dataToken
+      dataToken: token.platformContext.custom.dataToken,
+      'https://purl.imsglobal.org/spec/lti/claim/context': {
+        id: process.env.EDITOR_CLIENT_ID,
+      }
     }
 
     // TODO: Duplicate code
@@ -87,7 +91,7 @@ void (async () => {
       keyid: process.env.EDITOR_KEY_ID,
     })
 
-    const url = new URL(process.env.EDITOR_EDUSHARING_DETAILS_URL + nodeId)
+    const url = new URL(process.env.EDITOR_EDUSHARING_DETAILS_URL + repositoryId + "/" + nodeId)
 
     url.searchParams.append("displayMode", "inline")
     url.searchParams.append("jwt", encodeURIComponent(message))
@@ -100,8 +104,15 @@ void (async () => {
       "Accept": "application/json"}
     })
 
-    // TODO: Error handling
-    res.json(await response.json())
+    if (response.status != 200) {
+      console.error("Status-Code", response.status)
+      console.error(await response.text())
+
+      res.json({ details: "<b>ERROR!</b>" })
+    } else {
+      // TODO: Error handling
+      res.json(await response.json())
+    }
   })
 
   // TODO: Use another library
