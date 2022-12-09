@@ -10,6 +10,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
   const decoded = jwt.decode(token, { complete: true })
 
+  console.log(decoded)
+
   // Test scheme
   const resourceLink =
     decoded.payload[

@@ -8,7 +8,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: Use session to give information further
   // TODO: Proper parsing
   const messageHintParam = context.query['lti_message_hint'] as string
-  const { user, dataToken } = JSON.parse(messageHintParam) as MessageHint
+  const { user, dataToken, nodeId } = JSON.parse(
+    messageHintParam
+  ) as MessageHint
   const message = {
     iss: process.env.EDITOR_URL,
     // TODO: Should be a list
@@ -28,9 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       'LtiDeepLinkingRequest',
     'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
     'https://purl.imsglobal.org/spec/lti/claim/roles': [],
-    'https://purl.imsglobal.org/spec/lti/claim/context': {
-      id: process.env.EDITOR_CLIENT_ID,
-    },
+    'https://purl.imsglobal.org/spec/lti/claim/context': { id: nodeId },
     'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings': {
       accept_types: ['ltiResourceLink'],
       //accept_presentation_document_targets: ['frame', 'iframe', 'window'],
@@ -86,4 +86,5 @@ export interface MessageHint {
   type: 'deep-link'
   user: string
   dataToken: string
+  nodeId: string
 }

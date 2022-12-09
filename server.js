@@ -5,7 +5,6 @@ const { Provider } = require('ltijs')
 const next = require('next')
 const fetch = require('node-fetch')
 const { Request } = require('node-fetch')
-const { Blob } = require('buffer')
 const { FormData, File } = require('formdata-node')
 const { Readable } = require('stream')
 const { FormDataEncoder } = require('form-data-encoder')
@@ -40,7 +39,7 @@ Provider.setup(
 
 Provider.onConnect(async (token, req, res) => {
   const { custom } = res.locals.context
-
+  
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
@@ -50,7 +49,8 @@ Provider.onConnect(async (token, req, res) => {
       mayEdit:
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
-      user: custom.user
+      user: custom.user,
+      nodeId: custom.nodeId
     }),
   })
   res.send(await response.text())
