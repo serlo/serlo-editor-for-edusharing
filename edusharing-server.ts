@@ -183,6 +183,15 @@ app.post('/edu-sharing/rest/lti/v13/lti13', (_req, res) => {
   })
 })
 
+app.get('/edu-sharing/rest/lti/v13/details/*/*', (_req, res) => {
+  res
+    .json({
+      detailsSnippet:
+        '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg" />',
+    })
+    .end()
+})
+
 app.all('*', (req, res) => {
   console.error(`${req.method} call to ${req.url} registered`)
   res.sendStatus(404)
