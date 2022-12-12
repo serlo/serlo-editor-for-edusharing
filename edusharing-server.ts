@@ -206,6 +206,7 @@ function createAutoFromResponse({
   targetUrl: string
   params: Record<string, string>
 }) {
+  const escapedTargetUrl = escapeHTML(targetUrl)
   const formDataHtml = Object.entries(params)
     .map(([name, value]) => {
       const escapedValue = escapeHTML(value)
@@ -218,9 +219,9 @@ function createAutoFromResponse({
     `
     <!DOCTYPE html>
     <html>
-    <head><title>Redirect to ${targetUrl}</title></head>
+    <head><title>Redirect to ${escapedTargetUrl}</title></head>
     <body>
-      <form id="form" action="${targetUrl}" method="${method}">
+      <form id="form" action="${escapedTargetUrl}" method="${method}">
         ${formDataHtml}
       </form>
       <script type="text/javascript">
