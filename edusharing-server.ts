@@ -82,22 +82,14 @@ app.get('/edu-sharing/rest/ltiplatform/v13/auth', (req, res) => {
     },
   }
 
-  const privateKey = Buffer.from(
-    process.env.EDITOR_PLATFORM_PRIVATE_KEY,
-    'base64'
-  ).toString('utf-8')
-
-  const signed = jwt.sign(payload, privateKey, {
-    algorithm: 'RS256',
-    expiresIn: 60,
-    keyid: 'key',
-  })
-
   createAutoFromResponse({
     res,
     method: 'POST',
     targetUrl: process.env.EDITOR_URL + '/lti',
-    params: { id_token: signed, state: req.query['nonce'].toString() },
+    params: {
+      id_token: signJWT(payload),
+      state: req.query['nonce'].toString(),
+    },
   })
 })
 
@@ -134,8 +126,65 @@ app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
   res.sendStatus(200).end()
 })
 
-app.get('*', (req, res) => {
-  console.error(`Call to ${req.url} registered`)
+app.get('/edu-sharing/rest/lti/v13/oidc/login_initiations', (req, res) => {
+  const messageHint = decodeURIComponent(
+    req.query['lti_message_hint'].toString()
+  )
+
+  createAutoFromResponse({
+    res,
+    method: 'GET',
+    targetUrl: process.env.EDITOR_URL + 'platform/login',
+    params: {
+      nonce: 'nonce',
+      state: 'state',
+      lti_message_hint: messageHint,
+      redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+    },
+  })
+})
+
+app.post('/edu-sharing/rest/lti/v13/lti13', (_req, res) => {
+  const payload = {
+    iss: 'editor',
+    aud: 'http://localhost:3000/',
+    iat: Date.now(),
+    nonce: 'nonce',
+    azp: 'http://localhost:3000/',
+    'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
+    'https://purl.imsglobal.org/spec/lti/claim/message_type':
+      'LtiDeepLinkingResponse',
+    'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
+    'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': [
+      {
+        custom: {
+          repositoryId: 'serlo-edusharing',
+          nodeId: '960c48d0-5e01-45ca-aaf6-d648269f0db2',
+        },
+        icon: {
+          width: 'null',
+          url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/themes/default/images/common/mime-types/svg/file-image.svg',
+          height: 'null',
+        },
+        type: 'ltiResourceLink',
+        title: '2020-11-13-152700_392x305_scrot.png',
+        url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
+      },
+    ],
+  }
+
+  createAutoFromResponse({
+    res,
+    method: 'POST',
+    targetUrl: process.env.EDITOR_URL + 'platform/done',
+    params: {
+      JWT: signJWT(payload),
+    },
+  })
+})
+
+app.all('*', (req, res) => {
+  console.error(`${req.method} call to ${req.url} registered`)
   res.sendStatus(404)
 })
 
@@ -159,9 +208,8 @@ function createAutoFromResponse({
 }) {
   const formDataHtml = Object.entries(params)
     .map(([name, value]) => {
-      const encodedValue = encodeURI(value)
-
-      return `<input type="hidden" name="${name}" value="${encodedValue}" />`
+      const escapedValue = escapeHTML(value)
+      return `<input type="hidden" name="${name}" value="${escapedValue}" />`
     })
     .join('\n')
 
@@ -183,6 +231,27 @@ function createAutoFromResponse({
   `.trim()
   )
   res.end()
+}
+
+function signJWT(payload: Record<string, unknown>) {
+  const privateKey = Buffer.from(
+    process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+    'base64'
+  ).toString('utf-8')
+
+  return jwt.sign(payload, privateKey, {
+    algorithm: 'RS256',
+    expiresIn: 60,
+    keyid: 'key',
+  })
+}
+
+function escapeHTML(text: string): string {
+  return text
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
 }
 
 export {}
