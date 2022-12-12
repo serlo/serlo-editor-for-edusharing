@@ -13,7 +13,7 @@
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "next build",
-    "dev": "node server.js",
+    "dev": "nodemon server.js",
     "format": "run-p -c \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
@@ -21,9 +21,9 @@
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
-    "mongodb:start": "docker-compose up -d",
     "start": "NODE_ENV=production node server.js",
     "start:edusharing": "nodemon edusharing-server.ts",
+    "start:mongodb": "docker-compose up -d",
     "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'"
   },
   "resolutions": {
