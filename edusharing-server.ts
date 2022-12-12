@@ -15,13 +15,13 @@ app.get('/', (_req, res) => {
     targetUrl: process.env.EDITOR_URL + 'lti/login',
     params: {
       target_link_uri: 'http://localhost:3000/lti',
-      iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
+      iss: process.env.PLATFORM_URL,
 
       // Test whether this is optional
       login_hint: 'admin',
       lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
       lti_deployment_id: '1',
-      client_id: 'qsa2DgKBJ2WgoJO',
+      client_id: process.env.PLATFORM_CLIENT_ID,
     },
   })
 })
