@@ -13,6 +13,9 @@
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "next build",
+    "e2e": "cypress run",
+    "e2e:with-server": "start-server-and-test start:all '8100|3000' e2e",
+    "e2e:cypress": "cypress open",
     "format": "run-p -c \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
@@ -27,8 +30,7 @@
     "start:server": "nodemon server.js",
     "stop:mongodb": "docker-compose down",
     "test": "jest --coverage",
-    "test:with-server": "start-server-and-test start:all '8100|3000' test",
-    "cypress:open": "cypress open"
+    "test:with-server": "start-server-and-test start:all '8100|3000' test"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
