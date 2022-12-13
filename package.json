@@ -13,7 +13,9 @@
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "next build",
-    "dev": "nodemon server.js",
+    "e2e": "cypress run",
+    "e2e:with-server": "start-server-and-test start:all '8100|3000' e2e",
+    "e2e:cypress": "cypress open",
     "format": "run-p -c \"format:*\"",
     "format:eslint": "yarn _eslint --fix",
     "format:prettier": "yarn _prettier --write",
@@ -22,9 +24,13 @@
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
     "start": "NODE_ENV=production node server.js",
+    "start:all": "npm-run-all start:mongodb -p -l start:edusharing start:server",
     "start:edusharing": "nodemon edusharing-server.ts",
     "start:mongodb": "docker-compose up -d",
-    "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'"
+    "start:server": "nodemon server.js",
+    "stop:mongodb": "docker-compose down",
+    "test": "jest --coverage",
+    "test:with-server": "start-server-and-test start:all '8100|3000' test"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
@@ -86,6 +92,7 @@
     "@types/react": "^17.0.52",
     "@types/react-dom": "^17.0.18",
     "autoprefixer": "^10.4.13",
+    "cypress": "^11.1.0",
     "eslint": "^8.29.0",
     "eslint-config-next": "^12.3.4",
     "jest": "^29.3.1",

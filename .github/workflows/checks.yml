@@ -75,6 +75,34 @@ jobs:
           cache: yarn
           node-version: 16
       - run: yarn --immutable --immutable-cache
-      - run: docker-compose up -d
-      - run: yarn test
-      - run: docker-compose down
+      - run: yarn test:with-server
+      - run: yarn stop:mongodb
+
+  # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
+  cypress-run:
+    name: Run cypress tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+
+      # Install NPM dependencies, cache them correctly and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          install-command: yarn --immutable --immutable-cache
+          browser: chrome
+          build: yarn build
+          start: yarn start:all
+          wait-on: 'http://localhost:3000'
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-outcome
+          path: |
+            cypress/screenshots
+            cypress/videos
