@@ -97,7 +97,7 @@ jobs:
           install-command: yarn --immutable --immutable-cache
           browser: chrome
           build: yarn build
-          start: yarn e2etest
+          start: yarn start:all
           wait-on: 'http://localhost:3000'
 
       - uses: actions/upload-artifact@v3
