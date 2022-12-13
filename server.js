@@ -5,7 +5,6 @@ const { Provider } = require('ltijs')
 const next = require('next')
 const fetch = require('node-fetch')
 const { Request } = require('node-fetch')
-const { Blob } = require('buffer')
 const { FormData, File } = require('formdata-node')
 const { Readable } = require('stream')
 const { FormDataEncoder } = require('form-data-encoder')
@@ -40,7 +39,7 @@ Provider.setup(
 
 Provider.onConnect(async (token, req, res) => {
   const { custom } = res.locals.context
-
+  
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
@@ -50,7 +49,8 @@ Provider.onConnect(async (token, req, res) => {
       mayEdit:
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
-      user: custom.user
+      user: custom.user,
+      nodeId: custom.nodeId
     }),
   })
   res.send(await response.text())
@@ -64,24 +64,55 @@ void (async () => {
 
   server.use('/lti', Provider.app)
 
-  server.get('/get-embed-html', async (req, res) => {
+  server.get('/lti/get-embed-html', async (req, res) => {
     const nodeId = req.query["nodeId"]
-    const url = new URL(`http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/rendering/v1/details/-home-/${nodeId}?displayMode=inline`)
+    const repositoryId = req.query["repositoryId"]
+    const { token } = res.locals
+
+    const jwtBody = {
+      aud: process.env.EDITOR_CLIENT_ID,
+      "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
+      expiresIn: 60,
+      dataToken: token.platformContext.custom.dataToken,
+      'https://purl.imsglobal.org/spec/lti/claim/context': {
+        id: process.env.EDITOR_CLIENT_ID,
+      }
+    }
+
+    // TODO: Duplicate code
+    const privateKey = Buffer.from(
+      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      'base64'
+    ).toString('utf-8')
+
+    const message = jwt.sign(jwtBody, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      keyid: process.env.EDITOR_KEY_ID,
+    })
+
+    const url = new URL(process.env.EDITOR_EDUSHARING_DETAILS_URL + repositoryId + "/" + nodeId)
+
+    url.searchParams.append("displayMode", "inline")
+    url.searchParams.append("jwt", encodeURIComponent(message))
 
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
     }
 
-    const response = await fetch(url.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'Authorization': 'Basic ' + Buffer.from("admin:admin").toString('base64')
-      },
+    const response = await fetch(url.href, { method: "GET", headers: {
+      "Accept": "application/json"}
     })
 
-    res.json(await response.json())
+    if (response.status != 200) {
+      console.error("Status-Code", response.status)
+      console.error(await response.text())
+
+      res.json({ details: "<b>ERROR!</b>" })
+    } else {
+      // TODO: Error handling
+      res.json(await response.json())
+    }
   })
 
   // TODO: Use another library

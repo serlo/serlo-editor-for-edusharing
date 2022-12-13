@@ -29,7 +29,7 @@ export function Toolbar({
 
   return (
     <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
-      <div className="max-w-6xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex justify-between">
+      <div className="max-w-5xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex justify-between">
         {mode === 'render' ? renderRenderButtons() : renderEditButtons()}
       </div>
     </nav>

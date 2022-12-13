@@ -75,9 +75,9 @@ jobs:
           cache: yarn
           node-version: 16
       - run: yarn --immutable --immutable-cache
-      - run: yarn mongodb:start
+      - run: yarn start:mongodb
       - run: yarn test
-      - run: yarn mongodb:stop
+      - run: yarn stop:mongodb
 
   # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
   cypress-run:

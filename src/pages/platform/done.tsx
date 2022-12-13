@@ -11,23 +11,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const decoded = jwt.decode(token, { complete: true })
 
   // Test scheme
-  const resourceLink =
-    decoded.payload[
-      'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
-    ][0]['url']
+  const asset = decoded.payload[
+    'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
+  ][0]['custom'] as EdusharingAsset
 
-  return {
-    props: {
-      resourceLink,
-    },
-  }
+  return { props: asset }
 }
 
-export default function Done({ resourceLink }) {
+export default function Done(asset: EdusharingAsset) {
   // TODO: Set target origin
   useEffect(() => {
-    parent.postMessage({ resourceLink }, '*')
-  }, [resourceLink])
+    parent.postMessage(asset, '*')
+  }, [asset])
 
   return null
+}
+
+export interface EdusharingAsset {
+  repositoryId: string
+  nodeId: string
 }

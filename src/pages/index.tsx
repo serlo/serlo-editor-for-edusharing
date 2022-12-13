@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 
   const props = await getJsonBody<PageProps>(context)
-  const response = await fetch('http://localhost:3000/lti/get-content', {
+  const response = await fetch(process.env.EDITOR_URL + 'lti/get-content', {
     headers: {
       Authorization: `Bearer ${props.ltik}`,
     },
@@ -51,6 +51,15 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   // TODO: We definitely need to have a more clean implementation here
   if (props.user) {
     edusharingConfig.user = props.user
+  }
+  if (props.dataToken) {
+    edusharingConfig.dataToken = props.dataToken
+  }
+  if (props.ltik) {
+    edusharingConfig.ltik = props.ltik
+  }
+  if (props.nodeId) {
+    edusharingConfig.nodeId = props.nodeId
   }
 
   return {
@@ -66,6 +75,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 export interface PageProps extends EditorProps {
   mayEdit: boolean
   user?: string
+  dataToken?: string
+  nodeId?: string
 }
 
 export default function Page(props: PageProps) {
