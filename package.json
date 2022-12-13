@@ -26,7 +26,8 @@
     "start:mongodb": "docker-compose up -d",
     "start:server": "nodemon server.js",
     "stop:mongodb": "docker-compose down",
-    "test": "start-server-and-test dev http://localhost:3000 'jest --coverage'",
+    "test": "jest --coverage",
+    "test:with-server": "start-server-and-test start:all '8100|3000' test",
     "cypress:open": "cypress open"
   },
   "resolutions": {
