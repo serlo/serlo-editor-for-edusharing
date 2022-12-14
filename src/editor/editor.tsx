@@ -72,7 +72,7 @@ function EditInner({
       setIsSaving(true)
 
       try {
-        const saveUrl = new URL(`${providerUrl}/lti/save-content`)
+        const saveUrl = new URL(`${providerUrl}lti/save-content`)
 
         if (comment) {
           saveUrl.searchParams.append('comment', comment)
