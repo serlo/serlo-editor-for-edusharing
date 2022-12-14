@@ -3,7 +3,7 @@ it('The editor can be called via the LTI Workflow', () => {
   cy.contains('Speichern & Schließen')
 })
 
-it.only('Button "Saved named version" saves a named version', () => {
+it('Button "Saved named version" saves a named version', () => {
   cy.request('DELETE', 'http://localhost:8100/_internals/saved-versions')
 
   cy.visit('http://localhost:8100')
