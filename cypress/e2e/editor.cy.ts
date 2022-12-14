@@ -1,12 +1,6 @@
-import { loadEnvConfig } from '@next/env'
-
-describe('empty spec', () => {
-  it('Calls editor', () => {
-    loadEnvConfig(process.cwd())
-
-    const url = process.env.EDITOR_URL ?? 'http://localhost:3000'
-
-    cy.visit(url)
-    cy.contains(/Rich Text/i)
-  })
+it('The editor can be called via the LTI Workflow', () => {
+  cy.visit('http://localhost:8100')
+  cy.contains('Speichern & Schließen')
 })
+
+export {}
