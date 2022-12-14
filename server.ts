@@ -1,22 +1,22 @@
-const { loadEnvConfig } = require('@next/env')
-const express = require('express')
-const jwt = require('jsonwebtoken')
-const { Provider } = require('ltijs')
-const next = require('next')
-const fetch = require('node-fetch')
-const { Request } = require('node-fetch')
-const { FormData, File } = require('formdata-node')
-const { Readable } = require('stream')
-const { FormDataEncoder } = require('form-data-encoder')
-const JSONWebKey = require('json-web-key')
-const { Buffer } = require('buffer')
+import { loadEnvConfig } from '@next/env'
+import express from 'express'
+import jwt from 'jsonwebtoken'
+import { Provider } from 'ltijs'
+import next from 'next'
+import fetch from 'node-fetch'
+import { Request } from 'node-fetch'
+import { FormData, File } from 'formdata-node'
+import { Readable } from 'stream'
+import { FormDataEncoder } from 'form-data-encoder'
+import JSONWebKey from 'json-web-key'
+import { Buffer } from 'buffer'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-loadEnvConfig('./', process.env.NODE_ENV !== 'production')
+loadEnvConfig('./', dev)
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
@@ -37,9 +37,9 @@ Provider.setup(
   }
 )
 
-Provider.onConnect(async (token, req, res) => {
+Provider.onConnect(async (_token, _req, res) => {
   const { custom } = res.locals.context
-  
+
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
@@ -50,7 +50,7 @@ Provider.onConnect(async (token, req, res) => {
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
       user: custom.user,
-      nodeId: custom.nodeId
+      nodeId: custom.nodeId,
     }),
   })
   res.send(await response.text())
@@ -65,18 +65,19 @@ void (async () => {
   server.use('/lti', Provider.app)
 
   server.get('/lti/get-embed-html', async (req, res) => {
-    const nodeId = req.query["nodeId"]
-    const repositoryId = req.query["repositoryId"]
+    const nodeId = req.query['nodeId']
+    const repositoryId = req.query['repositoryId']
     const { token } = res.locals
 
     const jwtBody = {
       aud: process.env.EDITOR_CLIENT_ID,
-      "https://purl.imsglobal.org/spec/lti/claim/deployment_id" : process.env.EDITOR_DEPLOYMENT_ID,
+      'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
+        process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
       dataToken: token.platformContext.custom.dataToken,
       'https://purl.imsglobal.org/spec/lti/claim/context': {
         id: process.env.EDITOR_CLIENT_ID,
-      }
+      },
     }
 
     // TODO: Duplicate code
@@ -91,24 +92,29 @@ void (async () => {
       keyid: process.env.EDITOR_KEY_ID,
     })
 
-    const url = new URL(process.env.EDITOR_EDUSHARING_DETAILS_URL + repositoryId + "/" + nodeId)
+    const url = new URL(
+      process.env.EDITOR_EDUSHARING_DETAILS_URL + repositoryId + '/' + nodeId
+    )
 
-    url.searchParams.append("displayMode", "inline")
-    url.searchParams.append("jwt", encodeURIComponent(message))
+    url.searchParams.append('displayMode', 'inline')
+    url.searchParams.append('jwt', encodeURIComponent(message))
 
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
     }
 
-    const response = await fetch(url.href, { method: "GET", headers: {
-      "Accept": "application/json"}
+    const response = await fetch(url.href, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
     })
 
     if (response.status != 200) {
-      console.error("Status-Code", response.status)
+      console.error('Status-Code', response.status)
       console.error(await response.text())
 
-      res.json({ details: "<b>ERROR!</b>" })
+      res.json({ details: '<b>ERROR!</b>' })
     } else {
       // TODO: Error handling
       res.json(await response.json())
@@ -136,7 +142,7 @@ void (async () => {
       .end()
   })
 
-  server.get('/lti/get-content', async (req, res) => {
+  server.get('/lti/get-content', async (_req, res) => {
     const { token } = res.locals
 
     const platform = await Provider.getPlatformById(token.platformId)
@@ -148,7 +154,7 @@ void (async () => {
       nodeId,
       user,
       ...(version != null ? { version } : {}),
-      dataToken
+      dataToken,
     }
     const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
       algorithm: 'RS256',
@@ -178,7 +184,7 @@ void (async () => {
       appId,
       nodeId,
       user,
-      dataToken
+      dataToken,
     }
     const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
       algorithm: 'RS256',

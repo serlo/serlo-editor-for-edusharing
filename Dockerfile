@@ -13,12 +13,14 @@ COPY src src
 COPY .eslintrc.json .
 COPY next.config.js .
 COPY next-env.d.ts .
+COPY tsconfig.server.json .
 COPY postcss.config.js .
 COPY public .
-COPY server.js .
+COPY server.ts .
 COPY tailwind.config.js .
 COPY tsconfig.json .
 RUN yarn build
+RUN yarn tsc -p tsconfig.server.json
 
 FROM dependencies as release
 COPY --from=build /usr/src/app/.next .next
