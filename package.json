@@ -29,6 +29,7 @@
     "start:edusharing": "nodemon --watch edusharing-server.ts edusharing-server.ts",
     "start:mongodb": "docker-compose up -d",
     "start:server": "nodemon --watch server.js --watch src server.js",
+    "start:server-via-docker": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach ece-as-a-service",
     "stop:mongodb": "docker-compose down",
     "test": "jest --coverage",
     "test:with-server": "start-server-and-test start:all '8100|3000' test"
