@@ -13,7 +13,7 @@
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "next build",
-    "build:docker": "docker build -t ece-as-a-service:latest .",
+    "build:server-docker": "docker build -t ece-as-a-service-local-build:latest .",
     "e2e": "cypress run",
     "e2e:with-server": "start-server-and-test start:all '8100|3000' e2e",
     "e2e:cypress": "cypress open",
@@ -29,7 +29,7 @@
     "start:edusharing": "nodemon --watch edusharing-server.ts edusharing-server.ts",
     "start:mongodb": "docker-compose up -d",
     "start:server": "nodemon --watch server.js --watch src server.js",
-    "start:server-via-docker": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach ece-as-a-service",
+    "start:server-docker": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name ece-as-a-service-editor-local-build ece-as-a-service-local-build",
     "stop:mongodb": "docker-compose down",
     "test": "jest --coverage",
     "test:with-server": "start-server-and-test start:all '8100|3000' test"
