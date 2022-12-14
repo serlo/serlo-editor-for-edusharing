@@ -16,6 +16,7 @@
     "docker:build": "docker build -t ece-as-a-service-local-build:latest .",
     "docker:run": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name ece-as-a-service-from-local-build ece-as-a-service-local-build",
     "docker:stop": "docker container stop ece-as-a-service-from-local-build && docker container rm ece-as-a-service-from-local-build",
+    "docker:rm": "docker image rm ece-as-a-service-local-build",
     "e2e": "cypress run",
     "e2e:with-server": "start-server-and-test start:all '8100|3000' e2e",
     "e2e:cypress": "cypress open",
