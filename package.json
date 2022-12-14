@@ -31,6 +31,7 @@
     "lint:tsc": "tsc --noEmit",
     "start": "NODE_ENV=production node server.js",
     "start:all": "npm-run-all start:mongodb -p -l start:edusharing start:server",
+    "start:all-docker": "npm-run-all start:mongodb docker-run start:edusharing",
     "start:edusharing": "nodemon --watch edusharing-server.ts edusharing-server.ts",
     "start:mongodb": "docker-compose up -d",
     "start:server": "nodemon --watch server.js --watch src server.js",

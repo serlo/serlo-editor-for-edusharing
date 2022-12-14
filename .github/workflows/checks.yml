@@ -79,8 +79,8 @@ jobs:
       - run: yarn stop:mongodb
 
   # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
-  cypress-run:
-    name: Run cypress tests
+  cypress:
+    name: Run cypress tests (locally)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -89,7 +89,6 @@ jobs:
           cache: yarn
           node-version: 16
 
-      # Install NPM dependencies, cache them correctly and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
@@ -106,3 +105,23 @@ jobs:
           path: |
             cypress/screenshots
             cypress/videos
+
+  # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
+  cypress-docker:
+    name: Run cypress tests (with docker build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          install-command: yarn --immutable --immutable-cache
+          browser: chrome
+          build: yarn docker:build
+          start: yarn start:all-docker
+          wait-on: 'http://localhost:3000'
