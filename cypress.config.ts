@@ -1,4 +1,4 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from 'cypress'
 
 export default defineConfig({
   // Disable checks in chrome "same-origin" in HTTP requests. Normally cypress
@@ -15,4 +15,4 @@ export default defineConfig({
       // implement node event listeners here
     },
   },
-});
+})
