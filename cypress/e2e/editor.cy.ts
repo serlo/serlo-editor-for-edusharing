@@ -31,6 +31,7 @@ it('Assets from edu-sharing can be included', () => {
   cy.get('div.add-trigger').eq(1).click()
   cy.contains('Edusharing Inhalte').click()
   cy.contains('Datei von edu-sharing einbinden').click()
+  cy.wait(3000)
   cy.get(`img[src="${targetImage}"]`)
 })
 
