@@ -1,4 +1,5 @@
 FROM node:16 as dependencies
+LABEL stage=build
 WORKDIR /usr/src/app
 COPY .yarn .yarn
 COPY .yarnrc.yml .
@@ -7,6 +8,7 @@ COPY yarn.lock .
 RUN yarn --immutable --silent
 
 FROM dependencies as build
+LABEL stage=build
 COPY src src
 COPY .eslintrc.json .
 COPY next.config.js .
