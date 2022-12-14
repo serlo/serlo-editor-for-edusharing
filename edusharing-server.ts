@@ -120,7 +120,7 @@ app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
 })
 
 app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
-  savedVersions.push({ comment: req.query['versionComment'].toString() })
+  savedVersions.push({ comment: `${req.query['versionComment']}` })
   console.log(
     `[${new Date().toISOString()}]: Save registered with comment ${
       req.query['versionComment']
