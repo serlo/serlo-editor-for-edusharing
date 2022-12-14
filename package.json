@@ -13,6 +13,7 @@
     "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "next build",
+    "build:docker": "docker build -t ece-as-a-service:latest .",
     "e2e": "cypress run",
     "e2e:with-server": "start-server-and-test start:all '8100|3000' e2e",
     "e2e:cypress": "cypress open",
