@@ -96,7 +96,7 @@ jobs:
           browser: chrome
           build: yarn build
           start: yarn start:all
-          wait-on: 'http://localhost:3000'
+          wait-on: 'http://localhost:3000, http://localhost:8100'
 
       - uses: actions/upload-artifact@v3
         if: failure()
