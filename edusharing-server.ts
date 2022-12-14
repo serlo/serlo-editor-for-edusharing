@@ -9,6 +9,8 @@ const edusharingPort = 8100
 
 const app = express()
 
+let savedVersions: Array<{ comment: string }> = []
+
 app.get('/', (_req, res) => {
   createAutoFromResponse({
     res,
@@ -118,6 +120,7 @@ app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
 })
 
 app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
+  savedVersions.push({ comment: req.query['versionComment'].toString() })
   console.log(
     `[${new Date().toISOString()}]: Save registered with comment ${
       req.query['versionComment']
@@ -190,6 +193,15 @@ app.get('/edu-sharing/rest/lti/v13/details/*/*', (_req, res) => {
         '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg" />',
     })
     .end()
+})
+
+app.delete('/_internals/saved-versions', (_req, res) => {
+  savedVersions = []
+  res.sendStatus(200).end()
+})
+
+app.get('/_internals/saved-versions', (_req, res) => {
+  res.json(savedVersions)
 })
 
 app.all('*', (req, res) => {
