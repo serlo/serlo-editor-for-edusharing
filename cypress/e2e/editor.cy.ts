@@ -10,6 +10,7 @@ it('Button "Saved named version" saves a named version', () => {
   cy.contains('Benannte Version speichern').click()
   cy.get('input[placeholder="Name der neuen Version"]').type('version-name')
   cy.contains(/^Speichern$/).click()
+  cy.contains(/^Speichern$/).should('not.exist')
 
   cy.request('http://localhost:8100/_internals/saved-versions').then(
     (response) => {
