@@ -29,8 +29,9 @@
     "start:edusharing": "nodemon --watch edusharing-server.ts edusharing-server.ts",
     "start:mongodb": "docker-compose up -d",
     "start:server": "nodemon --watch server.js --watch src server.js",
-    "start:server-docker": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name ece-as-a-service-editor-local-build ece-as-a-service-local-build",
+    "start:server-docker": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name ece-as-a-service-from-local-build ece-as-a-service-local-build",
     "stop:mongodb": "docker-compose down",
+    "stop:server-docker": "docker container stop ece-as-a-service-from-local-build && docker container rm ece-as-a-service-from-local-build",
     "test": "jest --coverage",
     "test:with-server": "start-server-and-test start:all '8100|3000' test"
   },
