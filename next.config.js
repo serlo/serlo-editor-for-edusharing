@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   webpack(config) {
     // fixes problem with outdated react-dnd version
     // see https://github.com/react-dnd/react-dnd/issues/3433
