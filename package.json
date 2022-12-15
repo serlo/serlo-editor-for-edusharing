@@ -78,7 +78,7 @@
     "jsonwebtoken": "^8.5.1",
     "ltijs": "^5.9.0",
     "next": "^13.0.0",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^2.6.6",
     "raw-body": "^2.5.1",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
