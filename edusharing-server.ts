@@ -190,7 +190,7 @@ app.get('/edu-sharing/rest/lti/v13/details/*/*', (_req, res) => {
   res
     .json({
       detailsSnippet:
-        '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg" />',
+        '<p><b>Inhalt von edu-sharing</b></p><p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg" /></p>',
     })
     .end()
 })
