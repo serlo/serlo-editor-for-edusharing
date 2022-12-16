@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // This would case an error in react-hotkeys, when reactStrictMode is true.
+  // TODO: Fix this bug and set it to true.
   reactStrictMode: false,
   webpack(config) {
     // fixes problem with outdated react-dnd version
