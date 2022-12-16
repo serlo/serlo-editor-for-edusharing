@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   // This would case an error in react-hotkeys, when reactStrictMode is true.
   // TODO: Fix this bug and set it to true.
@@ -14,4 +15,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+export default nextConfig

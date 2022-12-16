@@ -1,4 +1,5 @@
-import { loadEnvConfig } from '@next/env'
+import nextEnv from '@next/env'
+const { loadEnvConfig } = nextEnv
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import { Provider } from 'ltijs'
@@ -56,7 +57,7 @@ Provider.onConnect(async (_token, _req, res) => {
   res.send(await response.text())
 })
 
-void (async () => {
+const server = (async () => {
   await app.prepare()
   await Provider.deploy({ serverless: true })
 
@@ -243,3 +244,5 @@ void (async () => {
     },
   })
 })()
+
+export default server

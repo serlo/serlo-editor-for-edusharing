@@ -11,13 +11,13 @@ FROM dependencies as build
 LABEL stage=build
 COPY src src
 COPY .eslintrc.json .
-COPY next.config.js .
+COPY next.config.mjs .
 COPY next-env.d.ts .
 COPY tsconfig.server.json .
-COPY postcss.config.js .
+COPY postcss.config.mjs .
 COPY public .
 COPY server.ts .
-COPY tailwind.config.js .
+COPY tailwind.config.mjs .
 COPY tsconfig.json .
 RUN yarn build
 RUN yarn tsc -p tsconfig.server.json
