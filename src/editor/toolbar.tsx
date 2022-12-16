@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useScopedDispatch, useScopedSelector } from '@edtr-io/core'
 import { ToolbarButton } from './toolbar-button'
 import { hasPendingChanges as hasPendingChangesSelector } from '@edtr-io/store'
+import { savedBySerloString } from './editor'
 
 export interface ToolbarProps {
   mode: 'edit' | 'render'
@@ -90,9 +91,7 @@ export function Toolbar({
         className="ml-12"
         active={hasPendingChanges}
         onClick={async () => {
-          await save(
-            'Diese Version wurde automatisch vom Serlo-Editor erstellt'
-          )
+          await save(savedBySerloString)
           if (canBeClosed) setShouldClose(true)
         }}
       >
