@@ -26,6 +26,7 @@ export function Toolbar({
   isSaving,
 }: ToolbarProps) {
   const dispatch = useScopedDispatch()
+  const canBeClosed = window.opener != null || window.history.length == 1
 
   return (
     <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
@@ -79,13 +80,15 @@ export function Toolbar({
               await save(
                 'Diese Version wurde automatisch vom Serlo-Editor erstellt'
               )
-              // this will only work reliably if this tab was opened with window.open (not target="_blank") for example
-              setTimeout(() => {
-                window.close()
-              }, 10)
+              if (canBeClosed) {
+                setTimeout(() => {
+                  window.close()
+                }, 100)
+              }
             }}
           >
-            <FontAwesomeIcon icon={faSave} /> Speichern & Schließen
+            <FontAwesomeIcon icon={faSave} /> Speichern
+            {canBeClosed ? ' & Schließen' : ''}
           </ToolbarButton>
         </div>
       </>
