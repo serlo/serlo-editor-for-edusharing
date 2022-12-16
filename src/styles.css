@@ -14,10 +14,10 @@
     @apply ece-button text-white bg-sky-800 hover:bg-sky-500;
   }
   .ece-button-light {
-    @apply ece-button text-sky-800 bg-sky-100 hover:text-white hover:bg-sky-800;
+    @apply ece-button text-sky-800 bg-sky-100 hover:text-white hover:bg-sky-500;
   }
   .ece-button-blue-transparent {
-    @apply ece-button text-sky-800 bg-transparent hover:text-white hover:bg-sky-800;
+    @apply ece-button text-sky-800 bg-transparent hover:bg-sky-100;
   }
   .special-hyphens-auto {
     hyphens: auto;
