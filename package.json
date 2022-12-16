@@ -37,7 +37,6 @@
     "start:mongodb": "docker-compose up -d",
     "start:server": "nodemon --watch server.ts --watch src server.ts",
     "stop:mongodb": "docker-compose down",
-    "dev": "yarn start:server",
     "test": "jest --coverage",
     "test:with-server": "start-server-and-test start:all '8100|3000' test"
   },

@@ -22,7 +22,7 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import clsx from 'clsx'
 import { KeyboardEvent } from 'react'
-import { FaIcon } from '../components/fa-icon'
+import { FaIcon } from '../../components/fa-icon'
 
 import { SerloTableRenderer, TableType } from './renderer'
 

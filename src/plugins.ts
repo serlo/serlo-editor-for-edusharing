@@ -32,7 +32,7 @@ import {
   createEdusharingAssetPlugin,
 } from './plugins/edusharing-asset'
 import { equationsPlugin } from './plugins/equations'
-import { serloTablePlugin } from './serlo-table'
+import { serloTablePlugin } from './plugins/serlo-table'
 
 const registry = [
   {
