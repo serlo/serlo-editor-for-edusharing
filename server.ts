@@ -168,7 +168,7 @@ void (async () => {
     }
     url.searchParams.append('jwt', message)
 
-    const response = await fetch(url)
+    const response = await fetch(url.href)
 
     return res.status(response.status).send(await response.text())
   })
@@ -212,7 +212,7 @@ void (async () => {
 
     const encoder = new FormDataEncoder(data)
 
-    const request = new Request(url, {
+    const request = new Request(url.href, {
       method: 'POST',
       headers: encoder.headers,
       body: Readable.from(encoder.encode()),

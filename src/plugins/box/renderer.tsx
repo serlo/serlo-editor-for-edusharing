@@ -4,7 +4,6 @@ import clsx from 'clsx'
 import { useState } from 'react'
 
 import { BoxProps } from '.'
-import { hasOwnPropertyTs } from '../../utils/has-own-property-ts'
 import { FaIcon } from '../../components/fa-icon'
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle'
 import { faHandPointRight } from '@fortawesome/free-solid-svg-icons/faHandPointRight'
@@ -58,13 +57,13 @@ export function BoxRenderer(props: BoxProps) {
   const isBlank = typedValue === 'blank'
 
   const style = boxTypeStyle[typedValue]
-  const borderColorClass = hasOwnPropertyTs(style, 'borderColorClass')
+  const borderColorClass = Object.hasOwn(style, 'borderColorClass')
     ? style.borderColorClass
     : defaultStyle.borderColorClass
-  const colorClass = hasOwnPropertyTs(style, 'colorClass')
+  const colorClass = Object.hasOwn(style, 'colorClass')
     ? style.colorClass
     : defaultStyle.colorClass
-  const icon = hasOwnPropertyTs(style, 'icon') ? style.icon : undefined
+  const icon = Object.hasOwn(style, 'icon') ? style.icon : undefined
   const store = useScopedStore()
   const [contentIsEmpty, setContentIsEmpty] = useState(true)
 
@@ -166,7 +165,7 @@ export function BoxRenderer(props: BoxProps) {
     return types.map((boxType) => {
       const typedBoxType = boxType as BoxType
       const listStyle = boxTypeStyle[typedBoxType]
-      const listIcon = hasOwnPropertyTs(listStyle, 'icon')
+      const listIcon = Object.hasOwn(listStyle, 'icon')
         ? listStyle.icon
         : undefined
 
