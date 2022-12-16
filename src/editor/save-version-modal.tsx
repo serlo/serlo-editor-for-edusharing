@@ -46,15 +46,14 @@ export function SaveVersionModal({
         placeholder="Name der neuen Version"
       />
       <div className="text-right mt-3">
-        {/* TODO use button class after PR merge, add hover effect */}
         <button
-          className="inline-block rounded-md p-2 mr-2 border text-sky-800 border-sky-800"
+          className="ece-button-blue-transparent mr-3 text-base"
           onClick={() => setOpen(false)}
         >
           Schließen
         </button>
         <button
-          className="inline-block rounded-md p-2 text-white bg-sky-800"
+          className="ece-button-blue text-base"
           onClick={async () => {
             await save(commentInput.current?.value)
             setOpen(false)
