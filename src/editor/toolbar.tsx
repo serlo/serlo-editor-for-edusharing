@@ -2,9 +2,11 @@ import { redo, undo } from '@edtr-io/store'
 import { faCheck, faRedoAlt, faSpinner } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
-import { Dispatch, SetStateAction } from 'react'
-import { useScopedDispatch } from '@edtr-io/core'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useScopedDispatch, useScopedSelector } from '@edtr-io/core'
 import { ToolbarButton } from './toolbar-button'
+import { hasPendingChanges as hasPendingChangesSelector } from '@edtr-io/store'
+import { savedBySerloString } from './editor'
 
 export interface ToolbarProps {
   mode: 'edit' | 'render'
@@ -25,7 +27,14 @@ export function Toolbar({
   save,
   isSaving,
 }: ToolbarProps) {
+  const [shouldClose, setShouldClose] = useState(false)
   const dispatch = useScopedDispatch()
+  const canBeClosed = window.opener != null || window.history.length == 1
+  const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
+
+  useEffect(() => {
+    if (shouldClose && !hasPendingChanges) window.close()
+  }, [hasPendingChanges, shouldClose])
 
   return (
     <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
@@ -70,25 +79,25 @@ export function Toolbar({
             <FontAwesomeIcon icon={faComment} flip="horizontal" /> Benannte
             Version speichern
           </ToolbarButton>
-          <ToolbarButton
-            className="ml-12"
-            active={true}
-            onClick={async () => {
-              // TODO: I think save does not change hasPendingChanges right now?
-              // this triggers a confusing promt right now
-              await save(
-                'Diese Version wurde automatisch vom Serlo-Editor erstellt'
-              )
-              // this will only work reliably if this tab was opened with window.open (not target="_blank") for example
-              setTimeout(() => {
-                window.close()
-              }, 10)
-            }}
-          >
-            <FontAwesomeIcon icon={faSave} /> Speichern & Schließen
-          </ToolbarButton>
+          {renderManualSaveButton()}
         </div>
       </>
+    )
+  }
+
+  function renderManualSaveButton() {
+    return (
+      <ToolbarButton
+        className="ml-12"
+        active={hasPendingChanges}
+        onClick={async () => {
+          await save(savedBySerloString)
+          if (canBeClosed) setShouldClose(true)
+        }}
+      >
+        <FontAwesomeIcon icon={faSave} /> Speichern
+        {canBeClosed ? ' & Schließen' : ''}
+      </ToolbarButton>
     )
   }
 

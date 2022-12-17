@@ -30,6 +30,9 @@ export interface EditorProps {
   edusharingConfig: EdusharingConfig
 }
 
+export const savedBySerloString =
+  'Diese Version wurde automatisch vom Serlo-Editor erstellt'
+
 export function Editor(props: EditorProps) {
   return (
     <Edtr
@@ -110,7 +113,7 @@ function EditInner({
   useEffect(() => {
     window.onbeforeunload = () => {
       if (hasPendingChanges) {
-        void save('Datei wurde durch den Serlo-Editor aktualisiert')
+        void save(savedBySerloString)
       }
     }
   }, [hasPendingChanges, save])

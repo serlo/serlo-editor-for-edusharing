@@ -32,7 +32,7 @@ const tableStrings = {
   rowHeaders: 'Nur Zeilentitel',
   columnAndRowHeaders: 'Spalten- und Zeilentitel',
   convertToText: 'Text als Inhalt',
-  convertToImage: 'Bild als Inhalt',
+  // convertToImage: 'Bild als Inhalt',
   row: 'Zeile',
   column: 'Spalte',
   addType: '%type% hinzufügen',
@@ -211,7 +211,7 @@ function SerloTableEditor(props: SerloTableProps) {
                   plugins: isHead ? headerTextPlugins : cellTextPlugins,
                 },
               })}
-              {renderSwitchButton(cell, isHead, isClear)}
+              {/* {renderSwitchButton(cell, isHead, isClear)} */}
               {/* hack: make sure we capture most clicks in cells */}
               <style jsx global>{`
                 .serlo-td,
@@ -231,7 +231,7 @@ function SerloTableEditor(props: SerloTableProps) {
       }
     })
   }
-
+  /*
   function renderSwitchButton(
     cell: StateTypesReturnType<{
       content: ChildStateType<string, unknown>
@@ -260,6 +260,7 @@ function SerloTableEditor(props: SerloTableProps) {
       </button>
     )
   }
+  */
 
   function renderInlineNav(rowIndex: number, colIndex: number) {
     const showRowButtons =
@@ -387,7 +388,7 @@ function SerloTableEditor(props: SerloTableProps) {
       <button
         className={clsx(
           'ece-button-light',
-          isRow ? 'm-4 -mt-4 w-auto' : 'mb-16'
+          isRow ? 'm-4 -mt-8 w-auto' : 'mb-16 ml-4'
         )}
         title={replaceWithType(tableStrings.addType, isRow)}
         onClick={() => {

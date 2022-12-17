@@ -1,6 +1,6 @@
 it('The editor can be called via the LTI Workflow', () => {
   cy.visit('http://localhost:8100')
-  cy.contains('Speichern & Schließen')
+  cy.contains('Benannte Version speichern')
 })
 
 it('Button "Saved named version" saves a named version', () => {
@@ -22,17 +22,13 @@ it('Button "Saved named version" saves a named version', () => {
 })
 
 it('Assets from edu-sharing can be included', () => {
-  // TODO: Move to fixtures or env variables
-  const targetImage =
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg'
-
   cy.visit('http://localhost:8100/')
 
   cy.get('div.add-trigger').eq(1).click()
   cy.contains('Edusharing Inhalte').click()
   cy.contains('Datei von edu-sharing einbinden').click()
-  cy.wait(3000)
-  cy.get(`img[src="${targetImage}"]`)
+  cy.wait(6000)
+  cy.contains('Inhalt von edu-sharing')
 })
 
 export {}
