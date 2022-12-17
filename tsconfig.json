@@ -16,11 +16,15 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  // "ts-node": {
-  //   "compilerOptions": {
-  //     "module": "CommonJS"
-  //   }
-  // },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "server.mts"],
+  "ts-node": {
+    "esm": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/*.ts",
+    "src/*.tsx",
+    "server.ts",
+    "edusharing-server.ts"
+  ],
   "exclude": ["node_modules"]
 }

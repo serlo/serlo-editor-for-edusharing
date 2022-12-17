@@ -1,5 +1,4 @@
 import nextEnv from '@next/env'
-const { loadEnvConfig } = nextEnv
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import { Provider } from 'ltijs'
@@ -17,7 +16,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-loadEnvConfig('./', dev)
+nextEnv.loadEnvConfig('./', dev)
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
