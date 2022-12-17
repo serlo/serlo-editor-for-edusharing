@@ -1,6 +1,6 @@
 it('The editor can be called via the LTI Workflow', () => {
   cy.visit('http://localhost:8100')
-  cy.contains('Speichern & Schließen')
+  cy.contains('Benannte Version speichern')
 })
 
 it('Button "Saved named version" saves a named version', () => {
