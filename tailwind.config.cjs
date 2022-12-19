@@ -1,3 +1,5 @@
+console.log('Hello World', 'tailwind')
+
 const tailwindConfig = {
   mode: 'jit',
   content: ['src/**/*.tsx'],
