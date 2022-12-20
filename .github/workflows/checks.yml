@@ -106,7 +106,6 @@ jobs:
             cypress/screenshots
             cypress/videos
 
-  # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
   cypress-docker:
     name: Run cypress tests (with docker build)
     runs-on: ubuntu-latest
