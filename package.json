@@ -30,10 +30,10 @@
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit",
-    "start": "NODE_OPTIONS='--loader ts-node/esm' NODE_ENV=production node server.ts",
     "start:all": "npm-run-all start:mongodb -p -l start:edusharing start:server",
     "start:all-docker": "npm-run-all start:mongodb docker:run start:edusharing",
     "start:edusharing": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch edusharing-server.ts edusharing-server.ts",
+    "start:in-docker-container": "NODE_ENV=production node --experimental-modules --experimental-specifier-resolution=node server.js",
     "start:mongodb": "docker-compose up -d",
     "start:server": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch server.ts --watch src server.ts",
     "stop:mongodb": "docker-compose down",
@@ -88,7 +88,8 @@
     "react-is": "^18.2.0",
     "redux": "^4.2.0",
     "rooks": "^7.4.2",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.8",
@@ -112,7 +113,6 @@
     "start-server-and-test": "^1.15.2",
     "tailwindcss": "^3.2.4",
     "ts-jest": "^29.0.3",
-    "ts-node": "^10.9.1",
     "typescript": "^4.9.4"
   },
   "packageManager": "yarn@3.2.0",
