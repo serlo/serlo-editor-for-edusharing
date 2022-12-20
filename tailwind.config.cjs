@@ -1,6 +1,4 @@
-console.log('Hello World', 'tailwind')
-
-const tailwindConfig = {
+module.exports = {
   mode: 'jit',
   content: ['src/**/*.tsx'],
   plugins: [require('@tailwindcss/typography')],
@@ -16,5 +14,3 @@ const tailwindConfig = {
     },
   },
 }
-
-export default tailwindConfig
