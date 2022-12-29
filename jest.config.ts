@@ -5,7 +5,7 @@ const jestConfig: Config.InitialOptions = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   testPathIgnorePatterns: ['/node_modules/'],
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm',
   setupFiles: ['<rootDir>/jest.setupFiles.ts'],
 }
 
