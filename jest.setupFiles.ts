@@ -1,3 +1,3 @@
-import { loadEnvConfig } from '@next/env'
+import nextEnv from '@next/env'
 
-loadEnvConfig(process.cwd())
+nextEnv.loadEnvConfig(process.cwd())

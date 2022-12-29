@@ -1,4 +1,4 @@
-import { loadEnvConfig } from '@next/env'
+import nextEnv from '@next/env'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import { Provider } from 'ltijs'
@@ -16,7 +16,7 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-loadEnvConfig('./', dev)
+nextEnv.loadEnvConfig('./', dev)
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
@@ -56,7 +56,7 @@ Provider.onConnect(async (_token, _req, res) => {
   res.send(await response.text())
 })
 
-void (async () => {
+const server = (async () => {
   await app.prepare()
   await Provider.deploy({ serverless: true })
 
@@ -243,3 +243,5 @@ void (async () => {
     },
   })
 })()
+
+export default server

@@ -1,10 +1,10 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import { loadEnvConfig } from '@next/env'
+import nextEnv from '@next/env'
 import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './src/storage-format'
 
-loadEnvConfig(process.cwd())
+nextEnv.loadEnvConfig(process.cwd())
 const edusharingPort = 8100
 
 const app = express()
