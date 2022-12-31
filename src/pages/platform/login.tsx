@@ -81,8 +81,8 @@ export default function Login({ jwt, redirectUri, state }) {
   )
 }
 
-// TODO: Find a better place for this interface
-export interface MessageHint {
+// TODO: Use typecheck in server to sync types
+interface MessageHint {
   type: 'deep-link'
   user: string
   dataToken: string
