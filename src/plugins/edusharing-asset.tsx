@@ -55,15 +55,14 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       const nodeId = edusharingAsset.nodeId.value
       const repositoryId = edusharingAsset.repositoryId.value
 
-      const dataToken = config.dataToken
+      const embedHtmlUrl = new URL(window.location.origin)
+      embedHtmlUrl.pathname = '/lti/get-embed-html'
+      embedHtmlUrl.searchParams.append('nodeId', nodeId)
+      embedHtmlUrl.searchParams.append('repositoryId', repositoryId)
 
-      // TODO: Is there a better way to fetch the data?
-      const response = await fetch(
-        `/lti/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}&repositoryId=${repositoryId}`,
-        {
-          headers: { Authorization: `Bearer ${config.ltik}` },
-        }
-      )
+      const response = await fetch(embedHtmlUrl.href, {
+        headers: { Authorization: `Bearer ${config.ltik}` },
+      })
       const result = await response.json()
 
       setEmbedHtml(result['detailsSnippet'])
