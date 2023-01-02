@@ -10,7 +10,6 @@ import Modal from 'react-modal'
 import Image from 'next/image'
 import { Button } from '../components/button'
 import { useEffect, useRef, useState } from 'react'
-import { MessageHint } from '../pages/platform/login'
 
 const state = object({
   edusharingAsset: optional(
@@ -28,15 +27,7 @@ export function createEdusharingAssetPlugin(
 }
 
 export interface EdusharingConfig {
-  clientId: string
-  deepLinkUrl: string
-  deploymentId: string
-  loginInitiationUrl: string
-  providerUrl: string
-  ltik?: string
-  user?: string
-  dataToken?: string
-  nodeId?: string
+  ltik: string
 }
 
 type State = typeof state
@@ -55,15 +46,14 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       const nodeId = edusharingAsset.nodeId.value
       const repositoryId = edusharingAsset.repositoryId.value
 
-      const dataToken = config.dataToken
+      const embedHtmlUrl = new URL(window.location.origin)
+      embedHtmlUrl.pathname = '/lti/get-embed-html'
+      embedHtmlUrl.searchParams.append('nodeId', nodeId)
+      embedHtmlUrl.searchParams.append('repositoryId', repositoryId)
 
-      // TODO: Is there a better way to fetch the data?
-      const response = await fetch(
-        `/lti/get-embed-html?nodeId=${nodeId}&dataToken=${dataToken}&repositoryId=${repositoryId}`,
-        {
-          headers: { Authorization: `Bearer ${config.ltik}` },
-        }
-      )
+      const response = await fetch(embedHtmlUrl.href, {
+        headers: { Authorization: `Bearer ${config.ltik}` },
+      })
       const result = await response.json()
 
       setEmbedHtml(result['detailsSnippet'])
@@ -147,18 +137,14 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   function renderModal() {
     if (!modalIsOpen) return
 
-    const url = createLtiUrl({
-      targetLink: config.deepLinkUrl,
-      messageHint: {
-        type: 'deep-link',
-        user: getUser(),
-        dataToken: getDataToken(),
-        nodeId: getNodeId(),
-      },
-    })
-
     // See https://reactcommunity.org/react-modal/accessibility/
     Modal.setAppElement(document.getElementsByTagName('body')[0])
+
+    // TODO: Create helper function
+    const url = new URL(window.location.origin)
+
+    url.pathname = '/lti/start-edusharing-deeplink-flow'
+    url.searchParams.append('ltik', config.ltik)
 
     return (
       <Modal
@@ -176,43 +162,8 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
           },
         }}
       >
-        <iframe src={url} className="w-full h-full" ref={iframeRef} />
+        <iframe src={url.href} className="w-full h-full" ref={iframeRef} />
       </Modal>
     )
-  }
-
-  function createLtiUrl({
-    targetLink,
-    messageHint,
-  }: {
-    targetLink: string
-    messageHint: MessageHint
-  }): string {
-    // Config everthing
-    const url = new URL(config.loginInitiationUrl)
-
-    url.searchParams.append('iss', config.providerUrl)
-    url.searchParams.append('target_link_uri', targetLink)
-    url.searchParams.append('login_hint', config.clientId)
-    url.searchParams.append(
-      'lti_message_hint',
-      encodeURIComponent(JSON.stringify(messageHint))
-    )
-    url.searchParams.append('client_id', config.clientId)
-    url.searchParams.append('lti_deployment_id', config.deploymentId)
-
-    return url.href
-  }
-
-  function getUser() {
-    return config.user ?? 'anonymous'
-  }
-
-  function getDataToken() {
-    return config.dataToken ?? ''
-  }
-
-  function getNodeId() {
-    return config.nodeId ?? ''
   }
 }

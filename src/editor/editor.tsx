@@ -21,13 +21,11 @@ import { createPlugins } from '../plugins'
 import { StorageFormat, documentType } from '../storage-format'
 import { Toolbar } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { EdusharingConfig } from '../plugins/edusharing-asset'
 
 export interface EditorProps {
   state: StorageFormat
   ltik: string
   providerUrl: string
-  edusharingConfig: EdusharingConfig
 }
 
 export const savedBySerloString =
@@ -36,7 +34,7 @@ export const savedBySerloString =
 export function Editor(props: EditorProps) {
   return (
     <Edtr
-      plugins={createPlugins(props.edusharingConfig)}
+      plugins={createPlugins({ ltik: props.ltik })}
       initialState={props.state.document}
     >
       {(document) => {
@@ -55,7 +53,6 @@ function EditInner({
   ltik,
   state,
   providerUrl,
-  edusharingConfig,
 }: { children: ReactNode; version: number } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -123,10 +120,7 @@ function EditInner({
       <>
         <Toolbar mode="render" setIsEditing={setIsEditing} />
         <Layout>
-          <Renderer
-            plugins={createPlugins(edusharingConfig)}
-            state={state.document}
-          />
+          <Renderer plugins={createPlugins({ ltik })} state={state.document} />
         </Layout>
       </>
     )

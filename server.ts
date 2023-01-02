@@ -49,8 +49,6 @@ Provider.onConnect(async (_token, _req, res) => {
       mayEdit:
         custom !== undefined && typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
-      user: custom.user,
-      nodeId: custom.nodeId,
     }),
   })
   res.send(await response.text())
@@ -63,6 +61,29 @@ const server = (async () => {
   const server = express()
 
   server.use('/lti', Provider.app)
+
+  server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
+    const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
+
+    createAutoFromResponse({
+      res,
+      method: 'GET',
+      targetUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
+      params: {
+        iss: process.env.EDITOR_URL,
+        target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+        login_hint: process.env.EDITOR_CLIENT_ID,
+        lti_message_hint: JSON.stringify({
+          type: 'deep-link',
+          user,
+          dataToken,
+          nodeId,
+        }),
+        client_id: process.env.EDITOR_CLIENT_ID,
+        lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+      },
+    })
+  })
 
   server.get('/lti/get-embed-html', async (req, res) => {
     const nodeId = req.query['nodeId']
@@ -243,5 +264,53 @@ const server = (async () => {
     },
   })
 })()
+
+// TODO: Find better place to store helper functions
+export function createAutoFromResponse({
+  res,
+  method = 'GET',
+  targetUrl,
+  params,
+}: {
+  res: express.Response
+  method?: 'GET' | 'POST'
+  targetUrl: string
+  params: Record<string, string>
+}) {
+  const escapedTargetUrl = escapeHTML(targetUrl)
+  const formDataHtml = Object.entries(params)
+    .map(([name, value]) => {
+      const escapedValue = escapeHTML(value)
+      return `<input type="hidden" name="${name}" value="${escapedValue}" />`
+    })
+    .join('\n')
+
+  res.setHeader('Content-Type', 'text/html')
+  res.send(
+    `
+    <!DOCTYPE html>
+    <html>
+    <head><title>Redirect to ${escapedTargetUrl}</title></head>
+    <body>
+      <form id="form" action="${escapedTargetUrl}" method="${method}">
+        ${formDataHtml}
+      </form>
+      <script type="text/javascript">
+        document.getElementById("form").submit();
+      </script>
+    </body>
+    </html>
+  `.trim()
+  )
+  res.end()
+}
+
+function escapeHTML(text: string): string {
+  return text
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+}
 
 export default server
