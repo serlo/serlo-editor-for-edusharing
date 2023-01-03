@@ -1,11 +1,10 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import nextEnv from '@next/env'
 import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './src/storage-format'
-import { createAutoFromResponse } from './src/server-utils'
+import { createAutoFromResponse, loadEnvConfig } from './src/server-utils'
 
-nextEnv.loadEnvConfig(process.cwd())
+loadEnvConfig()
 const edusharingPort = 8100
 
 const app = express()

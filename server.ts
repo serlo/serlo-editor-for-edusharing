@@ -1,4 +1,3 @@
-import nextEnv from '@next/env'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import { Provider } from 'ltijs'
@@ -10,14 +9,14 @@ import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
 import JSONWebKey from 'json-web-key'
 import { Buffer } from 'buffer'
-import { createAutoFromResponse } from './src/server-utils'
+import { createAutoFromResponse, loadEnvConfig } from './src/server-utils'
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const isDevEnvironment = process.env.NODE_ENV !== 'production'
+const app = next({ dev: isDevEnvironment })
 const handle = app.getRequestHandler()
 
-nextEnv.loadEnvConfig('./', dev)
+if (isDevEnvironment) loadEnvConfig()
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //

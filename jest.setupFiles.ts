@@ -1,3 +1,3 @@
-import nextEnv from '@next/env'
+import { loadEnvConfig } from './src/server-utils'
 
-nextEnv.loadEnvConfig(process.cwd())
+loadEnvConfig()

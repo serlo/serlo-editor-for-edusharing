@@ -1,4 +1,9 @@
 import type { Response } from 'express'
+import nextEnv from '@next/env'
+
+export function loadEnvConfig() {
+  nextEnv.loadEnvConfig(process.cwd())
+}
 
 export function createAutoFromResponse({
   res,
