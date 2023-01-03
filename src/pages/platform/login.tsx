@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const signed = jwt.sign(payload, privateKey, {
     algorithm: 'RS256',
     expiresIn: 60,
-    keyid: '42',
+    keyid: process.env.EDITOR_KEY_ID,
   })
 
   return {
