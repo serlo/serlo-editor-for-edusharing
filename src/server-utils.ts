@@ -1,8 +1,18 @@
 import type { Response } from 'express'
 import nextEnv from '@next/env'
 
-export function loadEnvConfig() {
-  nextEnv.loadEnvConfig(process.cwd())
+const doNothingLogger = {
+  info: () => void 0,
+  error: () => void 0,
+}
+
+export function loadEnvConfig(args?: { showLogs?: boolean }) {
+  const showLogs = args?.showLogs ?? true
+  nextEnv.loadEnvConfig(
+    process.cwd(),
+    true,
+    showLogs ? console : doNothingLogger
+  )
 }
 
 export function createAutoFromResponse({

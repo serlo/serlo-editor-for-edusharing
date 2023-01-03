@@ -1,3 +1,3 @@
 import { loadEnvConfig } from './src/server-utils'
 
-loadEnvConfig()
+loadEnvConfig({ showLogs: false })
