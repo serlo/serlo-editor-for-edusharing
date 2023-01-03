@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       //accept_unsigned: false,
       auto_create: false,
       //can_confirm: false,
-      deep_link_return_url: `${process.env.EDITOR_URL}/platform/done`,
+      deep_link_return_url: `${process.env.EDITOR_URL}platform/done`,
       title: '',
       text: '',
     },
