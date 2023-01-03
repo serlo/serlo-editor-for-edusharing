@@ -78,7 +78,6 @@ export default function Login({ jwt, redirectUri, state }) {
 
 // TODO: Use typecheck in server to sync types
 interface MessageHint {
-  type: 'deep-link'
   user: string
   dataToken: string
   nodeId: string

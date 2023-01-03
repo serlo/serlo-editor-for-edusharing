@@ -74,7 +74,6 @@ const server = (async () => {
         target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
         login_hint: process.env.EDITOR_CLIENT_ID,
         lti_message_hint: JSON.stringify({
-          type: 'deep-link',
           user,
           dataToken,
           nodeId,
