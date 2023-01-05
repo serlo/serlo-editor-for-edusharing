@@ -5,25 +5,24 @@ import { GetServerSideProps } from 'next'
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // TODO: verify token
 
-  // TODO: Use session to give information further
   // TODO: Proper parsing
   const messageHintParam = context.query['lti_message_hint'] as string
   const { user, dataToken, nodeId } = JSON.parse(
     messageHintParam
   ) as MessageHint
-  const message = {
+
+  // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
+  // for an example of a deep linking requst payload
+  const payload = {
     iss: process.env.EDITOR_URL,
     // TODO: Should be a list
     aud: process.env.EDITOR_CLIENT_ID,
-    // TODO: Set this to the current user
     sub: user,
 
     iat: Date.now(),
     nonce: context.query.nonce,
+    dataToken,
 
-    dataToken: dataToken,
-
-    // TODO: no idea where this should be coming from
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
       process.env.EDITOR_DEPLOYMENT_ID,
     'https://purl.imsglobal.org/spec/lti/claim/message_type':
@@ -33,14 +32,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     'https://purl.imsglobal.org/spec/lti/claim/context': { id: nodeId },
     'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings': {
       accept_types: ['ltiResourceLink'],
-      //accept_presentation_document_targets: ['frame', 'iframe', 'window'],
       accept_presentation_document_targets: ['iframe'],
-      //accept_copy_advice: false,
       accept_multiple: true,
-      //accept_unsigned: false,
       auto_create: false,
-      //can_confirm: false,
-      deep_link_return_url: `${process.env.EDITOR_URL}/platform/done`,
+      deep_link_return_url: `${process.env.EDITOR_URL}platform/done`,
       title: '',
       text: '',
     },
@@ -51,10 +46,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     'base64'
   ).toString('utf-8')
 
-  const signed = jwt.sign(message, privateKey, {
+  const signed = jwt.sign(payload, privateKey, {
     algorithm: 'RS256',
     expiresIn: 60,
-    keyid: '42',
+    keyid: process.env.EDITOR_KEY_ID,
   })
 
   return {
@@ -83,7 +78,6 @@ export default function Login({ jwt, redirectUri, state }) {
 
 // TODO: Use typecheck in server to sync types
 interface MessageHint {
-  type: 'deep-link'
   user: string
   dataToken: string
   nodeId: string

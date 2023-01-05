@@ -25,6 +25,7 @@ RUN yarn tsc -p tsconfig.server.json
 FROM dependencies as release
 COPY --from=build /usr/src/app/.next .next
 COPY --from=build /usr/src/app/server.js server.js
+COPY --from=build /usr/src/app/src/server-utils.js src/server-utils.js
 
 ENTRYPOINT ["yarn", "start:in-docker-container"]
 EXPOSE 3000
