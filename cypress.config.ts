@@ -13,13 +13,24 @@ export default defineConfig({
   chromeWebSecurity: false,
 
   e2e: {
-    setupNodeEvents(on, config) {
-      on('before:run', (details) => {
+    setupNodeEvents(on, _config) {
+      const server = new EdusharingServer()
+
+      on('before:run', () => {
         loadEnvConfig()
-        const server = new EdusharingServer()
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           server.listen(8100, resolve)
         })
+      })
+
+      on('task', {
+        deleteSavedVersionsInEdusharing() {
+          server.savedVersions = []
+          return null
+        },
+        getSavedVersionsInEdusharing() {
+          return server.savedVersions
+        },
       })
     },
   },

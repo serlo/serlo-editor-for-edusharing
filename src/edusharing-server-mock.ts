@@ -4,11 +4,10 @@ import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './storage-format'
 import { createAutoFromResponse } from './server-utils'
 
-// TODO delete
-let savedVersions: Array<{ comment: string }> = []
-
 export class EdusharingServer {
   private app: Express
+  public savedVersions: Array<{ comment: string }> = []
+
   constructor() {
     this.app = express()
 
@@ -119,7 +118,7 @@ export class EdusharingServer {
     })
 
     this.app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
-      savedVersions.push({ comment: `${req.query['versionComment']}` })
+      this.savedVersions.push({ comment: `${req.query['versionComment']}` })
       console.log(
         `[${new Date().toISOString()}]: Save registered with comment ${
           req.query['versionComment']
@@ -197,15 +196,6 @@ export class EdusharingServer {
         .end()
     })
 
-    this.app.delete('/_internals/saved-versions', (_req, res) => {
-      savedVersions = []
-      res.sendStatus(200).end()
-    })
-
-    this.app.get('/_internals/saved-versions', (_req, res) => {
-      res.json(savedVersions)
-    })
-
     this.app.all('*', (req, res) => {
       console.error(`${req.method} call to ${req.url} registered`)
       res.sendStatus(404)
@@ -229,3 +219,4 @@ function signJWT(payload: Record<string, unknown>) {
     keyid: 'key',
   })
 }
+

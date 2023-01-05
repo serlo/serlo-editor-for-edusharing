@@ -4,7 +4,7 @@ it('The editor can be called via the LTI Workflow', () => {
 })
 
 it('Button "Saved named version" saves a named version', () => {
-  cy.request('DELETE', 'http://localhost:8100/_internals/saved-versions')
+  cy.task('deleteSavedVersionsInEdusharing')
 
   cy.visit('http://localhost:8100')
   cy.contains('Benannte Version speichern').click()
@@ -12,13 +12,11 @@ it('Button "Saved named version" saves a named version', () => {
   cy.contains(/^Speichern$/).click()
   cy.contains(/^Speichern$/).should('not.exist')
 
-  cy.request('http://localhost:8100/_internals/saved-versions').then(
-    (response) => {
-      expect(response.body)
-        .to.be.an('array')
-        .that.deep.includes({ comment: 'version-name' })
-    }
-  )
+  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+    expect(savedVersions)
+      .to.be.an('array')
+      .that.deep.includes({ comment: 'version-name' })
+  })
 })
 
 it('Assets from edu-sharing can be included', () => {
