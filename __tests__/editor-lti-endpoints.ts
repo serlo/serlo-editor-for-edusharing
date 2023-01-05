@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 
 describe('All requests to editor endpoints /lti/... shall return Unauthorized (401) if url parameter "ltik" is missing or invalid.', () => {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = 'http://localhost:3000'
 
   // Shall contain all endpoints under /lti/... because all those need a valid ltik url parameter.
   const endpointsToTest = [
@@ -21,12 +21,12 @@ describe('All requests to editor endpoints /lti/... shall return Unauthorized (4
     })
   }
 
-  endpointsToTest.forEach(endpoint => {
+  endpointsToTest.forEach((endpoint) => {
     describe(`Endpoint ${endpoint}`, () => {
-      test.each([
-        `${baseUrl}${endpoint}`,
-        `${baseUrl}${endpoint}?ltik=foo`,
-      ])('url = %s', testUrl)
+      test.each([`${baseUrl}${endpoint}`, `${baseUrl}${endpoint}?ltik=foo`])(
+        'url = %s',
+        testUrl
+      )
     })
   })
 })
