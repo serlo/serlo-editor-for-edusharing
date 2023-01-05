@@ -1,16 +1,29 @@
-import express, { Express } from 'express'
+import express from 'express'
 import jwt from 'jsonwebtoken'
 import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './storage-format'
 import { createAutoFromResponse } from './server-utils'
 
 export class EdusharingServer {
-  private app: Express
+  private defaultCustom = {
+    getContentApiUrl:
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/ltiplatform/v13/content',
+    fileName: 'Hello worldd',
+    getDetailsSnippetUrl:
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details',
+    dataToken:
+      'kOXGc6AbqYW7iHOl3b48Pj/ngudoLCZk+DJwYxAg9wTiKsN9TKRY13qU+6vNNMEV2Guya3NPWO+Ay8IJDtQWMKxnkku/3mc+n64TIgMjs2yY7wXMYcvoRK4C9iXXpydNWQCGreYU2BcnMwne/b5BngOvBjqqVCPLMGT/lmvylP//GCzM7V99h9fKVMrgY97qOdsB1O0Ti//E3odWU1dFUMu3NLPy3MdTHXdViQpyPFRpgnZ8kcywDl0bLYSKy0pUuJy0hBvlnGmFyKlcQ38HaR2CZ9wRxrNgRxxEzGd8J+T6YSNoD8OyB9Nyjbp0N3tog4XhEZ/UASIqLYBzk+ygOA==',
+    postContentApiUrl:
+      'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/ltiplatform/v13/content',
+    appId: 'qsa2DgKBJ2WgoJO1',
+    nodeId: '604f62c1-6463-4206-a571-8c57097a54ae',
+    user: 'admin',
+  }
+  private custom = this.defaultCustom
+  private app = express()
   public savedVersions: Array<{ comment: string }> = []
 
   constructor() {
-    this.app = express()
-
     this.app.get('/', (_req, res) => {
       createAutoFromResponse({
         res,
@@ -66,20 +79,7 @@ export class EdusharingServer {
         },
         'https://purl.imsglobal.org/spec/lti/claim/message_type':
           'LtiResourceLinkRequest',
-        'https://purl.imsglobal.org/spec/lti/claim/custom': {
-          getContentApiUrl:
-            'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/ltiplatform/v13/content',
-          fileName: 'Hello worldd',
-          getDetailsSnippetUrl:
-            'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/details',
-          dataToken:
-            'kOXGc6AbqYW7iHOl3b48Pj/ngudoLCZk+DJwYxAg9wTiKsN9TKRY13qU+6vNNMEV2Guya3NPWO+Ay8IJDtQWMKxnkku/3mc+n64TIgMjs2yY7wXMYcvoRK4C9iXXpydNWQCGreYU2BcnMwne/b5BngOvBjqqVCPLMGT/lmvylP//GCzM7V99h9fKVMrgY97qOdsB1O0Ti//E3odWU1dFUMu3NLPy3MdTHXdViQpyPFRpgnZ8kcywDl0bLYSKy0pUuJy0hBvlnGmFyKlcQ38HaR2CZ9wRxrNgRxxEzGd8J+T6YSNoD8OyB9Nyjbp0N3tog4XhEZ/UASIqLYBzk+ygOA==',
-          postContentApiUrl:
-            'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/ltiplatform/v13/content',
-          appId: 'qsa2DgKBJ2WgoJO1',
-          nodeId: '604f62c1-6463-4206-a571-8c57097a54ae',
-          user: 'admin',
-        },
+        'https://purl.imsglobal.org/spec/lti/claim/custom': this.custom,
       }
 
       createAutoFromResponse({
@@ -200,6 +200,16 @@ export class EdusharingServer {
       console.error(`${req.method} call to ${req.url} registered`)
       res.sendStatus(404)
     })
+  }
+
+  init() {
+    this.savedVersions = []
+    this.custom = this.defaultCustom
+  }
+
+  // TODO: Better function
+  deleteDataToken() {
+    delete this.custom['dataToken']
   }
 
   listen(port: number, callback: () => void) {

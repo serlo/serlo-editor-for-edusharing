@@ -65,23 +65,30 @@ const server = (async () => {
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
 
-    createAutoFromResponse({
-      res,
-      method: 'GET',
-      targetUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
-      params: {
-        iss: process.env.EDITOR_URL,
-        target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-        login_hint: process.env.EDITOR_CLIENT_ID,
-        lti_message_hint: JSON.stringify({
-          user,
-          dataToken,
-          nodeId,
-        }),
-        client_id: process.env.EDITOR_CLIENT_ID,
-        lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
-      },
-    })
+    if (dataToken == null) {
+      res
+        .status(500)
+        .setHeader('Content-type', 'text/html')
+        .send('<html><body><p>dataToken is not set</p></body></html>')
+    } else {
+      createAutoFromResponse({
+        res,
+        method: 'GET',
+        targetUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
+        params: {
+          iss: process.env.EDITOR_URL,
+          target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+          login_hint: process.env.EDITOR_CLIENT_ID,
+          lti_message_hint: JSON.stringify({
+            user,
+            dataToken,
+            nodeId,
+          }),
+          client_id: process.env.EDITOR_CLIENT_ID,
+          lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+        },
+      })
+    }
   })
 
   server.get('/lti/get-embed-html', async (req, res) => {
@@ -174,7 +181,7 @@ const server = (async () => {
       nodeId,
       user,
       ...(version != null ? { version } : {}),
-      dataToken,
+      dataToken: dataToken ?? 'foo',
     }
     const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
       algorithm: 'RS256',

@@ -24,14 +24,20 @@ export default defineConfig({
       })
 
       on('task', {
-        deleteSavedVersionsInEdusharing() {
-          server.savedVersions = []
+        initEdusharingServer() {
+          server.init()
           return null
         },
         getSavedVersionsInEdusharing() {
           return server.savedVersions
         },
+        deleteDataToken() {
+          server.deleteDataToken()
+          return null
+        },
       })
     },
   },
+
+  experimentalInteractiveRunEvents: true,
 })
