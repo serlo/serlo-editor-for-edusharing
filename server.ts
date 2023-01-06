@@ -64,6 +64,7 @@ const server = (async () => {
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
+    const messageHint: MessageHint = { user, dataToken, nodeId }
 
     if (dataToken == null) {
       res
@@ -79,11 +80,7 @@ const server = (async () => {
           iss: process.env.EDITOR_URL,
           target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
           login_hint: process.env.EDITOR_CLIENT_ID,
-          lti_message_hint: JSON.stringify({
-            user,
-            dataToken,
-            nodeId,
-          }),
+          lti_message_hint: JSON.stringify(messageHint),
           client_id: process.env.EDITOR_CLIENT_ID,
           lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
         },
@@ -167,6 +164,64 @@ const server = (async () => {
         ],
       })
       .end()
+  })
+
+  server.get('/platform/login', async (req, res) => {
+    // TODO: verify token
+
+    // TODO: Proper parsing
+    const messageHintParam = req.query['lti_message_hint'] as string
+    const { user, dataToken, nodeId } = JSON.parse(
+      messageHintParam
+    ) as MessageHint
+
+    // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
+    // for an example of a deep linking requst payload
+    const payload = {
+      iss: process.env.EDITOR_URL,
+      // TODO: Should be a list
+      aud: process.env.EDITOR_CLIENT_ID,
+      sub: user,
+
+      iat: Date.now(),
+      nonce: req.query['nonce'],
+      dataToken,
+
+      'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
+        process.env.EDITOR_DEPLOYMENT_ID,
+      'https://purl.imsglobal.org/spec/lti/claim/message_type':
+        'LtiDeepLinkingRequest',
+      'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
+      'https://purl.imsglobal.org/spec/lti/claim/roles': [],
+      'https://purl.imsglobal.org/spec/lti/claim/context': { id: nodeId },
+      'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings': {
+        accept_types: ['ltiResourceLink'],
+        accept_presentation_document_targets: ['iframe'],
+        accept_multiple: true,
+        auto_create: false,
+        deep_link_return_url: `${process.env.EDITOR_URL}platform/done`,
+        title: '',
+        text: '',
+      },
+    }
+
+    const privateKey = Buffer.from(
+      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      'base64'
+    ).toString('utf-8')
+
+    const token = jwt.sign(payload, privateKey, {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      keyid: process.env.EDITOR_KEY_ID,
+    })
+
+    createAutoFromResponse({
+      res,
+      method: 'POST',
+      targetUrl: req.query['redirect_uri'].toString(),
+      params: { id_token: token, state: req.query['state'].toString() },
+    })
   })
 
   server.get('/lti/get-content', async (_req, res) => {
@@ -270,5 +325,11 @@ const server = (async () => {
     },
   })
 })()
+
+interface MessageHint {
+  user: string
+  dataToken: string
+  nodeId: string
+}
 
 export default server
