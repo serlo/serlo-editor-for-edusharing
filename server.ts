@@ -168,13 +168,23 @@ const server = (async () => {
 
   server.get('/platform/login', async (req, res) => {
     const nonce = req.query['nonce']
+    const state = req.query['state']
 
     if (typeof nonce !== 'string') {
-      res.status(400).send('nonce is not set').end()
+      res.status(400).send('nonce is not valid').end()
+      return
+    } else if (typeof state !== 'string') {
+      res.status(400).send('state is not valid').end()
+      return
+    } else if (
+      req.query['redirect_uri'] !== process.env.EDITOR_TARGET_DEEP_LINK_URL
+    ) {
+      res.status(400).send('redirect_uri is not valid').end()
+      return
+    } else if (req.query['client_id'] !== process.env.PLATFORM_CLIENT_ID) {
+      res.status(400).send('client_id is not valid').end()
       return
     }
-
-    // TODO: verify token
 
     // TODO: Proper parsing
     const messageHintParam = req.query['lti_message_hint'] as string
@@ -226,8 +236,8 @@ const server = (async () => {
     createAutoFromResponse({
       res,
       method: 'POST',
-      targetUrl: req.query['redirect_uri'].toString(),
-      params: { id_token: token, state: req.query['state'].toString() },
+      targetUrl: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+      params: { id_token: token, state },
     })
   })
 
