@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './storage-format'
 import { createAutoFromResponse, signJwtWithBase64Key } from './server-utils'
@@ -152,16 +152,10 @@ export class EdusharingServer {
           lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
         }
 
-        for (const [name, value] of Object.entries(targetParameters)) {
-          if (req.query[name] !== value) {
-            res
-              .status(400)
-              .json({
-                error: `Editor send invalid value '${req.query[name]}' for '${name}'`,
-                context: 'deeplink-flow',
-                location: req.route.path,
-              })
-              .end()
+        for (const [name, targetValue] of Object.entries(targetParameters)) {
+          const value = req.query['name']
+
+          if (isEditorValueInvalid({ req, res, name, value, targetValue })) {
             return
           }
         }
@@ -184,10 +178,16 @@ export class EdusharingServer {
     )
 
     this.app.post('/edu-sharing/rest/lti/v13/lti13', (req, res) => {
-      if (req.body.state !== this.state) {
-        res.status(400).send('state is invalid').end()
+      if (
+        isEditorValueInvalid({
+          req,
+          res,
+          name: 'state',
+          value: req.body.state,
+          targetValue: this.state,
+        })
+      )
         return
-      }
 
       const payload = {
         iss: 'editor',
@@ -258,5 +258,33 @@ export class EdusharingServer {
 
   listen(port: number, callback: () => void) {
     this.app.listen(port, callback)
+  }
+}
+
+function isEditorValueInvalid({
+  req,
+  res,
+  name,
+  value,
+  targetValue,
+}: {
+  req: Request
+  res: Response
+  name: string
+  value: unknown
+  targetValue: unknown
+}): boolean {
+  if (value === targetValue) {
+    return false
+  } else {
+    res
+      .status(400)
+      .json({
+        error: `Editor send invalid value '${value}' for '${name}'`,
+        context: 'edusharing-mock-server',
+        location: req.route.path,
+      })
+      .end()
+    return true
   }
 }
