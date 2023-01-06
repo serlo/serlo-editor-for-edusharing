@@ -130,32 +130,43 @@ export class EdusharingServer {
     this.app.get(
       '/edu-sharing/rest/lti/v13/oidc/login_initiations',
       (req, res) => {
-        if (req.query['iss'] != process.env.EDITOR_URL) {
-          res
-            .status(400)
-            .json({
-              error: 'variable `iss` is invalid',
-              context: 'deeplink-flow',
-              url: req.url,
-            })
-            .end()
-        } else {
-          const messageHint = decodeURIComponent(
-            req.query['lti_message_hint'].toString()
-          )
-
-          createAutoFromResponse({
-            res,
-            method: 'GET',
-            targetUrl: process.env.EDITOR_URL + 'platform/login',
-            params: {
-              nonce: 'nonce',
-              state: 'state',
-              lti_message_hint: messageHint,
-              redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-            },
-          })
+        const targetParameters = {
+          iss: process.env.EDITOR_URL,
+          target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+          login_hint: process.env.EDITOR_CLIENT_ID,
+          client_id: process.env.EDITOR_CLIENT_ID,
+          lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
         }
+
+        for (const [name, value] of Object.entries(targetParameters)) {
+          if (req.query[name] !== value) {
+            res
+              .status(400)
+              .json({
+                error: `Editor send invalid value '${req.query[name]}' for '${name}'`,
+                context: 'deeplink-flow',
+                location: req.route.path,
+              })
+              .end()
+            return
+          }
+        }
+
+        const messageHint = decodeURIComponent(
+          req.query['lti_message_hint'].toString()
+        )
+
+        createAutoFromResponse({
+          res,
+          method: 'GET',
+          targetUrl: process.env.EDITOR_URL + 'platform/login',
+          params: {
+            nonce: 'nonce',
+            state: 'state',
+            lti_message_hint: messageHint,
+            redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+          },
+        })
       }
     )
 
