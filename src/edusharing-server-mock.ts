@@ -1,10 +1,11 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
 import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './storage-format'
-import { createAutoFromResponse } from './server-utils'
+import { createAutoFromResponse, signJwtWithBase64Key } from './server-utils'
 
 export class EdusharingServer {
+  private keyid = 'key'
+  private key: string
   private defaultCustom = {
     getContentApiUrl:
       'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/ltiplatform/v13/content',
@@ -24,6 +25,9 @@ export class EdusharingServer {
   public savedVersions: Array<{ comment: string }> = []
 
   constructor() {
+    // In the cypress tests the env variables are read after this file is
+    // included. Thus this variable must be set in the constructor.
+    this.key = process.env.EDITOR_PLATFORM_PRIVATE_KEY
     this.app.get('/', (_req, res) => {
       createAutoFromResponse({
         res,
@@ -87,7 +91,11 @@ export class EdusharingServer {
         method: 'POST',
         targetUrl: process.env.EDITOR_URL + '/lti',
         params: {
-          id_token: signJWT(payload),
+          id_token: signJwtWithBase64Key({
+            payload,
+            keyid: this.keyid,
+            key: this.key,
+          }),
           state: req.query['nonce'].toString(),
         },
       })
@@ -203,7 +211,11 @@ export class EdusharingServer {
         method: 'POST',
         targetUrl: process.env.EDITOR_URL + 'platform/done',
         params: {
-          JWT: signJWT(payload),
+          JWT: signJwtWithBase64Key({
+            payload,
+            keyid: this.keyid,
+            key: this.key,
+          }),
         },
       })
     })
@@ -236,17 +248,4 @@ export class EdusharingServer {
   listen(port: number, callback: () => void) {
     this.app.listen(port, callback)
   }
-}
-
-function signJWT(payload: Record<string, unknown>) {
-  const privateKey = Buffer.from(
-    process.env.EDITOR_PLATFORM_PRIVATE_KEY,
-    'base64'
-  ).toString('utf-8')
-
-  return jwt.sign(payload, privateKey, {
-    algorithm: 'RS256',
-    expiresIn: 60,
-    keyid: 'key',
-  })
 }

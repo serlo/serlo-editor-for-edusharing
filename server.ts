@@ -1,5 +1,4 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
 import { Provider } from 'ltijs'
 import next from 'next'
 import fetch from 'node-fetch'
@@ -9,7 +8,12 @@ import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
 import JSONWebKey from 'json-web-key'
 import { Buffer } from 'buffer'
-import { createAutoFromResponse, loadEnvConfig } from './src/server-utils'
+import {
+  createAutoFromResponse,
+  loadEnvConfig,
+  signJwtWithBase64Key,
+  signJwt,
+} from './src/server-utils'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -94,7 +98,7 @@ const server = (async () => {
     const repositoryId = req.query['repositoryId']
     const { token } = res.locals
 
-    const jwtBody = {
+    const payload = {
       aud: process.env.EDITOR_CLIENT_ID,
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
         process.env.EDITOR_DEPLOYMENT_ID,
@@ -105,16 +109,10 @@ const server = (async () => {
       },
     }
 
-    // TODO: Duplicate code
-    const privateKey = Buffer.from(
-      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
-      'base64'
-    ).toString('utf-8')
-
-    const message = jwt.sign(jwtBody, privateKey, {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const message = signJwtWithBase64Key({
+      payload,
       keyid: process.env.EDITOR_KEY_ID,
+      key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
     })
 
     const url = new URL(
@@ -229,15 +227,10 @@ const server = (async () => {
       },
     }
 
-    const privateKey = Buffer.from(
-      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
-      'base64'
-    ).toString('utf-8')
-
-    const token = jwt.sign(payload, privateKey, {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const token = signJwtWithBase64Key({
+      payload,
       keyid: process.env.EDITOR_KEY_ID,
+      key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
     })
 
     createAutoFromResponse({
@@ -255,16 +248,16 @@ const server = (async () => {
 
     const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
       token.platformContext.custom
-    const jwtBody = {
+    const payload = {
       appId,
       nodeId,
       user,
       ...(version != null ? { version } : {}),
       dataToken: dataToken ?? 'foo',
     }
-    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const message = signJwt({
+      payload,
+      key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
     })
     const url = new URL(getContentApiUrl)
@@ -286,15 +279,10 @@ const server = (async () => {
 
     const { appId, nodeId, user, postContentApiUrl, dataToken } =
       token.platformContext.custom
-    const jwtBody = {
-      appId,
-      nodeId,
-      user,
-      dataToken,
-    }
-    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const payload = { appId, nodeId, user, dataToken }
+    const message = signJwt({
+      payload,
+      key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
     })
 

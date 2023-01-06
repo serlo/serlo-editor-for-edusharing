@@ -1,4 +1,5 @@
 import type { Response } from 'express'
+import jwt from 'jsonwebtoken'
 import nextEnv from '@next/env'
 
 const doNothingLogger = {
@@ -13,6 +14,38 @@ export function loadEnvConfig(args?: { showLogs?: boolean }) {
     true,
     showLogs ? console : doNothingLogger
   )
+}
+
+export function signJwtWithBase64Key({
+  payload,
+  keyid,
+  key,
+}: {
+  payload: Record<string, unknown>
+  keyid: string
+  key: string
+}) {
+  return signJwt({
+    payload,
+    keyid,
+    key: Buffer.from(key, 'base64').toString('utf-8'),
+  })
+}
+
+export function signJwt({
+  payload,
+  keyid,
+  key,
+}: {
+  payload: Record<string, unknown>
+  keyid: string
+  key: string
+}) {
+  return jwt.sign(payload, key, {
+    algorithm: 'RS256',
+    expiresIn: 60,
+    keyid,
+  })
 }
 
 export function createAutoFromResponse({
