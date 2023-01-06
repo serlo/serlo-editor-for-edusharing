@@ -144,7 +144,7 @@ export class EdusharingServer {
         }
 
         for (const [name, targetValue] of Object.entries(targetParameters)) {
-          const value = req.query['name']
+          const value = req.query[name]
 
           if (isEditorValueInvalid({ req, res, name, value, targetValue })) {
             return

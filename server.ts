@@ -6,7 +6,6 @@ import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
-import { Buffer } from 'buffer'
 import {
   createAutoFromResponse,
   loadEnvConfig,
