@@ -24,23 +24,28 @@ it('Button "Saved named version" saves a named version', () => {
 it('Assets from edu-sharing can be included', () => {
   cy.visit('http://localhost:8100/')
 
-  cy.get('div.add-trigger').eq(1).click()
-  cy.contains('Edusharing Inhalte').click()
-  cy.contains('Datei von edu-sharing einbinden').click()
+  embedEdusharingAsset()
+
+  // TODO: Find a way around this wait
   cy.wait(6000)
   cy.contains('Inhalt von edu-sharing')
 })
 
 describe('Including assets from edu-sharing', () => {
-  it.only('fails when edu-sharing has not provided a dataToken in the LTI flow', () => {
+  it('fails when edu-sharing has not provided a dataToken in the LTI flow', () => {
     cy.task('deleteDataToken')
 
-    cy.visit('http://localhost:8100/')
-    cy.get('div.add-trigger').eq(1).click()
-    cy.contains('Edusharing Inhalte').click()
-    cy.contains('Datei von edu-sharing einbinden').click()
+    embedEdusharingAsset()
+
     cy.getIframe().contains('dataToken is not set')
   })
 })
+
+function embedEdusharingAsset() {
+  cy.visit('http://localhost:8100/')
+  cy.get('div.add-trigger').eq(1).click()
+  cy.contains('Edusharing Inhalte').click()
+  cy.contains('Datei von edu-sharing einbinden').click()
+}
 
 export {}
