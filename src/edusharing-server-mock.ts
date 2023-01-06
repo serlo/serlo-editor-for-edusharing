@@ -130,21 +130,32 @@ export class EdusharingServer {
     this.app.get(
       '/edu-sharing/rest/lti/v13/oidc/login_initiations',
       (req, res) => {
-        const messageHint = decodeURIComponent(
-          req.query['lti_message_hint'].toString()
-        )
+        if (req.query['iss'] != process.env.EDITOR_URL) {
+          res
+            .status(400)
+            .json({
+              error: 'variable `iss` is invalid',
+              context: 'deeplink-flow',
+              url: req.url,
+            })
+            .end()
+        } else {
+          const messageHint = decodeURIComponent(
+            req.query['lti_message_hint'].toString()
+          )
 
-        createAutoFromResponse({
-          res,
-          method: 'GET',
-          targetUrl: process.env.EDITOR_URL + 'platform/login',
-          params: {
-            nonce: 'nonce',
-            state: 'state',
-            lti_message_hint: messageHint,
-            redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-          },
-        })
+          createAutoFromResponse({
+            res,
+            method: 'GET',
+            targetUrl: process.env.EDITOR_URL + 'platform/login',
+            params: {
+              nonce: 'nonce',
+              state: 'state',
+              lti_message_hint: messageHint,
+              redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+            },
+          })
+        }
       }
     )
 
@@ -229,4 +240,3 @@ function signJWT(payload: Record<string, unknown>) {
     keyid: 'key',
   })
 }
-
