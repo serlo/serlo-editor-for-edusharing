@@ -64,7 +64,6 @@ const server = (async () => {
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
-    const messageHint: MessageHint = { user, dataToken, nodeId }
 
     if (dataToken == null) {
       res
@@ -80,9 +79,11 @@ const server = (async () => {
           iss: process.env.EDITOR_URL,
           target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
           login_hint: process.env.EDITOR_CLIENT_ID,
-          lti_message_hint: JSON.stringify(messageHint),
           client_id: process.env.EDITOR_CLIENT_ID,
           lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+          user,
+          dataToken,
+          nodeId,
         },
       })
     }
@@ -169,6 +170,9 @@ const server = (async () => {
   server.get('/platform/login', async (req, res) => {
     const nonce = req.query['nonce']
     const state = req.query['state']
+    const user = req.query['user']
+    const nodeId = req.query['nodeId']
+    const dataToken = req.query['dataToken']
 
     if (typeof nonce !== 'string') {
       res.status(400).send('nonce is not valid').end()
@@ -184,13 +188,16 @@ const server = (async () => {
     } else if (req.query['client_id'] !== process.env.PLATFORM_CLIENT_ID) {
       res.status(400).send('client_id is not valid').end()
       return
+    } else if (typeof user !== 'string') {
+      res.status(400).send('user is not valid').end()
+      return
+    } else if (typeof nodeId !== 'string') {
+      res.status(400).send('nodeId is not valid').end()
+      return
+    } else if (typeof dataToken !== 'string') {
+      res.status(400).send('dataToken is not valid').end()
+      return
     }
-
-    // TODO: Proper parsing
-    const messageHintParam = req.query['lti_message_hint'] as string
-    const { user, dataToken, nodeId } = JSON.parse(
-      messageHintParam
-    ) as MessageHint
 
     // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
     // for an example of a deep linking requst payload
@@ -342,11 +349,5 @@ const server = (async () => {
     },
   })
 })()
-
-interface MessageHint {
-  user: string
-  dataToken: string
-  nodeId: string
-}
 
 export default server
