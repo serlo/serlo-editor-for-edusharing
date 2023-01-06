@@ -14,10 +14,10 @@ export default defineConfig({
 
   e2e: {
     setupNodeEvents(on, _config) {
+      loadEnvConfig()
       const server = new EdusharingServer()
 
       on('before:run', () => {
-        loadEnvConfig()
         return new Promise((resolve) => {
           server.listen(8100, resolve)
         })
