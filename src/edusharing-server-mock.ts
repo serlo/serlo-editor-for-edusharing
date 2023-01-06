@@ -5,6 +5,8 @@ import { createAutoFromResponse, signJwtWithBase64Key } from './server-utils'
 
 export class EdusharingServer {
   private keyid = 'key'
+  private state = 'state-value'
+  private nonce = 'nonce-value'
   private key: string
   private defaultCustom = {
     getContentApiUrl:
@@ -28,6 +30,10 @@ export class EdusharingServer {
     // In the cypress tests the env variables are read after this file is
     // included. Thus this variable must be set in the constructor.
     this.key = process.env.EDITOR_PLATFORM_PRIVATE_KEY
+
+    this.app.use(express.json())
+    this.app.use(express.urlencoded({ extended: true }))
+
     this.app.get('/', (_req, res) => {
       createAutoFromResponse({
         res,
@@ -165,8 +171,8 @@ export class EdusharingServer {
           method: 'GET',
           targetUrl: process.env.EDITOR_URL + 'platform/login',
           params: {
-            nonce: 'nonce',
-            state: 'state',
+            nonce: this.nonce,
+            state: this.state,
             user: req.query['user'].toString(),
             dataToken: req.query['dataToken'].toString(),
             nodeId: req.query['nodeId'].toString(),
@@ -177,12 +183,17 @@ export class EdusharingServer {
       }
     )
 
-    this.app.post('/edu-sharing/rest/lti/v13/lti13', (_req, res) => {
+    this.app.post('/edu-sharing/rest/lti/v13/lti13', (req, res) => {
+      if (req.body.state !== this.state) {
+        res.status(400).send('state is invalid').end()
+        return
+      }
+
       const payload = {
         iss: 'editor',
         aud: 'http://localhost:3000/',
         iat: Date.now(),
-        nonce: 'nonce',
+        nonce: this.nonce,
         azp: 'http://localhost:3000/',
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
         'https://purl.imsglobal.org/spec/lti/claim/message_type':
