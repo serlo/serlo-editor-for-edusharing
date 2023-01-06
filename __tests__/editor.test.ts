@@ -1,19 +1,11 @@
 import fetch from 'node-fetch'
 import { expect } from '@jest/globals'
 
-describe.skip('Editor tests', () => {
-  const port = parseInt(process.env.PORT, 10) || 3000
-  const url = `http://localhost:${port}`
+describe('endpoint "/platform/login"', () => {
+  test('fails when nonce is not set', async () => {
+    const response = await fetch('http://localhost:3000/platform/login')
 
-  test('Open editor with LTI', () => {})
-
-  test('Open editor in view mode when postContentApiUrl is not present ', () => {})
-
-  test('Button "Close and Save"', () => {})
-
-  test('Button "name version"', () => {})
-
-  test('Content is saved after 5 secs', () => {})
-
-  test('Content is saved when closed with a tab', () => {})
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('nonce is not set')
+  })
 })

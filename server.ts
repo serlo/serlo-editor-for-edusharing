@@ -167,6 +167,13 @@ const server = (async () => {
   })
 
   server.get('/platform/login', async (req, res) => {
+    const nonce = req.query['nonce']
+
+    if (typeof nonce !== 'string') {
+      res.status(400).send('nonce is not set').end()
+      return
+    }
+
     // TODO: verify token
 
     // TODO: Proper parsing
@@ -184,7 +191,7 @@ const server = (async () => {
       sub: user,
 
       iat: Date.now(),
-      nonce: req.query['nonce'],
+      nonce,
       dataToken,
 
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
