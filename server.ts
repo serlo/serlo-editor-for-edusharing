@@ -6,13 +6,13 @@ import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
-import JSONWebKey from 'json-web-key'
 import { Buffer } from 'buffer'
 import {
   createAutoFromResponse,
   loadEnvConfig,
   signJwtWithBase64Key,
   signJwt,
+  createJWKSResponse,
 } from './src/server-utils'
 
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -144,25 +144,12 @@ const server = (async () => {
     }
   })
 
-  // TODO: Use another library
   server.use('/platform/keys', async (_req, res) => {
-    res
-      .json({
-        keys: [
-          {
-            kid: process.env.EDITOR_KEY_ID,
-            alg: 'RS256',
-            use: 'sig',
-            ...JSONWebKey.fromPEM(
-              Buffer.from(
-                process.env.EDITOR_PLATFORM_PUBLIC_KEY,
-                'base64'
-              ).toString('utf-8')
-            ).toJSON(),
-          },
-        ],
-      })
-      .end()
+    createJWKSResponse({
+      res,
+      keyid: process.env.EDITOR_KEY_ID,
+      key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+    })
   })
 
   server.get('/platform/login', async (req, res) => {

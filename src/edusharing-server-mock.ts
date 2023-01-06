@@ -1,7 +1,10 @@
 import express, { Request, Response } from 'express'
-import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './storage-format'
-import { createAutoFromResponse, signJwtWithBase64Key } from './server-utils'
+import {
+  createAutoFromResponse,
+  createJWKSResponse,
+  signJwtWithBase64Key,
+} from './server-utils'
 
 export class EdusharingServer {
   private keyid = 'key'
@@ -108,23 +111,11 @@ export class EdusharingServer {
     })
 
     this.app.get('/edu-sharing/rest/lti/v13/jwks', (_req, res) => {
-      res
-        .json({
-          keys: [
-            {
-              kid: 'key',
-              alg: 'RS256',
-              use: 'sig',
-              ...JSONWebKey.fromPEM(
-                Buffer.from(
-                  process.env.EDITOR_PLATFORM_PUBLIC_KEY,
-                  'base64'
-                ).toString('utf-8')
-              ).toJSON(),
-            },
-          ],
-        })
-        .end()
+      createJWKSResponse({
+        res,
+        keyid: this.keyid,
+        key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+      })
     })
 
     this.app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {

@@ -1,5 +1,6 @@
 import type { Response } from 'express'
 import jwt from 'jsonwebtoken'
+import JSONWebKey from 'json-web-key'
 import nextEnv from '@next/env'
 
 const doNothingLogger = {
@@ -14,6 +15,29 @@ export function loadEnvConfig(args?: { showLogs?: boolean }) {
     true,
     showLogs ? console : doNothingLogger
   )
+}
+
+export function createJWKSResponse(args: {
+  res: Response
+  keyid: string
+  key: string
+}) {
+  const { res, keyid, key } = args
+
+  res
+    .json({
+      keys: [
+        {
+          kid: keyid,
+          alg: 'RS256',
+          use: 'sig',
+          ...JSONWebKey.fromPEM(
+            Buffer.from(key, 'base64').toString('utf-8')
+          ).toJSON(),
+        },
+      ],
+    })
+    .end()
 }
 
 export function signJwtWithBase64Key({
