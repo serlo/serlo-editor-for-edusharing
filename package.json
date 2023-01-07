@@ -19,7 +19,7 @@
     "docker:stop": "docker container stop ece-as-a-service-from-local-build && docker container rm ece-as-a-service-from-local-build",
     "docker:rm": "docker image rm ece-as-a-service-local-build",
     "e2e": "cypress run",
-    "e2e:with-server": "start-server-and-test start:server '3000' e2e",
+    "e2e:with-server": "start-server-and-test start:server-with-mongodb '3000' e2e",
     "e2e:cypress": "cypress open",
     "e2e:with-docker": "npm-run-all -c docker:build start:mongodb docker:run e2e docker:stop docker:rm",
     "format": "run-p -c \"format:*\"",
@@ -35,9 +35,10 @@
     "start:in-docker-container": "NODE_ENV=production node --experimental-modules --experimental-specifier-resolution=node server.js",
     "start:mongodb": "docker-compose up -d",
     "start:server": "TS_NODE_PROJECT='tsconfig.server.json' NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch server.ts --watch src server.ts",
+    "start:server-with-mongodb": "npm-run-all start:mongodb start:server",
     "stop:mongodb": "docker-compose down",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "test:with-server": "start-server-and-test start:server '3000' test"
+    "test:with-server": "start-server-and-test start:server-with-mongodb '3000' test"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
