@@ -1,11 +1,15 @@
 import fetch from 'node-fetch'
-import { expect } from '@jest/globals'
+import { expect, describe } from '@jest/globals'
 
 describe('Calls for LTI request tests', () => {
   const url = process.env.EDITOR_URL
 
   test('/platform/keys', async () => {
-    const expected = {
+    const response = await fetch(`${url}/platform/keys`)
+    const result = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(result).toEqual({
       keys: [
         {
           kid: '42',
@@ -16,17 +20,15 @@ describe('Calls for LTI request tests', () => {
           e: 'AQAB',
         },
       ],
-    }
-
-    const response = await fetch(`${url}/platform/keys`)
-    const result = await response.json()
-
-    expect(response.status).toBe(200)
-    expect(result).toEqual(expected)
+    })
   })
 
   test('/lti/keys', async () => {
-    const expected = {
+    const response = await fetch(`${url}/lti/keys`)
+    const result = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(result).toEqual({
       keys: [
         {
           kty: 'RSA',
@@ -37,12 +39,6 @@ describe('Calls for LTI request tests', () => {
           use: 'sig',
         },
       ],
-    }
-
-    const response = await fetch(`${url}/lti/keys`)
-    const result = await response.json()
-
-    expect(response.status).toBe(200)
-    expect(result).toEqual(expected)
+    })
   })
 })
