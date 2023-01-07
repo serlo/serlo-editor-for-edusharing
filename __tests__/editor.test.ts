@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { expect } from '@jest/globals'
+import { expect, test, describe } from '@jest/globals'
 
 describe('endpoint "/platform/login"', () => {
   const correctParamaters = {
