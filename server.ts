@@ -2,6 +2,7 @@ import express from 'express'
 import { Provider } from 'ltijs'
 import next from 'next'
 import fetch from 'node-fetch'
+import jwt from 'jsonwebtoken'
 import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
@@ -63,6 +64,7 @@ const server = (async () => {
 
   const server = express()
 
+  server.use(express.urlencoded({ extended: true }))
   server.use('/lti', Provider.app)
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
@@ -227,6 +229,34 @@ const server = (async () => {
       targetUrl: process.env.EDITOR_TARGET_DEEP_LINK_URL,
       params: { id_token: token, state },
     })
+  })
+
+  server.post('/platform/done', async (req, res) => {
+    // TODO: verify token
+    const decoded = jwt.decode(req.body.JWT, { complete: true })
+
+    // Test scheme
+    const asset = decoded.payload[
+      'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
+    ][0]['custom'] as { repositoryId: string; nodeId: string }
+
+    res
+      .setHeader('Content-type', 'text/html')
+      .send(
+        `<!DOCTYPE html>
+          <html>
+            <body>
+              <script type="text/javascript">
+                parent.postMessage({
+                  repositoryId: '${asset.repositoryId}',
+                  nodeId: '${asset.nodeId}'
+                }, '${process.env.EDITOR_URL}')
+              </script>
+            </body>
+          </html>
+        `
+      )
+      .end()
   })
 
   server.get('/lti/get-content', async (_req, res) => {
