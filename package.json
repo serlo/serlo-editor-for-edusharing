@@ -75,6 +75,7 @@
     "immutable": "^4.2.1",
     "json-web-key": "^0.4.0",
     "jsonwebtoken": "^9.0.0",
+    "jwks-rsa": "^3.0.0",
     "ltijs": "^5.9.0",
     "next": "^13.1.1",
     "node-fetch": "^3.3.0",

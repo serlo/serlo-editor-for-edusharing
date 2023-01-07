@@ -187,7 +187,9 @@ const server = (async () => {
     // for an example of a deep linking requst payload
     const payload = {
       iss: process.env.EDITOR_URL,
-      // TODO: Should be a list
+
+      // TODO: This should be a list. Fix this when edusharing has fixed the
+      // parsing of the JWT.
       aud: process.env.EDITOR_CLIENT_ID,
       sub: user,
 

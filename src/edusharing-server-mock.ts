@@ -5,6 +5,8 @@ import {
   createJWKSResponse,
   signJwtWithBase64Key,
 } from './server-utils'
+import jwt from 'jsonwebtoken'
+import JWKSClient from 'jwks-rsa'
 
 export class EdusharingServer {
   private keyid = 'key'
@@ -25,6 +27,7 @@ export class EdusharingServer {
     nodeId: '604f62c1-6463-4206-a571-8c57097a54ae',
     user: 'admin',
   }
+  private user = 'admin'
   private custom = this.defaultCustom
   private app = express()
   public savedVersions: Array<{ comment: string }> = []
@@ -46,7 +49,7 @@ export class EdusharingServer {
           iss: process.env.PLATFORM_URL,
 
           // Test whether this is optional
-          login_hint: 'admin',
+          login_hint: this.user,
           lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
           lti_deployment_id: '1',
           client_id: process.env.PLATFORM_CLIENT_ID,
@@ -60,7 +63,7 @@ export class EdusharingServer {
         iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
         iat: Date.now(),
         aud: process.env.PLATFORM_CLIENT_ID,
-        sub: 'admin',
+        sub: this.user,
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '1',
         'https://purl.imsglobal.org/spec/lti/claim/context': {
           id: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
@@ -180,45 +183,91 @@ export class EdusharingServer {
       )
         return
 
-      const payload = {
-        iss: 'editor',
-        aud: 'http://localhost:3000/',
-        iat: Date.now(),
-        nonce: this.nonce,
-        azp: 'http://localhost:3000/',
-        'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
-        'https://purl.imsglobal.org/spec/lti/claim/message_type':
-          'LtiDeepLinkingResponse',
-        'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
-        'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': [
-          {
-            custom: {
-              repositoryId: 'serlo-edusharing',
-              nodeId: '960c48d0-5e01-45ca-aaf6-d648269f0db2',
-            },
-            icon: {
-              width: 'null',
-              url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/themes/default/images/common/mime-types/svg/file-image.svg',
-              height: 'null',
-            },
-            type: 'ltiResourceLink',
-            title: '2020-11-13-152700_392x305_scrot.png',
-            url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
-          },
-        ],
+      if (typeof req.body.id_token !== 'string') {
+        res.status(400).send('id_token is undefined').end()
+        return
       }
 
-      createAutoFromResponse({
-        res,
-        method: 'POST',
-        targetUrl: process.env.EDITOR_URL + 'platform/done',
-        params: {
-          JWT: signJwtWithBase64Key({
-            payload,
-            keyid: this.keyid,
-            key: this.key,
-          }),
-        },
+      const jwksClient = JWKSClient({
+        jwksUri: 'http://localhost:3000/platform/keys',
+      })
+
+      async function fetchSigningKey(keyid: string) {
+        const signingKey = await jwksClient.getSigningKey(keyid)
+
+        return signingKey.getPublicKey()
+      }
+
+      function getKey(
+        header: { kid?: string },
+        callback: (_: Error, key: string) => void
+      ) {
+        if (header.kid == null) {
+          res.status(500).send('edusharing did not provide a keyid').end()
+        } else {
+          fetchSigningKey(header.kid)
+            .then((key) => callback(null, key))
+            .catch((err) => {
+              console.log(err)
+              res.status(400).send(err.message)
+            })
+        }
+      }
+
+      const verifyOptions = {
+        audience: process.env.EDITOR_CLIENT_ID,
+        issuer: process.env.EDITOR_URL,
+        sub: this.user,
+        nonce: this.nonce,
+      }
+
+      jwt.verify(req.body.id_token, getKey, verifyOptions, (err) => {
+        if (err != null) {
+          console.log('verify', err)
+          res.status(400).send(err.message).end()
+          return
+        }
+
+        const payload = {
+          iss: 'editor',
+          aud: 'http://localhost:3000/',
+          iat: Date.now(),
+          nonce: this.nonce,
+          azp: 'http://localhost:3000/',
+          'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
+          'https://purl.imsglobal.org/spec/lti/claim/message_type':
+            'LtiDeepLinkingResponse',
+          'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
+          'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': [
+            {
+              custom: {
+                repositoryId: 'serlo-edusharing',
+                nodeId: '960c48d0-5e01-45ca-aaf6-d648269f0db2',
+              },
+              icon: {
+                width: 'null',
+                url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/themes/default/images/common/mime-types/svg/file-image.svg',
+                height: 'null',
+              },
+              type: 'ltiResourceLink',
+              title: '2020-11-13-152700_392x305_scrot.png',
+              url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
+            },
+          ],
+        }
+
+        createAutoFromResponse({
+          res,
+          method: 'POST',
+          targetUrl: process.env.EDITOR_URL + 'platform/done',
+          params: {
+            JWT: signJwtWithBase64Key({
+              payload,
+              keyid: this.keyid,
+              key: this.key,
+            }),
+          },
+        })
       })
     })
 
