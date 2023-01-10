@@ -12,7 +12,7 @@ describe('All requests to editor endpoints /lti/... shall return Unauthorized (4
     '/lti/get-content',
   ]
 
-  const testUrl = async (url) => {
+  const fetchAndExpectErrorResponse = async (url) => {
     const response = await fetch(url)
     expect(response.status).toBe(401)
     expect(await response.json()).toMatchObject({
@@ -21,12 +21,8 @@ describe('All requests to editor endpoints /lti/... shall return Unauthorized (4
     })
   }
 
-  endpointsToTest.forEach((endpoint) => {
-    describe(`Endpoint ${endpoint}`, () => {
-      test.each([`${baseUrl}${endpoint}`, `${baseUrl}${endpoint}?ltik=foo`])(
-        'url = %s',
-        testUrl
-      )
-    })
+  test.each(endpointsToTest)('Endpoint %s', (endpoint) => {
+    fetchAndExpectErrorResponse(`${baseUrl}${endpoint}`)
+    fetchAndExpectErrorResponse(`${baseUrl}${endpoint}?ltik=foo`)
   })
 })
