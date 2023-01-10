@@ -1,10 +1,10 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import nextEnv from '@next/env'
 import JSONWebKey from 'json-web-key'
 import { emptyDocument } from './src/storage-format'
+import { createAutoFromResponse, loadEnvConfig } from './src/server-utils'
 
-nextEnv.loadEnvConfig(process.cwd())
+loadEnvConfig()
 const edusharingPort = 8100
 
 const app = express()
@@ -216,45 +216,6 @@ app.listen(edusharingPort, () => {
   )
 })
 
-function createAutoFromResponse({
-  res,
-  method = 'GET',
-  targetUrl,
-  params,
-}: {
-  res: express.Response
-  method?: 'GET' | 'POST'
-  targetUrl: string
-  params: Record<string, string>
-}) {
-  const escapedTargetUrl = escapeHTML(targetUrl)
-  const formDataHtml = Object.entries(params)
-    .map(([name, value]) => {
-      const escapedValue = escapeHTML(value)
-      return `<input type="hidden" name="${name}" value="${escapedValue}" />`
-    })
-    .join('\n')
-
-  res.setHeader('Content-Type', 'text/html')
-  res.send(
-    `
-    <!DOCTYPE html>
-    <html>
-    <head><title>Redirect to ${escapedTargetUrl}</title></head>
-    <body>
-      <form id="form" action="${escapedTargetUrl}" method="${method}">
-        ${formDataHtml}
-      </form>
-      <script type="text/javascript">
-        document.getElementById("form").submit();
-      </script>
-    </body>
-    </html>
-  `.trim()
-  )
-  res.end()
-}
-
 function signJWT(payload: Record<string, unknown>) {
   const privateKey = Buffer.from(
     process.env.EDITOR_PLATFORM_PRIVATE_KEY,
@@ -266,14 +227,6 @@ function signJWT(payload: Record<string, unknown>) {
     expiresIn: 60,
     keyid: 'key',
   })
-}
-
-function escapeHTML(text: string): string {
-  return text
-    .replaceAll('&', '&amp;')
-    .replaceAll('"', '&quot;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
 }
 
 export {}

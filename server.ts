@@ -1,4 +1,3 @@
-import nextEnv from '@next/env'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import { Provider } from 'ltijs'
@@ -10,13 +9,14 @@ import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
 import JSONWebKey from 'json-web-key'
 import { Buffer } from 'buffer'
+import { createAutoFromResponse, loadEnvConfig } from './src/server-utils'
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const isDevEnvironment = process.env.NODE_ENV !== 'production'
+const app = next({ dev: isDevEnvironment })
 const handle = app.getRequestHandler()
 
-nextEnv.loadEnvConfig('./', dev)
+if (isDevEnvironment) loadEnvConfig()
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
@@ -74,7 +74,6 @@ const server = (async () => {
         target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
         login_hint: process.env.EDITOR_CLIENT_ID,
         lti_message_hint: JSON.stringify({
-          type: 'deep-link',
           user,
           dataToken,
           nodeId,
@@ -264,53 +263,5 @@ const server = (async () => {
     },
   })
 })()
-
-// TODO: Find better place to store helper functions
-export function createAutoFromResponse({
-  res,
-  method = 'GET',
-  targetUrl,
-  params,
-}: {
-  res: express.Response
-  method?: 'GET' | 'POST'
-  targetUrl: string
-  params: Record<string, string>
-}) {
-  const escapedTargetUrl = escapeHTML(targetUrl)
-  const formDataHtml = Object.entries(params)
-    .map(([name, value]) => {
-      const escapedValue = escapeHTML(value)
-      return `<input type="hidden" name="${name}" value="${escapedValue}" />`
-    })
-    .join('\n')
-
-  res.setHeader('Content-Type', 'text/html')
-  res.send(
-    `
-    <!DOCTYPE html>
-    <html>
-    <head><title>Redirect to ${escapedTargetUrl}</title></head>
-    <body>
-      <form id="form" action="${escapedTargetUrl}" method="${method}">
-        ${formDataHtml}
-      </form>
-      <script type="text/javascript">
-        document.getElementById("form").submit();
-      </script>
-    </body>
-    </html>
-  `.trim()
-  )
-  res.end()
-}
-
-function escapeHTML(text: string): string {
-  return text
-    .replaceAll('&', '&amp;')
-    .replaceAll('"', '&quot;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-}
 
 export default server

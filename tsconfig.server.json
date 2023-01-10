@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["server.ts"],
+  "include": ["server.ts", "src/server-utils.ts"],
   "compilerOptions": {
     "allowJs": false,
     "noEmit": false
