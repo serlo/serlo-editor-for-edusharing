@@ -12,7 +12,12 @@ describe('All requests to editor endpoints /lti/... shall return Unauthorized (4
     '/lti/get-content',
   ]
 
-  const fetchAndExpectErrorResponse = async (url) => {
+  test.each(endpointsToTest)('Endpoint %s', (endpoint) => {
+    fetchAndExpectErrorResponse(`${baseUrl}${endpoint}`)
+    fetchAndExpectErrorResponse(`${baseUrl}${endpoint}?ltik=foo`)
+  })
+
+  async function fetchAndExpectErrorResponse(url: string) {
     const response = await fetch(url)
     expect(response.status).toBe(401)
     expect(await response.json()).toMatchObject({
@@ -20,9 +25,4 @@ describe('All requests to editor endpoints /lti/... shall return Unauthorized (4
       status: 401,
     })
   }
-
-  test.each(endpointsToTest)('Endpoint %s', (endpoint) => {
-    fetchAndExpectErrorResponse(`${baseUrl}${endpoint}`)
-    fetchAndExpectErrorResponse(`${baseUrl}${endpoint}?ltik=foo`)
-  })
 })
