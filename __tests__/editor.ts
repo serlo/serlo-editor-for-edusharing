@@ -2,7 +2,7 @@ import fetch, { RequestInit } from 'node-fetch'
 import jwt from 'jsonwebtoken'
 import { Server } from 'node:http'
 import { expect, test, describe } from '@jest/globals'
-import express from 'express'
+import express, { RequestHandler } from 'express'
 
 describe('endpoint "/platform/login"', () => {
   const correctParamaters = {
@@ -35,6 +35,11 @@ describe('endpoint "/platform/login"', () => {
 })
 
 describe('endpoint "/platform/done"', () => {
+  const validKeyid = 'keyid'
+  const validKey = Buffer.from(
+    process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+    'base64'
+  ).toString('utf-8')
   const validPayload = {
     iss: 'editor',
     aud: 'http://localhost:3000/',
@@ -73,69 +78,28 @@ describe('endpoint "/platform/done"', () => {
   })
 
   test('fails when no JWT token as parameter "JWT" is present in the body', async () => {
-    const response = await fetchDoneWithJWT(null)
+    const response = await fetchDoneWithJWTValue(undefined)
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('JWT token is missing in the request')
   })
 
   test('fails when a malformed JWT is send', async () => {
-    const response = await fetchDoneWithJWT('foobar')
+    const response = await fetchDoneWithJWTValue('foobar')
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('jwt malformed')
   })
 
   test('fails when no keyid is present in the JWT', async () => {
-    const JWT = jwt.sign(
-      validPayload,
-      Buffer.from(process.env.EDITOR_PLATFORM_PRIVATE_KEY, 'base64').toString(
-        'utf-8'
-      ),
-      {
-        algorithm: 'RS256',
-        expiresIn: 60,
-      }
-    )
-
-    const params = new URLSearchParams()
-    params.append('JWT', JWT)
-
-    const response = await fetch('http://localhost:3000/platform/done', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: params,
-    })
+    const response = await fetchDoneWithJWT({ keyid: undefined })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('No keyid was provided in the JWT')
   })
 
   test('fails when keysetUrl cannot be fetched', async () => {
-    const JWT = jwt.sign(
-      validPayload,
-      Buffer.from(process.env.EDITOR_PLATFORM_PRIVATE_KEY, 'base64').toString(
-        'utf-8'
-      ),
-      {
-        algorithm: 'RS256',
-        expiresIn: 60,
-        keyid: 'keyid',
-      }
-    )
-
-    const params = new URLSearchParams()
-    params.append('JWT', JWT)
-
-    const response = await fetch('http://localhost:3000/platform/done', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      body: params,
-    })
+    const response = await fetchDoneWithJWT({ keyid: validKeyid })
 
     expect(response.status).toBe(502)
     expect(await response.text()).toBe(
@@ -144,19 +108,18 @@ describe('endpoint "/platform/done"', () => {
   })
 
   describe('when editor can connect to keyset URL of edu-sharing', () => {
-    let keysetResponse: { status: 500 } | { status: 200; body: unknown }
+    let edusharingKeyset: unknown
+    let keysetRequestHandler: RequestHandler
     let server: Server
 
     beforeAll((done) => {
       const app = express()
 
-      app.get('/edu-sharing/rest/lti/v13/jwks', (_req, res) => {
-        if (keysetResponse.status === 200) {
-          res.json(keysetResponse.body)
-        } else {
-          res.sendStatus(keysetResponse.status)
-        }
+      app.get('/edu-sharing/rest/lti/v13/jwks', (req, res, next) => {
+        keysetRequestHandler(req, res, next)
       })
+
+      keysetRequestHandler = (_req, res) => res.json(edusharingKeyset)
 
       server = app.listen(8100, done)
     })
@@ -166,29 +129,9 @@ describe('endpoint "/platform/done"', () => {
     })
 
     test('fails when edu-sharing has an internal server error', async () => {
-      keysetResponse = { status: 500 }
-      const JWT = jwt.sign(
-        validPayload,
-        Buffer.from(process.env.EDITOR_PLATFORM_PRIVATE_KEY, 'base64').toString(
-          'utf-8'
-        ),
-        {
-          algorithm: 'RS256',
-          expiresIn: 60,
-          keyid: 'keyid',
-        }
-      )
+      keysetRequestHandler = (_req, res) => res.sendStatus(500)
 
-      const params = new URLSearchParams()
-      params.append('JWT', JWT)
-
-      const response = await fetch('http://localhost:3000/platform/done', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded',
-        },
-        body: params,
-      })
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
@@ -197,7 +140,19 @@ describe('endpoint "/platform/done"', () => {
     })
   })
 
-  function fetchDoneWithJWT(JWT?: string) {
+  function fetchDoneWithJWT(args: { keyid?: string | null; key?: string }) {
+    const { keyid, key } = args
+
+    const jwtValue = jwt.sign(validPayload, key ?? validKey, {
+      algorithm: 'RS256',
+      expiresIn: 60,
+      ...(keyid ? { keyid } : {}),
+    })
+
+    return fetchDoneWithJWTValue(jwtValue)
+  }
+
+  function fetchDoneWithJWTValue(JWT?: string) {
     return fetchDone({
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       ...(JWT ? { body: new URLSearchParams({ JWT }) } : {}),
