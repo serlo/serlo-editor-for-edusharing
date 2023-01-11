@@ -13,6 +13,7 @@ import {
   signJwtWithBase64Key,
   signJwt,
   createJWKSResponse,
+  verifyJwt,
 } from './src/server-utils'
 
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -232,18 +233,20 @@ const server = (async () => {
   })
 
   server.post('/platform/done', async (req, res) => {
-    // TODO: verify token
-    const decoded = jwt.decode(req.body.JWT, { complete: true })
+    verifyJwt({
+      res,
+      token: req.body.JWT,
+      keysetUrl: process.env.PLATFORM_JWK_SET,
+      verifyOptions: {},
+      callback(decoded) {
+        const asset = decoded[
+          'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
+        ][0]['custom'] as { repositoryId: string; nodeId: string }
 
-    // Test scheme
-    const asset = decoded.payload[
-      'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
-    ][0]['custom'] as { repositoryId: string; nodeId: string }
-
-    res
-      .setHeader('Content-type', 'text/html')
-      .send(
-        `<!DOCTYPE html>
+        res
+          .setHeader('Content-type', 'text/html')
+          .send(
+            `<!DOCTYPE html>
           <html>
             <body>
               <script type="text/javascript">
@@ -255,8 +258,10 @@ const server = (async () => {
             </body>
           </html>
         `
-      )
-      .end()
+          )
+          .end()
+      },
+    })
   })
 
   server.get('/lti/get-content', async (_req, res) => {

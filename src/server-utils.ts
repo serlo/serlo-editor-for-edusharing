@@ -1,12 +1,15 @@
 import type { Response } from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { VerifyOptions } from 'jsonwebtoken'
 import JSONWebKey from 'json-web-key'
+import JWKSClient, { JwksClient } from 'jwks-rsa'
 import nextEnv from '@next/env'
 
 const doNothingLogger = {
   info: () => void 0,
   error: () => void 0,
 }
+
+const jwksClients: Record<string, JwksClient | undefined> = {}
 
 export function loadEnvConfig(args?: { showLogs?: boolean }) {
   const showLogs = args?.showLogs ?? true
@@ -70,6 +73,56 @@ export function signJwt({
     expiresIn: 60,
     keyid,
   })
+}
+
+export function verifyJwt(args: {
+  token: string
+  res: Response
+  verifyOptions: VerifyOptions
+  keysetUrl: string
+  callback: (decoded: jwt.JwtPayload) => void
+}) {
+  const { res, token, verifyOptions, keysetUrl, callback } = args
+
+  jwt.verify(token, getKey, verifyOptions, (err, decoded) => {
+    if (err != null) {
+      console.log('verify', err)
+      res.status(400).send(err.message).end()
+      return
+    } else {
+      // TODO: Use no "as"
+      callback(decoded as jwt.JwtPayload)
+    }
+  })
+
+  function getKey(
+    header: { kid?: string },
+    callback: (_: Error, key: string) => void
+  ) {
+    if (header.kid == null) {
+      res.status(400).send('No keyid was provided in the JWT').end()
+    } else {
+      fetchSigningKey(header.kid)
+        .then((key) => callback(null, key))
+        .catch((err) => {
+          console.log(err)
+          res.status(400).send(err.message)
+        })
+    }
+  }
+
+  async function fetchSigningKey(keyid: string) {
+    const jwksClient =
+      jwksClients[keysetUrl] != null
+        ? jwksClients[keysetUrl]
+        : JWKSClient({ jwksUri: keysetUrl })
+
+    jwksClients[keysetUrl] = jwksClient
+
+    const signingKey = await jwksClient.getSigningKey(keyid)
+
+    return signingKey.getPublicKey()
+  }
 }
 
 export function createAutoFromResponse({
