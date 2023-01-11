@@ -188,6 +188,7 @@ export class EdusharingServer {
         return
       }
 
+      // TODO: Use global jwksClient per keyset url
       const jwksClient = JWKSClient({
         jwksUri: 'http://localhost:3000/platform/keys',
       })
