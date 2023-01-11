@@ -120,14 +120,17 @@ describe('endpoint "/platform/done"', () => {
         keysetRequestHandler(req, res, next)
       })
 
-      keysetRequestHandler = (_req, res) =>
+      server = app.listen(8100, done)
+    })
+
+    beforeEach(() => {
+      keysetRequestHandler = (_req, res) => {
         createJWKSResponse({
           res,
           keyid: validKeyid,
           key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
         })
-
-      server = app.listen(8100, done)
+      }
     })
 
     afterAll((done) => {
@@ -184,6 +187,15 @@ describe('endpoint "/platform/done"', () => {
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
         'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('succeeds when valid values are send', async () => {
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(200)
+      expect(response.headers.get('content-type')).toBe(
+        'text/html; charset=utf-8'
       )
     })
   })
