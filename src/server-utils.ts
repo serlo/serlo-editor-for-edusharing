@@ -118,7 +118,7 @@ export function verifyJwt(args: {
     const jwksClient =
       jwksClients[keysetUrl] != null
         ? jwksClients[keysetUrl]
-        : JWKSClient({ jwksUri: keysetUrl })
+        : JWKSClient({ jwksUri: keysetUrl, cache: true })
 
     jwksClients[keysetUrl] = jwksClient
 
