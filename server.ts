@@ -259,17 +259,17 @@ const server = (async () => {
           .setHeader('Content-type', 'text/html')
           .send(
             `<!DOCTYPE html>
-          <html>
-            <body>
-              <script type="text/javascript">
-                parent.postMessage({
-                  repositoryId: '${asset.repositoryId}',
-                  nodeId: '${asset.nodeId}'
-                }, '${process.env.EDITOR_URL}')
-              </script>
-            </body>
-          </html>
-        `
+            <html>
+              <body>
+                <script type="text/javascript">
+                  parent.postMessage({
+                    repositoryId: '${asset.repositoryId}',
+                    nodeId: '${asset.nodeId}'
+                  }, '${process.env.EDITOR_URL}')
+                </script>
+              </body>
+            </html>
+          `
           )
           .end()
       },
