@@ -301,19 +301,15 @@ export class EdusharingServer {
   }
 }
 
-function isEditorValueInvalid({
-  req,
-  res,
-  name,
-  value,
-  targetValue,
-}: {
+function isEditorValueInvalid(args: {
   req: Request
   res: Response
   name: string
   value: unknown
   targetValue: unknown
 }): boolean {
+  const { req, res, name, value, targetValue } = args
+
   if (value === targetValue) {
     return false
   } else {
