@@ -61,6 +61,17 @@ describe('endpoint "/platform/done"', () => {
     ],
   }
 
+  test('fails when "content-type" is not "application/x-www-form-urlencoded"', async () => {
+    const response = await fetch('http://localhost:3000/platform/done', {
+      method: 'POST',
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(
+      '"content-type" is not "application/x-www-form-urlencoded"'
+    )
+  })
+
   test('fails when no keyid is present in the JWT', async () => {
     const JWT = jwt.sign(
       validPayload,
@@ -78,6 +89,9 @@ describe('endpoint "/platform/done"', () => {
 
     const response = await fetch('http://localhost:3000/platform/done', {
       method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
       body: params,
     })
 

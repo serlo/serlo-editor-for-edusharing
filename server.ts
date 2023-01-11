@@ -2,7 +2,6 @@ import express from 'express'
 import { Provider } from 'ltijs'
 import next from 'next'
 import fetch from 'node-fetch'
-import jwt from 'jsonwebtoken'
 import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
@@ -233,6 +232,14 @@ const server = (async () => {
   })
 
   server.post('/platform/done', async (req, res) => {
+    if (req.headers['content-type'] !== 'application/x-www-form-urlencoded') {
+      res
+        .status(400)
+        .send('"content-type" is not "application/x-www-form-urlencoded"')
+        .end()
+      return
+    }
+
     verifyJwt({
       res,
       token: req.body.JWT,
