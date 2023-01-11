@@ -267,6 +267,7 @@ export class EdusharingServer {
               keyid: this.keyid,
               key: this.key,
             }),
+            state: this.state,
           },
         })
       })
