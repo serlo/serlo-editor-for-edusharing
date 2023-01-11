@@ -86,7 +86,6 @@ export function verifyJwt(args: {
 
   jwt.verify(token, getKey, verifyOptions, (err, decoded) => {
     if (err != null) {
-      console.log('verify', err)
       res.status(400).send(err.message).end()
       return
     } else {

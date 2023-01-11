@@ -1,4 +1,4 @@
-import fetch from 'node-fetch'
+import fetch, { RequestInit } from 'node-fetch'
 import jwt from 'jsonwebtoken'
 import { Server } from 'node:http'
 import { expect, test, describe } from '@jest/globals'
@@ -64,9 +64,7 @@ describe('endpoint "/platform/done"', () => {
   }
 
   test('fails when "content-type" is not "application/x-www-form-urlencoded"', async () => {
-    const response = await fetch('http://localhost:3000/platform/done', {
-      method: 'POST',
-    })
+    const response = await fetchDone()
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(
@@ -75,13 +73,17 @@ describe('endpoint "/platform/done"', () => {
   })
 
   test('fails when no JWT token as parameter "JWT" is present in the body', async () => {
-    const response = await fetch('http://localhost:3000/platform/done', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    })
+    const response = await fetchDoneWithJWT(null)
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('JWT token is missing in the request')
+  })
+
+  test('fails when a malformed JWT is send', async () => {
+    const response = await fetchDoneWithJWT('foobar')
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('jwt malformed')
   })
 
   test('fails when no keyid is present in the JWT', async () => {
@@ -194,4 +196,16 @@ describe('endpoint "/platform/done"', () => {
       )
     })
   })
+
+  function fetchDoneWithJWT(JWT?: string) {
+    return fetchDone({
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      ...(JWT ? { body: new URLSearchParams({ JWT }) } : {}),
+    })
+  }
+
+  function fetchDone(init?: RequestInit) {
+    const url = 'http://localhost:3000/platform/done'
+    return fetch(url, { method: 'POST', ...init })
+  }
 })
