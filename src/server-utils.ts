@@ -103,7 +103,11 @@ export function verifyJwt(args: {
       res.status(400).send('No keyid was provided in the JWT').end()
     } else {
       fetchSigningKey(header.kid)
-        .then((key) => callback(null, key))
+        .then((key) => {
+          if (typeof key === 'string') {
+            callback(null, key)
+          }
+        })
         .catch((err) => {
           console.log(err)
           res.status(400).send(err.message)
@@ -111,7 +115,7 @@ export function verifyJwt(args: {
     }
   }
 
-  async function fetchSigningKey(keyid: string) {
+  async function fetchSigningKey(keyid: string): Promise<string | null> {
     const jwksClient =
       jwksClients[keysetUrl] != null
         ? jwksClients[keysetUrl]
@@ -119,9 +123,18 @@ export function verifyJwt(args: {
 
     jwksClients[keysetUrl] = jwksClient
 
-    const signingKey = await jwksClient.getSigningKey(keyid)
+    try {
+      const signingKey = await jwksClient.getSigningKey(keyid)
 
-    return signingKey.getPublicKey()
+      return signingKey.getPublicKey()
+    } catch (err) {
+      res
+        .status(502)
+        .send('An error occured while fetching key from the keyset URL')
+        .end()
+
+      return null
+    }
   }
 }
 

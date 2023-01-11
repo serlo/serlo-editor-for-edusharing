@@ -108,4 +108,34 @@ describe('endpoint "/platform/done"', () => {
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('No keyid was provided in the JWT')
   })
+
+  test('fails when keysetUrl cannot be fetched', async () => {
+    const JWT = jwt.sign(
+      validPayload,
+      Buffer.from(process.env.EDITOR_PLATFORM_PRIVATE_KEY, 'base64').toString(
+        'utf-8'
+      ),
+      {
+        algorithm: 'RS256',
+        expiresIn: 60,
+        keyid: 'keyid',
+      }
+    )
+
+    const params = new URLSearchParams()
+    params.append('JWT', JWT)
+
+    const response = await fetch('http://localhost:3000/platform/done', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+      },
+      body: params,
+    })
+
+    expect(response.status).toBe(502)
+    expect(await response.text()).toBe(
+      'An error occured while fetching key from the keyset URL'
+    )
+  })
 })
