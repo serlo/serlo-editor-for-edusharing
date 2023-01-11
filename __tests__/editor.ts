@@ -4,6 +4,8 @@ import { Server } from 'node:http'
 import { expect, test, describe } from '@jest/globals'
 import express, { RequestHandler } from 'express'
 
+import { createJWKSResponse } from '../src/server-utils'
+
 describe('endpoint "/platform/login"', () => {
   const correctParamaters = {
     nonce: 'bar',
@@ -108,7 +110,6 @@ describe('endpoint "/platform/done"', () => {
   })
 
   describe('when editor can connect to keyset URL of edu-sharing', () => {
-    let edusharingKeyset: unknown
     let keysetRequestHandler: RequestHandler
     let server: Server
 
@@ -119,7 +120,12 @@ describe('endpoint "/platform/done"', () => {
         keysetRequestHandler(req, res, next)
       })
 
-      keysetRequestHandler = (_req, res) => res.json(edusharingKeyset)
+      keysetRequestHandler = (_req, res) =>
+        createJWKSResponse({
+          res,
+          keyid: validKeyid,
+          key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+        })
 
       server = app.listen(8100, done)
     })
@@ -139,10 +145,41 @@ describe('endpoint "/platform/done"', () => {
       )
     })
 
-    test('fails when edu-sharing responses with malformed keyset', async () => {
-      edusharingKeyset = 'malformed'
+    test('fails when edu-sharing responses with text response', async () => {
+      keysetRequestHandler = (_req, res) => res.send('no json response')
 
       const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('fails when edu-sharing responses with malformed keyset', async () => {
+      keysetRequestHandler = (_req, res) => res.json('malformed')
+
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('fails when the keyset of edu-sharing is empty', async () => {
+      keysetRequestHandler = (_req, res) => res.json([])
+
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('fails when the given keyid in the JWT cannot be found in the keyset', async () => {
+      const response = await fetchDoneWithJWT({ keyid: 'invalid-key' })
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
