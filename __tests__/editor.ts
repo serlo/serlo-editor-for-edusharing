@@ -1,6 +1,8 @@
 import fetch from 'node-fetch'
 import jwt from 'jsonwebtoken'
+import { Server } from 'node:http'
 import { expect, test, describe } from '@jest/globals'
+import express from 'express'
 
 describe('endpoint "/platform/login"', () => {
   const correctParamaters = {
@@ -137,5 +139,59 @@ describe('endpoint "/platform/done"', () => {
     expect(await response.text()).toBe(
       'An error occured while fetching key from the keyset URL'
     )
+  })
+
+  describe('when editor can connect to keyset URL of edu-sharing', () => {
+    let keysetResponse: { status: 500 } | { status: 200; body: unknown }
+    let server: Server
+
+    beforeAll((done) => {
+      const app = express()
+
+      app.get('/edu-sharing/rest/lti/v13/jwks', (_req, res) => {
+        if (keysetResponse.status === 200) {
+          res.json(keysetResponse.body)
+        } else {
+          res.sendStatus(keysetResponse.status)
+        }
+      })
+
+      server = app.listen(8100, done)
+    })
+
+    afterAll((done) => {
+      server.close(done)
+    })
+
+    test('fails when edu-sharing has an internal server error', async () => {
+      keysetResponse = { status: 500 }
+      const JWT = jwt.sign(
+        validPayload,
+        Buffer.from(process.env.EDITOR_PLATFORM_PRIVATE_KEY, 'base64').toString(
+          'utf-8'
+        ),
+        {
+          algorithm: 'RS256',
+          expiresIn: 60,
+          keyid: 'keyid',
+        }
+      )
+
+      const params = new URLSearchParams()
+      params.append('JWT', JWT)
+
+      const response = await fetch('http://localhost:3000/platform/done', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+        body: params,
+      })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
   })
 })
