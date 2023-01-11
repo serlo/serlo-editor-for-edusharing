@@ -138,6 +138,17 @@ describe('endpoint "/platform/done"', () => {
         'An error occured while fetching key from the keyset URL'
       )
     })
+
+    test('fails when edu-sharing responses with malformed keyset', async () => {
+      edusharingKeyset = 'malformed'
+
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
   })
 
   function fetchDoneWithJWT(args: { keyid?: string | null; key?: string }) {
