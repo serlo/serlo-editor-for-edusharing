@@ -72,6 +72,16 @@ describe('endpoint "/platform/done"', () => {
     )
   })
 
+  test('fails when no JWT token as parameter "JWT" is present in the body', async () => {
+    const response = await fetch('http://localhost:3000/platform/done', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('JWT token is missing in the request')
+  })
+
   test('fails when no keyid is present in the JWT', async () => {
     const JWT = jwt.sign(
       validPayload,

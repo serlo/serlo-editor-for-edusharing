@@ -240,6 +240,11 @@ const server = (async () => {
       return
     }
 
+    if (typeof req.body.JWT !== 'string') {
+      res.status(400).send('JWT token is missing in the request').end()
+      return
+    }
+
     verifyJwt({
       res,
       token: req.body.JWT,
