@@ -108,7 +108,6 @@ export function verifyJwt(args: {
           }
         })
         .catch((err) => {
-          console.log(err)
           res.status(400).send(err.message)
         })
     }
