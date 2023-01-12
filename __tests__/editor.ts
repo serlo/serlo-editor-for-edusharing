@@ -212,6 +212,18 @@ describe('endpoint "/platform/done"', () => {
       expect(await response.text()).toBe('jwt issuer invalid. expected: editor')
     })
 
+    test('fails when "aud" is invalid', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayload, aud: 'foo' },
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe(
+        'jwt audience invalid. expected: http://localhost:3000/'
+      )
+    })
+
     test('succeeds when valid values are send', async () => {
       const response = await fetchDoneWithJWT({ keyid: validKeyid })
 

@@ -250,6 +250,7 @@ const server = (async () => {
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
         issuer: process.env.EDITOR_CLIENT_ID,
+        audience: process.env.EDITOR_URL,
       },
       callback(decoded) {
         const asset = decoded[
