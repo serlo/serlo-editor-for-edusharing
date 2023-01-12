@@ -48,7 +48,7 @@ export function signJwtWithBase64Key({
   keyid,
   key,
 }: {
-  payload: Record<string, unknown>
+  payload: Omit<jwt.JwtPayload, 'iat'>
   keyid: string
   key: string
 }) {
@@ -64,11 +64,11 @@ export function signJwt({
   keyid,
   key,
 }: {
-  payload: Record<string, unknown>
+  payload: Omit<jwt.JwtPayload, 'iat'>
   keyid: string
   key: string
 }) {
-  return jwt.sign(payload, key, {
+  return jwt.sign({ ...payload, iat: Math.floor(Date.now() / 1000) }, key, {
     algorithm: 'RS256',
     expiresIn: 60,
     keyid,

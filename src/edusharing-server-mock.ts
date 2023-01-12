@@ -60,7 +60,6 @@ export class EdusharingServer {
       const payload = {
         nonce: req.query['nonce'],
         iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
-        iat: Date.now(),
         aud: process.env.PLATFORM_CLIENT_ID,
         sub: this.user,
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '1',
@@ -201,7 +200,6 @@ export class EdusharingServer {
           const payload = {
             iss: 'editor',
             aud: 'http://localhost:3000/',
-            iat: Date.now(),
             nonce: this.nonce,
             azp: 'http://localhost:3000/',
             'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
