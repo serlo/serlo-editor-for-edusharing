@@ -42,10 +42,12 @@ describe('endpoint "/platform/done"', () => {
     process.env.EDITOR_PLATFORM_PRIVATE_KEY,
     'base64'
   ).toString('utf-8')
+  const iat = Math.floor(Date.now() / 1000)
   const validPayload = {
     iss: 'editor',
     aud: 'http://localhost:3000/',
-    iat: Date.now(),
+    iat,
+    exp: iat + 100,
     nonce: 'none-value',
     azp: 'http://localhost:3000/',
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
@@ -190,6 +192,16 @@ describe('endpoint "/platform/done"', () => {
       )
     })
 
+    test('fails when the JWT is expired', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayload, exp: iat - 10 },
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('jwt expired')
+    })
+
     test('succeeds when valid values are send', async () => {
       const response = await fetchDoneWithJWT({ keyid: validKeyid })
 
@@ -200,12 +212,15 @@ describe('endpoint "/platform/done"', () => {
     })
   })
 
-  function fetchDoneWithJWT(args: { keyid?: string | null; key?: string }) {
-    const { keyid, key } = args
+  function fetchDoneWithJWT(args: {
+    keyid?: string | null
+    key?: string
+    payload?: jwt.JwtPayload
+  }) {
+    const { keyid, key, payload = validPayload } = args
 
-    const jwtValue = jwt.sign(validPayload, key ?? validKey, {
+    const jwtValue = jwt.sign(payload, key ?? validKey, {
       algorithm: 'RS256',
-      expiresIn: 60,
       ...(keyid ? { keyid } : {}),
     })
 
