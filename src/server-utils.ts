@@ -118,7 +118,10 @@ export function verifyJwt(args: {
     const jwksClient =
       jwksClients[keysetUrl] != null
         ? jwksClients[keysetUrl]
-        : JWKSClient({ jwksUri: keysetUrl, cache: true })
+        : JWKSClient({
+            jwksUri: keysetUrl,
+            cache: process.env.NODE_ENV === 'production',
+          })
 
     jwksClients[keysetUrl] = jwksClient
 
