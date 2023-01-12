@@ -195,7 +195,7 @@ const server = (async () => {
       aud: process.env.EDITOR_CLIENT_ID,
       sub: user,
 
-      iat: Date.now(),
+      iat: Math.floor(Date.now() / 1000),
       nonce,
       dataToken,
 
