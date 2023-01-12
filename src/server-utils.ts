@@ -163,20 +163,19 @@ export function createAutoFromResponse({
 
   res.setHeader('Content-Type', 'text/html')
   res.send(
-    `
-    <!DOCTYPE html>
-    <html>
-    <head><title>Redirect to ${escapedTargetUrl}</title></head>
-    <body>
-      <form id="form" action="${escapedTargetUrl}" method="${method}">
-        ${formDataHtml}
-      </form>
-      <script type="text/javascript">
-        document.getElementById("form").submit();
-      </script>
-    </body>
-    </html>
-  `.trim()
+    `<!DOCTYPE html>
+     <html>
+     <head><title>Redirect to ${escapedTargetUrl}</title></head>
+     <body>
+       <form id="form" action="${escapedTargetUrl}" method="${method}">
+         ${formDataHtml}
+       </form>
+       <script type="text/javascript">
+         document.getElementById("form").submit();
+       </script>
+     </body>
+     </html>
+    `.trim()
   )
   res.end()
 }
