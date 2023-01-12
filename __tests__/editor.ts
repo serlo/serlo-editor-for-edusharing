@@ -202,6 +202,16 @@ describe('endpoint "/platform/done"', () => {
       expect(await response.text()).toBe('jwt expired')
     })
 
+    test('fails when "iss" is invalid', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayload, iss: 'foo' },
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('jwt issuer invalid. expected: editor')
+    })
+
     test('succeeds when valid values are send', async () => {
       const response = await fetchDoneWithJWT({ keyid: validKeyid })
 

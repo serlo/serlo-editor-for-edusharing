@@ -248,7 +248,9 @@ const server = (async () => {
       res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
-      verifyOptions: {},
+      verifyOptions: {
+        issuer: process.env.EDITOR_CLIENT_ID,
+      },
       callback(decoded) {
         const asset = decoded[
           'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
