@@ -224,6 +224,46 @@ describe('endpoint "/platform/done"', () => {
       )
     })
 
+    test('fails when "jwt" is signed by another key', async () => {
+      const invalidKey = `
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpAIBAAKCAQEAplp60im+W3yZ6JAjJaZe42o9Ef5TkiGxVkKbUuTWCUV60Hf2
+        0CmV/OcAPJoqBtQkPCLIsempMHbqFNbQpEZWKHEdITA00PXnVMa62vD1EM7Kn8iX
+        cy544r2cb1+W5PdtTTrnadLDvg2WHxtI3NqFJyZO1TdH8epCrSiI7CT/URnFFlSC
+        lQd1Ho0NxFbhaMaOyGBqkaYyG49Q5UVFRy+AFbSQU87XHscg5XDGWHqsWqxqHMFX
+        JCVoxPuvpU9I9RmL+j4iTwg22FduEjAqkI5pl6lllFPmvr4hIkbQgFic0ixoVD37
+        SMFHJU2oEaVIcq6LwNw1a0B3tTpJGDRWzmsGYQIDAQABAoIBABqFMi9vGDndk2vQ
+        Dsphy57VwQatVQVm+a6Wz8xXTwgLW5kAhwiImLDI4vDGYwzTpTMxGG3EooRncMoB
+        tSF7VSD9Z3dzB/iIO2j4hbGB2I/lZ8gxYnOqZPtA3z+iLZwzFenKCjqEr1ANOnGb
+        F/Kdo7yqDsdPGNkoT5jrbWi4PTvgbOCN4vPc0QQAXJtv/wY3fvzbQuCjqp2Bn0qV
+        pXcxtatKlFWisRyYiYiCb+RQM9S/C5XvB/4/K8hNpK7IDc+bW6sCSwgn+P14ZuUz
+        rCQew+8qqAZuS0A4QmjXt891V/fSQKiU5qRLJDrtFHNhurKegF/DubAI1dwmvzo7
+        aSip5wECgYEA+VM7md7S4TDJ0YUmumAgvFgwmzpLAi8SmnwFPJQBy5htUfWV3sxI
+        hB2gzLbT6Wd4PPEBsYy+ARELKvbFp9+9zrmITlWhHq9Y1Zt8B9io33vlHVzSxURU
+        iXlHFOSrT/H6jWHnd0XESIdyC7Z3zVhU3pTOaoOFvUYw2vg5HN5s5N0CgYEAqs6Y
+        PCw2z3+RCitHBrwKcqyzinF2WqCGMyv4rpvfX+IGkRUhrK0173mA+Eo5k2RulPBK
+        eoi5GFQNNfhSCyM/PII6+PYxW3UD+iO5l1q3eU0yqQXz9NKI5BSPmCYiurcsKLJM
+        u9j/I1HFR6o3uIvQyEPeH+KSNDwnuvCtIL9OHVUCgYEAi/sSHGrBJROaS9shCkTM
+        PFKbP5uz308Ed92npwJGG8PBpOFoOoWhNSPZUvZW9dVU6Yo6dC/bwYeLKJ0SDhWN
+        YJJEGA71fd/e1VcNhO48qfTKhvjFkWGywNhpcy6LjEAEdvp/1TRDZqE9A5x3mL++
+        LpWHar/bB5Bv/5CbqDytELUCgYBHmXKXRrFzKbZS3PFZEVoP1/UrA4TpWIDo0nXc
+        O9rXBphaGNGU4MbLK9O0QOkBsAfqxw9xbf6pBBLFnOJHaO8JHk46LnliLRsNsAwM
+        NirS3lluIOCyr85STYwj61iDjGUmahdgZwYMeCqKcAALjBBo4ooqM3+2BcFhy6HH
+        KGpGQQKBgQDQDCkGrcnMscpzY4RZliDWkWiKgGmXmP3ycQJzg2ReYcLz4Q17YzZZ
+        lAeIi6MzyKxKBTblHdzyJIBGQhtq2fjeoDXjYiLqYph0ml5TZoD2jHh6kTXAWKma
+        L8ovrRvQ0MjWyIOrBeudSjU2rtOAHcgmoF3IOhjqk8/fcckvRoE4DA==
+        -----END RSA PRIVATE KEY-----`
+        .trim()
+        .replace(/\n +/g, '\n')
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        key: invalidKey,
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('invalid signature')
+    })
+
     test('succeeds when valid values are send', async () => {
       const response = await fetchDoneWithJWT({ keyid: validKeyid })
 
