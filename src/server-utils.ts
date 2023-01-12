@@ -84,6 +84,9 @@ export function verifyJwt(args: {
 }) {
   const { res, token, verifyOptions, keysetUrl, callback } = args
 
+  // We want to make ensure that the JWT is never older than 1min
+  verifyOptions.maxAge = 60
+
   jwt.verify(token, getKey, verifyOptions, (err, decoded) => {
     if (err != null) {
       res.status(400).send(err.message).end()
