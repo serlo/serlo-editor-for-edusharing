@@ -14,6 +14,7 @@ import {
   createJWKSResponse,
   verifyJwt,
 } from './src/server-utils'
+import { jwtDeepflowResponseDecoder } from './src/utils/decoders'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -253,9 +254,17 @@ const server = (async () => {
         audience: process.env.EDITOR_URL,
       },
       callback(decoded) {
-        const asset = decoded[
-          'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
-        ][0]['custom'] as { repositoryId: string; nodeId: string }
+        console.log(decoded)
+        if (!jwtDeepflowResponseDecoder.is(decoded)) {
+          console.log(2)
+          res.status(400).send('malformed custom claim in JWT send').end()
+          return
+        }
+
+        const { repositoryId, nodeId } =
+          decoded[
+            'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
+          ][0].custom
 
         res
           .setHeader('Content-type', 'text/html')
@@ -265,8 +274,8 @@ const server = (async () => {
               <body>
                 <script type="text/javascript">
                   parent.postMessage({
-                    repositoryId: '${asset.repositoryId}',
-                    nodeId: '${asset.nodeId}'
+                    repositoryId: '${repositoryId}',
+                    nodeId: '${nodeId}'
                   }, '${process.env.EDITOR_URL}')
                 </script>
               </body>

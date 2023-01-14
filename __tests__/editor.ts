@@ -224,6 +224,21 @@ describe('endpoint "/platform/done"', () => {
       )
     })
 
+    test('fails when "custom" claim is malformed', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: {
+          ...validPayload,
+          'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': {
+            custom: 1,
+          },
+        },
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('malformed custom claim in JWT send')
+    })
+
     test('fails when "jwt" is signed by another key', async () => {
       const invalidKey = `
         -----BEGIN RSA PRIVATE KEY-----
