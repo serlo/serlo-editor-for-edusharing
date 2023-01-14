@@ -165,7 +165,7 @@ export class EdusharingServer {
             state: this.state,
             lti_message_hint: messageHint,
             redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-            client_id: process.env.PLATFORM_CLIENT_ID,
+            client_id: process.env.EDITOR_CLIENT_ID,
           },
         })
       }
