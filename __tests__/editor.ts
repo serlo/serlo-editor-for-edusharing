@@ -13,7 +13,7 @@ describe('endpoint "/platform/login"', () => {
     user: 'admin',
     nodeId: 'foo',
     dataToken: 'bar',
-    client_id: process.env.PLATFORM_CLIENT_ID,
+    client_id: process.env.EDITOR_CLIENT_ID,
     redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
   }
 

@@ -172,7 +172,7 @@ const server = (async () => {
     ) {
       res.status(400).send('redirect_uri is not valid').end()
       return
-    } else if (req.query['client_id'] !== process.env.PLATFORM_CLIENT_ID) {
+    } else if (req.query['client_id'] !== process.env.EDITOR_CLIENT_ID) {
       res.status(400).send('client_id is not valid').end()
       return
     } else if (typeof user !== 'string') {
