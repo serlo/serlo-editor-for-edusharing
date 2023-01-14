@@ -73,32 +73,34 @@ const server = (async () => {
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
-    const messageHint: LtiMessageHint = { user, dataToken, nodeId }
-    // TODO: edu-sharing seems to only forward this parameter without
-    // proper decoding. Thus we need to double encode this parameter.
-    // Delete this when edu-sharing has fixed the bug.
-    const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
 
     if (dataToken == null) {
       res
         .status(500)
         .setHeader('Content-type', 'text/html')
         .send('<html><body><p>dataToken is not set</p></body></html>')
-    } else {
-      createAutoFromResponse({
-        res,
-        method: 'GET',
-        targetUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
-        params: {
-          iss: process.env.EDITOR_URL,
-          target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-          login_hint: process.env.EDITOR_CLIENT_ID,
-          client_id: process.env.EDITOR_CLIENT_ID,
-          lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
-          lti_message_hint,
-        },
-      })
+      return
     }
+
+    const messageHint: LtiMessageHint = { user, dataToken, nodeId }
+    // TODO: edu-sharing seems to only forward this parameter without
+    // proper decoding. Thus we need to double encode this parameter.
+    // Delete this when edu-sharing has fixed the bug.
+    const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
+
+    createAutoFromResponse({
+      res,
+      method: 'GET',
+      targetUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
+      params: {
+        iss: process.env.EDITOR_URL,
+        target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+        login_hint: process.env.EDITOR_CLIENT_ID,
+        client_id: process.env.EDITOR_CLIENT_ID,
+        lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+        lti_message_hint,
+      },
+    })
   })
 
   server.get('/lti/get-embed-html', async (req, res) => {
