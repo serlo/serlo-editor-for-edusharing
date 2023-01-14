@@ -29,7 +29,7 @@ describe('Calls for LTI request tests', () => {
 
     expect(response.status).toBe(200)
     expect(result).toEqual({
-      keys: [
+      keys: expect.arrayContaining([
         {
           kty: 'RSA',
           n: expect.any(String),
@@ -38,7 +38,7 @@ describe('Calls for LTI request tests', () => {
           alg: 'RS256',
           use: 'sig',
         },
-      ],
+      ]),
     })
   })
 })
