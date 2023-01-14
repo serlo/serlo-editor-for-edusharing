@@ -152,6 +152,10 @@ export class EdusharingServer {
           }
         }
 
+        const messageHint = decodeURIComponent(
+          req.query['lti_message_hint'].toString()
+        )
+
         createAutoFromResponse({
           res,
           method: 'GET',
@@ -159,9 +163,7 @@ export class EdusharingServer {
           params: {
             nonce: this.nonce,
             state: this.state,
-            user: req.query['user'].toString(),
-            dataToken: req.query['dataToken'].toString(),
-            nodeId: req.query['nodeId'].toString(),
+            lti_message_hint: messageHint,
             redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
             client_id: process.env.PLATFORM_CLIENT_ID,
           },

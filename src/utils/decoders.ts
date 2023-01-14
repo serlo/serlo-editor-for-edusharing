@@ -7,3 +7,10 @@ export const jwtDeepflowResponseDecoder = t.type({
     })
   ),
 })
+
+export const LtiMessageHint = t.type({
+  user: t.string,
+  dataToken: t.string,
+  nodeId: t.string,
+})
+export type LtiMessageHint = t.TypeOf<typeof LtiMessageHint>

@@ -14,7 +14,10 @@ import {
   createJWKSResponse,
   verifyJwt,
 } from './src/server-utils'
-import { jwtDeepflowResponseDecoder } from './src/utils/decoders'
+import {
+  jwtDeepflowResponseDecoder,
+  LtiMessageHint,
+} from './src/utils/decoders'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -70,6 +73,7 @@ const server = (async () => {
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
+    const messageHint: LtiMessageHint = { user, dataToken, nodeId }
 
     if (dataToken == null) {
       res
@@ -87,9 +91,7 @@ const server = (async () => {
           login_hint: process.env.EDITOR_CLIENT_ID,
           client_id: process.env.EDITOR_CLIENT_ID,
           lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
-          user,
-          dataToken,
-          nodeId,
+          lti_message_hint: JSON.stringify(messageHint),
         },
       })
     }
@@ -157,9 +159,7 @@ const server = (async () => {
   server.get('/platform/login', async (req, res) => {
     const nonce = req.query['nonce']
     const state = req.query['state']
-    const user = req.query['user']
-    const nodeId = req.query['nodeId']
-    const dataToken = req.query['dataToken']
+    const messageHint = req.query['lti_message_hint']
 
     if (typeof nonce !== 'string') {
       res.status(400).send('nonce is not valid').end()
@@ -175,16 +175,26 @@ const server = (async () => {
     } else if (req.query['client_id'] !== process.env.EDITOR_CLIENT_ID) {
       res.status(400).send('client_id is not valid').end()
       return
-    } else if (typeof user !== 'string') {
-      res.status(400).send('user is not valid').end()
-      return
-    } else if (typeof nodeId !== 'string') {
-      res.status(400).send('nodeId is not valid').end()
-      return
-    } else if (typeof dataToken !== 'string') {
-      res.status(400).send('dataToken is not valid').end()
+    } else if (typeof messageHint !== 'string') {
+      res.status(400).send('lti_message_hint is not valid').end()
       return
     }
+
+    // TODO: tests
+    let messageHintDecoded: unknown
+    try {
+      messageHintDecoded = JSON.parse(messageHint)
+    } catch {
+      res.status(400).send('lti_message_hint is invalid').end()
+      return
+    }
+
+    if (!LtiMessageHint.is(messageHintDecoded)) {
+      res.status(400).send('lti_message_hint is invalid').end()
+      return
+    }
+
+    const { user, nodeId, dataToken } = messageHintDecoded
 
     // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
     // for an example of a deep linking requst payload
