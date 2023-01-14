@@ -74,6 +74,10 @@ const server = (async () => {
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
     const messageHint: LtiMessageHint = { user, dataToken, nodeId }
+    // TODO: edu-sharing seems to only forward this parameter without
+    // proper decoding. Thus we need to double encode this parameter.
+    // Delete this when edu-sharing has fixed the bug.
+    const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
 
     if (dataToken == null) {
       res
@@ -91,7 +95,7 @@ const server = (async () => {
           login_hint: process.env.EDITOR_CLIENT_ID,
           client_id: process.env.EDITOR_CLIENT_ID,
           lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
-          lti_message_hint: JSON.stringify(messageHint),
+          lti_message_hint,
         },
       })
     }
