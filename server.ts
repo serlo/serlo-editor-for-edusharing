@@ -268,9 +268,7 @@ const server = (async () => {
         audience: process.env.EDITOR_URL,
       },
       callback(decoded) {
-        console.log(decoded)
         if (!jwtDeepflowResponseDecoder.is(decoded)) {
-          console.log(2)
           res.status(400).send('malformed custom claim in JWT send').end()
           return
         }
