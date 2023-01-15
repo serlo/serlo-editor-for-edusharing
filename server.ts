@@ -1,4 +1,6 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
+import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
 import next from 'next'
 import fetch from 'node-fetch'
@@ -15,6 +17,7 @@ import {
   verifyJwt,
 } from './src/server-utils'
 import {
+  DeeplinkFlow,
   jwtDeepflowResponseDecoder,
   LtiMessageHint,
 } from './src/utils/decoders'
@@ -25,6 +28,13 @@ const app = next({ dev: isDevEnvironment })
 const handle = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
+
+const deeplinkFlowMaxAge = 60
+
+const mongoUrl = new URL(process.env.MONGODB_URL)
+mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
+mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
+const mongoClient = new MongoClient(mongoUrl.href)
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
@@ -63,11 +73,24 @@ Provider.onConnect(async (_token, _req, res) => {
 })
 
 const server = (async () => {
+  await mongoClient.connect()
+
+  const deeplinkFlows = mongoClient.db().collection('deeplink_flows')
+  // Make documents in the `deeplink_flow` expire after `deeplinkFlowMaxAge`
+  // seconds.
+  //
+  // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
+  await deeplinkFlows.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: deeplinkFlowMaxAge }
+  )
+
   await app.prepare()
   await Provider.deploy({ serverless: true })
 
   const server = express()
 
+  server.use(cookieParser())
   server.use(express.urlencoded({ extended: true }))
   server.use('/lti', Provider.app)
 
@@ -87,6 +110,14 @@ const server = (async () => {
     // proper decoding. Thus we need to double encode this parameter.
     // Delete this when edu-sharing has fixed the bug.
     const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
+
+    const flowId = (
+      await deeplinkFlows.insertOne({ createdAt: new Date() })
+    ).insertedId.toString()
+    res.setHeader(
+      'Set-Cookie',
+      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/; SameSite=None`
+    )
 
     createAutoFromResponse({
       res,
@@ -202,6 +233,29 @@ const server = (async () => {
 
     const { user, nodeId, dataToken } = messageHintDecoded
 
+    if (typeof req.cookies.deeplinkFlowId != 'string') {
+      res.status(400).send('cookie deeplinkFlowId is missing').end()
+      return
+    }
+
+    let flowId: ObjectId
+    try {
+      flowId = new ObjectId(req.cookies.deeplinkFlowId)
+    } catch {
+      res.status(400).send('cookie deeplinkFlowId is malformed').end()
+      return
+    }
+
+    const flowUpdate = await deeplinkFlows.updateOne(
+      { _id: flowId },
+      { $set: { nonce, state } }
+    )
+
+    if (flowUpdate.modifiedCount === 0) {
+      res.status(400).send('cookie deeplinkFlowId is invalid').end()
+      return
+    }
+
     // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
     // for an example of a deep linking requst payload
     const payload = {
@@ -261,6 +315,42 @@ const server = (async () => {
       return
     }
 
+    if (typeof req.cookies.deeplinkFlowId != 'string') {
+      res.status(400).send('cookie deeplinkFlowId is missing').end()
+      return
+    }
+
+    // TODO: to function()
+    let flowId: ObjectId
+    try {
+      flowId = new ObjectId(req.cookies.deeplinkFlowId)
+    } catch {
+      res.status(400).send('cookie deeplinkFlowId is malformed').end()
+      return
+    }
+
+    if ((await deeplinkFlows.findOne({ _id: flowId })) == null) {
+      res.status(400).send('cookie deeplinkFlowId is invalid').end()
+      return
+    }
+
+    const { value: deeplinkSession } = await deeplinkFlows.findOneAndDelete({
+      _id: flowId,
+    })
+
+    if (!DeeplinkFlow.is(deeplinkSession)) {
+      console.log(deeplinkSession)
+      res.status(400).send('deeplinkFlowSession is invalid').end()
+      return
+    }
+
+    const { state, nonce } = deeplinkSession
+
+    if (req.body.state !== state) {
+      res.status(400).send('state is invalid').end()
+      return
+    }
+
     verifyJwt({
       res,
       token: req.body.JWT,
@@ -268,6 +358,7 @@ const server = (async () => {
       verifyOptions: {
         issuer: process.env.EDITOR_CLIENT_ID,
         audience: process.env.EDITOR_URL,
+        nonce,
       },
       callback(decoded) {
         if (!jwtDeepflowResponseDecoder.is(decoded)) {

@@ -2792,6 +2792,7 @@ __metadata:
     "@next/env": ^13.1.1
     "@tailwindcss/typography": ^0.5.8
     "@types/body-parser": ^1.19.2
+    "@types/cookie-parser": ^1.4.3
     "@types/express": ^4.17.15
     "@types/jest": ^29.2.4
     "@types/jsonwebtoken": ^9.0.0
@@ -2801,6 +2802,7 @@ __metadata:
     autoprefixer: ^10.4.13
     body-parser: ^1.20.1
     clsx: ^1.2.1
+    cookie-parser: ^1.4.6
     cypress: ^12.2.0
     eslint: ^8.30.0
     eslint-config-next: ^13.1.1
@@ -2815,6 +2817,7 @@ __metadata:
     jsonwebtoken: ^9.0.0
     jwks-rsa: ^3.0.0
     ltijs: ^5.9.0
+    mongodb: ^4.13.0
     next: ^13.1.1
     node-fetch: ^3.3.0
     nodemon: ^2.0.20
@@ -3041,6 +3044,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/cookie-parser@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "@types/cookie-parser@npm:1.4.3"
+  dependencies:
+    "@types/express": "*"
+  checksum: f390f3af1b1711190dee2c2ecd9af33af81fbde8d81ee820dadb6fe1e0d80c3faba40af37c6ed36fb88b04b64870f6a021f7e9edceecd17c42fe22abe0af5005
+  languageName: node
+  linkType: hard
+
 "@types/exenv@npm:^1.2.0":
   version: 1.2.0
   resolution: "@types/exenv@npm:1.2.0"
@@ -3059,7 +3071,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:^4.17.14, @types/express@npm:^4.17.15":
+"@types/express@npm:*, @types/express@npm:^4.17.14, @types/express@npm:^4.17.15":
   version: 4.17.15
   resolution: "@types/express@npm:4.17.15"
   dependencies:
@@ -4647,7 +4659,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:^1.4.5":
+"cookie-parser@npm:^1.4.5, cookie-parser@npm:^1.4.6":
   version: 1.4.6
   resolution: "cookie-parser@npm:1.4.6"
   dependencies:
@@ -8581,6 +8593,24 @@ __metadata:
     saslprep:
       optional: true
   checksum: 84590484b2c93bce849ec1e334b064e983444ed73942061c91e09556348c80db9d4a40544b927cd795bdfbfc51d1b713a7df5ced4ecf13cd00fab5e3c3e32ada
+  languageName: node
+  linkType: hard
+
+"mongodb@npm:^4.13.0":
+  version: 4.13.0
+  resolution: "mongodb@npm:4.13.0"
+  dependencies:
+    "@aws-sdk/credential-providers": ^3.186.0
+    bson: ^4.7.0
+    mongodb-connection-string-url: ^2.5.4
+    saslprep: ^1.0.3
+    socks: ^2.7.1
+  dependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    saslprep:
+      optional: true
+  checksum: 4c30eed40f639ac64069623cf7a4954e98eab81b91d61df90e7813dd2a745259cdc698f3b60bd7f37c123242b7eb0aaae6ee4e29ff2e48f5d13f187931d51f36
   languageName: node
   linkType: hard
 

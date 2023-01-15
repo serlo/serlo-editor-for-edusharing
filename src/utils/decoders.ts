@@ -14,3 +14,5 @@ export const LtiMessageHint = t.type({
   nodeId: t.string,
 })
 export type LtiMessageHint = t.TypeOf<typeof LtiMessageHint>
+
+export const DeeplinkFlow = t.type({ nonce: t.string, state: t.string })
