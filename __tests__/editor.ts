@@ -36,6 +36,22 @@ describe('endpoint "/platform/login"', () => {
       }
     )
   })
+
+  test('fails when `lti_message_hint` is malformed JSON', async () => {
+    const url = new URL('http://localhost:3000/platform/login')
+
+    for (const [name, value] of Object.entries({
+      ...correctParamaters,
+      lti_message_hint: 'foo',
+    })) {
+      url.searchParams.append(name, value)
+    }
+
+    const response = await fetch(url.href)
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(`lti_message_hint is invalid`)
+  })
 })
 
 describe('endpoint "/platform/done"', () => {
