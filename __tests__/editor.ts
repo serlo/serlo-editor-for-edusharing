@@ -144,7 +144,7 @@ describe('endpoint "/platform/done"', () => {
     'base64'
   ).toString('utf-8')
   const iat = Math.floor(Date.now() / 1000)
-  const validNonceValue = 'nonce'
+  const validNonceValue = 'nonce-value'
   const validPayload = {
     iss: 'editor',
     aud: 'http://localhost:3000/',
@@ -395,6 +395,18 @@ describe('endpoint "/platform/done"', () => {
         expect(response.status).toBe(400)
         expect(await response.text()).toBe(
           'jwt audience invalid. expected: http://localhost:3000/'
+        )
+      })
+
+      test('fails when "nonce" is invalid', async () => {
+        const response = await fetchDoneWithJWT({
+          keyid: validKeyid,
+          payload: { ...validPayload, nonce: 'foo' },
+        })
+
+        expect(response.status).toBe(400)
+        expect(await response.text()).toBe(
+          'jwt nonce invalid. expected: nonce-value'
         )
       })
 
