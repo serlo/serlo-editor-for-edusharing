@@ -94,8 +94,8 @@ jobs:
         with:
           install-command: yarn --immutable --immutable-cache
           browser: chrome
-          start: yarn start:all
-          wait-on: 'http://localhost:3000, http://localhost:8100'
+          start: yarn start:server-with-mongodb
+          wait-on: 'http://localhost:3000'
 
       - uses: actions/upload-artifact@v3
         if: failure()
