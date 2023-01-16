@@ -23,13 +23,9 @@ describe('endpoint "/platform/login"', () => {
     test.each(Object.keys(correctParamaters))(
       'when %s is not set',
       async (param) => {
-        const url = new URL('http://localhost:3000/platform/login')
-
-        for (const [name, value] of Object.entries(correctParamaters)) {
-          if (name !== param) url.searchParams.append(name, value)
-        }
-
-        const response = await fetch(url.href)
+        const searchParams = { ...correctParamaters }
+        delete searchParams[param]
+        const response = await fetchLogin(searchParams)
 
         expect(response.status).toBe(400)
         expect(await response.text()).toBe(`${param} is not valid`)
@@ -38,36 +34,34 @@ describe('endpoint "/platform/login"', () => {
   })
 
   test('fails when `lti_message_hint` is malformed JSON', async () => {
-    const url = new URL('http://localhost:3000/platform/login')
-
-    for (const [name, value] of Object.entries({
+    const response = await fetchLogin({
       ...correctParamaters,
-      lti_message_hint: 'foo',
-    })) {
-      url.searchParams.append(name, value)
-    }
-
-    const response = await fetch(url.href)
+      lti_message_hint: 'invalid',
+    })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(`lti_message_hint is invalid`)
   })
 
   test('fails when `lti_message_hint` has invalid scheme', async () => {
-    const url = new URL('http://localhost:3000/platform/login')
-
-    for (const [name, value] of Object.entries({
+    const response = await fetchLogin({
       ...correctParamaters,
       lti_message_hint: JSON.stringify({ foo: 'bar' }),
-    })) {
-      url.searchParams.append(name, value)
-    }
-
-    const response = await fetch(url.href)
+    })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(`lti_message_hint is invalid`)
   })
+
+  function fetchLogin(searchParams: Partial<typeof correctParamaters>) {
+    const url = new URL('http://localhost:3000/platform/login')
+
+    for (const [name, value] of Object.entries(searchParams)) {
+      url.searchParams.append(name, value)
+    }
+
+    return fetch(url.href)
+  }
 })
 
 describe('endpoint "/platform/done"', () => {
