@@ -40,9 +40,11 @@ Provider.setup(
   }
 )
 
+// Registers callback to execute when serlo editor was sucessfully launched as a tool. All lti exchange until here is handled by lti.js.
 Provider.onConnect(async (_token, _req, res) => {
   const { custom } = res.locals.context
 
+  // Fetch the editor html created by nextjs.
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
     headers: {
@@ -54,9 +56,11 @@ Provider.onConnect(async (_token, _req, res) => {
       ltik: res.locals.ltik,
     }),
   })
+  // Sends the received html as a response to this request. This will render the editor in the browser. 
   res.send(await response.text())
 })
 
+// @@@ Creates an async function assigned to server and call it directly afterwards. 
 const server = (async () => {
   await app.prepare()
   await Provider.deploy({ serverless: true })
@@ -305,6 +309,7 @@ const server = (async () => {
     return res.status(response.status).send(await response.text())
   })
 
+  // @@@ Does this catch all requests?
   server.all('*', (req, res) => {
     return handle(req, res)
   })
@@ -326,4 +331,5 @@ const server = (async () => {
   })
 })()
 
+// @@@ Why is server exporter here? 
 export default server

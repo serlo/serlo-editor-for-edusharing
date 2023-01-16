@@ -95,7 +95,7 @@ export class EdusharingServer {
         },
         'https://purl.imsglobal.org/spec/lti/claim/message_type':
           'LtiResourceLinkRequest',
-        'https://purl.imsglobal.org/spec/lti/claim/custom': this.custom,
+        'https://purl.imsglobal.org/spec/lti/claim/custom': this.custom, // Assumption: This transmits the custom object to the tool server. There it is available through res.locals.token.platformContext.custom
       }
 
       createAutoFromResponse({
