@@ -74,6 +74,16 @@ describe('endpoint "/platform/login"', () => {
     expect(await response.text()).toBe(`cookie deeplinkFlowId is malformed`)
   })
 
+  test('fails when no session for `deeplinkFlowId` can be found', async () => {
+    const response = await fetchLogin({
+      searchParams: correctParamaters,
+      deelinkFlowId: '5099803df3f4948bd2f98391',
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(`cookie deeplinkFlowId is invalid`)
+  })
+
   function fetchLogin(args: {
     searchParams: Partial<typeof correctParamaters>
     deelinkFlowId?: string
