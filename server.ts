@@ -217,7 +217,6 @@ const server = (async () => {
       return
     }
 
-    // TODO: tests
     let messageHintDecoded: unknown
     try {
       messageHintDecoded = JSON.parse(messageHint)
