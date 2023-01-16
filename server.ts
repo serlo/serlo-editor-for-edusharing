@@ -232,18 +232,8 @@ const server = (async () => {
 
     const { user, nodeId, dataToken } = messageHintDecoded
 
-    if (typeof req.cookies.deeplinkFlowId != 'string') {
-      res.status(400).send('cookie deeplinkFlowId is missing').end()
-      return
-    }
-
-    let flowId: ObjectId
-    try {
-      flowId = new ObjectId(req.cookies.deeplinkFlowId)
-    } catch {
-      res.status(400).send('cookie deeplinkFlowId is malformed').end()
-      return
-    }
+    const flowId = parseDeepflowId({ req, res })
+    if (flowId == null) return
 
     const flowUpdate = await deeplinkFlows.updateOne(
       { _id: flowId },
@@ -314,19 +304,8 @@ const server = (async () => {
       return
     }
 
-    if (typeof req.cookies.deeplinkFlowId != 'string') {
-      res.status(400).send('cookie deeplinkFlowId is missing').end()
-      return
-    }
-
-    // TODO: to function()
-    let flowId: ObjectId
-    try {
-      flowId = new ObjectId(req.cookies.deeplinkFlowId)
-    } catch {
-      res.status(400).send('cookie deeplinkFlowId is malformed').end()
-      return
-    }
+    const flowId = parseDeepflowId({ req, res })
+    if (flowId == null) return
 
     const { value: deeplinkSession } = await deeplinkFlows.findOneAndDelete({
       _id: flowId,
@@ -481,5 +460,25 @@ const server = (async () => {
     },
   })
 })()
+
+function parseDeepflowId({
+  req,
+  res,
+}: {
+  req: express.Request
+  res: express.Response
+}): ObjectId | null {
+  if (typeof req.cookies.deeplinkFlowId != 'string') {
+    res.status(400).send('cookie deeplinkFlowId is missing').end()
+    return null
+  }
+
+  try {
+    return new ObjectId(req.cookies.deeplinkFlowId)
+  } catch {
+    res.status(400).send('cookie deeplinkFlowId is malformed').end()
+    return null
+  }
+}
 
 export default server
