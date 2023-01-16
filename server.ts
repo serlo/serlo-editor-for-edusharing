@@ -90,7 +90,7 @@ const server = (async () => {
 
   const server = express()
 
-  server.use(cookieParser())
+  server.use('/platform', cookieParser())
   server.use(express.urlencoded({ extended: true }))
   server.use('/lti', Provider.app)
 
