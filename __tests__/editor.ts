@@ -8,6 +8,7 @@ import { MongoClient, Collection } from 'mongodb'
 import { createJWKSResponse } from '../src/server-utils'
 
 let sessions: Collection
+let mongoClient: MongoClient
 
 beforeAll(async () => {
   // TODO: It would be better to test the requests to /platform/login and
@@ -16,10 +17,14 @@ beforeAll(async () => {
   const mongoUrl = new URL(process.env.MONGODB_URL)
   mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
   mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
-  const mongoClient = new MongoClient(mongoUrl.href)
+  mongoClient = new MongoClient(mongoUrl.href)
 
   await mongoClient.connect()
   sessions = mongoClient.db().collection('deeplink_flows')
+})
+
+afterAll(async () => {
+  await mongoClient.close()
 })
 
 describe('endpoint "/platform/login"', () => {
