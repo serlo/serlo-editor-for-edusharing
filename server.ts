@@ -328,17 +328,11 @@ const server = (async () => {
       return
     }
 
-    if ((await deeplinkFlows.findOne({ _id: flowId })) == null) {
-      res.status(400).send('cookie deeplinkFlowId is invalid').end()
-      return
-    }
-
     const { value: deeplinkSession } = await deeplinkFlows.findOneAndDelete({
       _id: flowId,
     })
 
     if (!DeeplinkFlow.is(deeplinkSession)) {
-      console.log(deeplinkSession)
       res.status(400).send('deeplinkFlowSession is invalid').end()
       return
     }
