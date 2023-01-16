@@ -26,8 +26,6 @@ it('Assets from edu-sharing can be included', () => {
 
   embedEdusharingAsset()
 
-  // TODO: Find a way around this wait
-  cy.wait(6000)
   cy.contains('Inhalt von edu-sharing')
 })
 
@@ -46,6 +44,8 @@ function embedEdusharingAsset() {
   cy.get('div.add-trigger').eq(1).click()
   cy.contains('Edusharing Inhalte').click()
   cy.contains('Datei von edu-sharing einbinden').click()
+  // TODO: Find a way around this wait
+  cy.wait(6000)
 }
 
 export {}
