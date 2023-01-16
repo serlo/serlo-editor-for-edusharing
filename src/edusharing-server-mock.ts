@@ -260,7 +260,7 @@ export class EdusharingServer {
 
   init() {
     this.savedVersions = []
-    this.custom = this.defaultCustom
+    this.custom = { ...this.defaultCustom }
   }
 
   // TODO: Better function
