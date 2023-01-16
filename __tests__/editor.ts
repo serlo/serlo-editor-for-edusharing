@@ -3,8 +3,24 @@ import jwt from 'jsonwebtoken'
 import { Server } from 'node:http'
 import { expect, test, describe } from '@jest/globals'
 import express, { RequestHandler } from 'express'
+import { MongoClient, Collection } from 'mongodb'
 
 import { createJWKSResponse } from '../src/server-utils'
+
+let sessions: Collection
+
+beforeAll(async () => {
+  // TODO: It would be better to test the requests to /platform/login and
+  // /platform/done by making the appropriate requests to /lti/start-deeplink-flow
+  // first since this better tests the features which are seen by users
+  const mongoUrl = new URL(process.env.MONGODB_URL)
+  mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
+  mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
+  const mongoClient = new MongoClient(mongoUrl.href)
+
+  await mongoClient.connect()
+  sessions = mongoClient.db().collection('deeplink_flows')
+})
 
 describe('endpoint "/platform/login"', () => {
   const correctParamaters = {
@@ -67,7 +83,7 @@ describe('endpoint "/platform/login"', () => {
   test('fails when cookie `deeplinkFlowId` is invalid', async () => {
     const response = await fetchLogin({
       searchParams: correctParamaters,
-      deelinkFlowId: 'foo',
+      deeplinkFlowId: 'foo',
     })
 
     expect(response.status).toBe(400)
@@ -77,18 +93,34 @@ describe('endpoint "/platform/login"', () => {
   test('fails when no session for `deeplinkFlowId` can be found', async () => {
     const response = await fetchLogin({
       searchParams: correctParamaters,
-      deelinkFlowId: '5099803df3f4948bd2f98391',
+      deeplinkFlowId: '5099803df3f4948bd2f98391',
     })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(`cookie deeplinkFlowId is invalid`)
   })
 
+  test('succeeds when proper arguments are given', async () => {
+    const deeplinkFlowId = (
+      await sessions.insertOne({ createdAt: Date() })
+    ).insertedId.toString()
+
+    const response = await fetchLogin({
+      searchParams: correctParamaters,
+      deeplinkFlowId,
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.headers.get('content-type')).toBe(
+      'text/html; charset=utf-8'
+    )
+  })
+
   function fetchLogin(args: {
     searchParams: Partial<typeof correctParamaters>
-    deelinkFlowId?: string
+    deeplinkFlowId?: string
   }) {
-    const { searchParams, deelinkFlowId } = args
+    const { searchParams, deeplinkFlowId: deelinkFlowId } = args
     const url = new URL('http://localhost:3000/platform/login')
 
     for (const [name, value] of Object.entries(searchParams)) {
