@@ -90,7 +90,7 @@ jobs:
           node-version: 16
 
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           install-command: yarn --immutable --immutable-cache
           browser: chrome
@@ -116,7 +116,7 @@ jobs:
           node-version: 16
 
       - name: Cypress run
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           install-command: yarn --immutable --immutable-cache
           browser: chrome
