@@ -1,4 +1,4 @@
-FROM node:16 as dependencies
+FROM node:16-alpine as dependencies
 LABEL stage=build
 WORKDIR /usr/src/app
 COPY .yarn .yarn
