@@ -116,7 +116,7 @@ const server = (async () => {
     ).insertedId.toString()
     res.setHeader(
       'Set-Cookie',
-      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/; SameSite=None`
+      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/; SameSite=Lax;`
     )
 
     createAutoFromResponse({
