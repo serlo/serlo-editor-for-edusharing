@@ -245,6 +245,17 @@ describe('endpoint "/platform/done"', () => {
       deeplinkFlowId = session.insertedId.toString()
     })
 
+    test('fails when wrong state is send', async () => {
+      const response = await fetchDoneWithJWTValue({
+        JWT: 'some JWT (state check is before)',
+        state: 'invalid-state',
+        deeplinkFlowId,
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('state is invalid')
+    })
+
     test('fails when a malformed JWT is send', async () => {
       const response = await fetchDoneWithJWTValue({
         JWT: 'foobar',
