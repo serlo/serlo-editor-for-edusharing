@@ -1,5 +1,6 @@
 import express from 'express'
-import jwt from 'jsonwebtoken'
+import cookieParser from 'cookie-parser'
+import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
 import next from 'next'
 import fetch from 'node-fetch'
@@ -7,9 +8,19 @@ import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
-import JSONWebKey from 'json-web-key'
-import { Buffer } from 'buffer'
-import { createAutoFromResponse, loadEnvConfig } from './src/server-utils'
+import {
+  createAutoFromResponse,
+  loadEnvConfig,
+  signJwtWithBase64Key,
+  signJwt,
+  createJWKSResponse,
+  verifyJwt,
+} from './src/server-utils'
+import {
+  DeeplinkFlow,
+  jwtDeepflowResponseDecoder,
+  LtiMessageHint,
+} from './src/utils/decoders'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -17,6 +28,13 @@ const app = next({ dev: isDevEnvironment })
 const handle = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
+
+const deeplinkFlowMaxAge = 60
+
+const mongoUrl = new URL(process.env.MONGODB_URL)
+mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
+mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
+const mongoClient = new MongoClient(mongoUrl.href)
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
@@ -55,15 +73,51 @@ Provider.onConnect(async (_token, _req, res) => {
 })
 
 const server = (async () => {
+  await mongoClient.connect()
+
+  const deeplinkFlows = mongoClient.db().collection('deeplink_flows')
+  // Make documents in the `deeplink_flow` expire after `deeplinkFlowMaxAge`
+  // seconds.
+  //
+  // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
+  await deeplinkFlows.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: deeplinkFlowMaxAge }
+  )
+
   await app.prepare()
   await Provider.deploy({ serverless: true })
 
   const server = express()
 
+  server.use('/platform', cookieParser())
+  server.use(express.urlencoded({ extended: true }))
   server.use('/lti', Provider.app)
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
+
+    if (dataToken == null) {
+      res
+        .status(500)
+        .setHeader('Content-type', 'text/html')
+        .send('<html><body><p>dataToken is not set</p></body></html>')
+      return
+    }
+
+    const messageHint: LtiMessageHint = { user, dataToken, nodeId }
+    // TODO: edu-sharing seems to only forward this parameter without
+    // proper decoding. Thus we need to double encode this parameter.
+    // Delete this when edu-sharing has fixed the bug.
+    const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
+
+    const flowId = (
+      await deeplinkFlows.insertOne({ createdAt: new Date() })
+    ).insertedId.toString()
+    res.setHeader(
+      'Set-Cookie',
+      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/; SameSite=Lax;`
+    )
 
     createAutoFromResponse({
       res,
@@ -73,13 +127,9 @@ const server = (async () => {
         iss: process.env.EDITOR_URL,
         target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
         login_hint: process.env.EDITOR_CLIENT_ID,
-        lti_message_hint: JSON.stringify({
-          user,
-          dataToken,
-          nodeId,
-        }),
         client_id: process.env.EDITOR_CLIENT_ID,
         lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+        lti_message_hint,
       },
     })
   })
@@ -89,7 +139,7 @@ const server = (async () => {
     const repositoryId = req.query['repositoryId']
     const { token } = res.locals
 
-    const jwtBody = {
+    const payload = {
       aud: process.env.EDITOR_CLIENT_ID,
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
         process.env.EDITOR_DEPLOYMENT_ID,
@@ -100,16 +150,10 @@ const server = (async () => {
       },
     }
 
-    // TODO: Duplicate code
-    const privateKey = Buffer.from(
-      process.env.EDITOR_PLATFORM_PRIVATE_KEY,
-      'base64'
-    ).toString('utf-8')
-
-    const message = jwt.sign(jwtBody, privateKey, {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const message = signJwtWithBase64Key({
+      payload,
       keyid: process.env.EDITOR_KEY_ID,
+      key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
     })
 
     const url = new URL(
@@ -141,25 +185,183 @@ const server = (async () => {
     }
   })
 
-  // TODO: Use another library
   server.use('/platform/keys', async (_req, res) => {
-    res
-      .json({
-        keys: [
-          {
-            kid: process.env.EDITOR_KEY_ID,
-            alg: 'RS256',
-            use: 'sig',
-            ...JSONWebKey.fromPEM(
-              Buffer.from(
-                process.env.EDITOR_PLATFORM_PUBLIC_KEY,
-                'base64'
-              ).toString('utf-8')
-            ).toJSON(),
-          },
-        ],
-      })
-      .end()
+    createJWKSResponse({
+      res,
+      keyid: process.env.EDITOR_KEY_ID,
+      key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+    })
+  })
+
+  server.get('/platform/login', async (req, res) => {
+    const nonce = req.query['nonce']
+    const state = req.query['state']
+    const messageHint = req.query['lti_message_hint']
+
+    if (typeof nonce !== 'string') {
+      res.status(400).send('nonce is not valid').end()
+      return
+    } else if (typeof state !== 'string') {
+      res.status(400).send('state is not valid').end()
+      return
+    } else if (
+      req.query['redirect_uri'] !== process.env.EDITOR_TARGET_DEEP_LINK_URL
+    ) {
+      res.status(400).send('redirect_uri is not valid').end()
+      return
+    } else if (req.query['client_id'] !== process.env.EDITOR_CLIENT_ID) {
+      res.status(400).send('client_id is not valid').end()
+      return
+    } else if (typeof messageHint !== 'string') {
+      res.status(400).send('lti_message_hint is not valid').end()
+      return
+    }
+
+    let messageHintDecoded: unknown
+    try {
+      messageHintDecoded = JSON.parse(messageHint)
+    } catch {
+      res.status(400).send('lti_message_hint is invalid').end()
+      return
+    }
+
+    if (!LtiMessageHint.is(messageHintDecoded)) {
+      res.status(400).send('lti_message_hint is invalid').end()
+      return
+    }
+
+    const { user, nodeId, dataToken } = messageHintDecoded
+
+    const flowId = parseDeepflowId({ req, res })
+    if (flowId == null) return
+
+    const flowUpdate = await deeplinkFlows.updateOne(
+      { _id: flowId },
+      { $set: { nonce, state } }
+    )
+
+    if (flowUpdate.modifiedCount === 0) {
+      res.status(400).send('cookie deeplinkFlowId is invalid').end()
+      return
+    }
+
+    // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
+    // for an example of a deep linking requst payload
+    const payload = {
+      iss: process.env.EDITOR_URL,
+
+      // TODO: This should be a list. Fix this when edusharing has fixed the
+      // parsing of the JWT.
+      aud: process.env.EDITOR_CLIENT_ID,
+      sub: user,
+
+      nonce,
+      dataToken,
+
+      'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
+        process.env.EDITOR_DEPLOYMENT_ID,
+      'https://purl.imsglobal.org/spec/lti/claim/message_type':
+        'LtiDeepLinkingRequest',
+      'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
+      'https://purl.imsglobal.org/spec/lti/claim/roles': [],
+      'https://purl.imsglobal.org/spec/lti/claim/context': { id: nodeId },
+      'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings': {
+        accept_types: ['ltiResourceLink'],
+        accept_presentation_document_targets: ['iframe'],
+        accept_multiple: true,
+        auto_create: false,
+        deep_link_return_url: `${process.env.EDITOR_URL}platform/done`,
+        title: '',
+        text: '',
+      },
+    }
+
+    const token = signJwtWithBase64Key({
+      payload,
+      keyid: process.env.EDITOR_KEY_ID,
+      key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+    })
+
+    createAutoFromResponse({
+      res,
+      method: 'POST',
+      targetUrl: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+      params: { id_token: token, state },
+    })
+  })
+
+  server.post('/platform/done', async (req, res) => {
+    if (req.headers['content-type'] !== 'application/x-www-form-urlencoded') {
+      res
+        .status(400)
+        .send('"content-type" is not "application/x-www-form-urlencoded"')
+        .end()
+      return
+    }
+
+    if (typeof req.body.JWT !== 'string') {
+      res.status(400).send('JWT token is missing in the request').end()
+      return
+    }
+
+    const flowId = parseDeepflowId({ req, res })
+    if (flowId == null) return
+
+    const { value: deeplinkSession } = await deeplinkFlows.findOneAndDelete({
+      _id: flowId,
+    })
+
+    if (!DeeplinkFlow.is(deeplinkSession)) {
+      res.status(400).send('deeplinkFlowSession is invalid').end()
+      return
+    }
+
+    const { state, nonce } = deeplinkSession
+
+    if (req.body.state !== state) {
+      res.status(400).send('state is invalid').end()
+      return
+    }
+
+    verifyJwt({
+      res,
+      token: req.body.JWT,
+      keysetUrl: process.env.PLATFORM_JWK_SET,
+      verifyOptions: {
+        issuer: process.env.EDITOR_CLIENT_ID,
+        audience: process.env.EDITOR_URL,
+        nonce,
+      },
+      callback(decoded) {
+        if (!jwtDeepflowResponseDecoder.is(decoded)) {
+          res.status(400).send('malformed custom claim in JWT send').end()
+          return
+        }
+
+        const { repositoryId, nodeId } =
+          decoded[
+            'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
+          ][0].custom
+
+        res
+          .setHeader('Content-type', 'text/html')
+          .send(
+            `<!DOCTYPE html>
+            <html>
+              <body>
+                <script type="text/javascript">
+                  parent.postMessage({
+                    repositoryId: '${repositoryId}',
+                    nodeId: '${nodeId}'
+                  }, '${process.env.EDITOR_URL}')
+                </script>
+              </body>
+            </html>
+          `
+          )
+          .end()
+      },
+    })
   })
 
   server.get('/lti/get-content', async (_req, res) => {
@@ -169,16 +371,16 @@ const server = (async () => {
 
     const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
       token.platformContext.custom
-    const jwtBody = {
+    const payload = {
       appId,
       nodeId,
       user,
       ...(version != null ? { version } : {}),
-      dataToken,
+      dataToken: dataToken ?? 'foo',
     }
-    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const message = signJwt({
+      payload,
+      key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
     })
     const url = new URL(getContentApiUrl)
@@ -200,15 +402,10 @@ const server = (async () => {
 
     const { appId, nodeId, user, postContentApiUrl, dataToken } =
       token.platformContext.custom
-    const jwtBody = {
-      appId,
-      nodeId,
-      user,
-      dataToken,
-    }
-    const message = jwt.sign(jwtBody, await platform.platformPrivateKey(), {
-      algorithm: 'RS256',
-      expiresIn: 60,
+    const payload = { appId, nodeId, user, dataToken }
+    const message = signJwt({
+      payload,
+      key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
     })
 
@@ -263,5 +460,25 @@ const server = (async () => {
     },
   })
 })()
+
+function parseDeepflowId({
+  req,
+  res,
+}: {
+  req: express.Request
+  res: express.Response
+}): ObjectId | null {
+  if (typeof req.cookies.deeplinkFlowId != 'string') {
+    res.status(400).send('cookie deeplinkFlowId is missing').end()
+    return null
+  }
+
+  try {
+    return new ObjectId(req.cookies.deeplinkFlowId)
+  } catch {
+    res.status(400).send('cookie deeplinkFlowId is malformed').end()
+    return null
+  }
+}
 
 export default server

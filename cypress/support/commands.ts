@@ -36,4 +36,20 @@
 //   }
 // }
 
+Cypress.Commands.add('getIframe', () => {
+  return cy
+    .get('iframe')
+    .its('0.contentDocument.body')
+    .should('be.visible')
+    .then(cy.wrap)
+})
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      getIframe(): Chainable<unknown>
+    }
+  }
+}
+
 export {}

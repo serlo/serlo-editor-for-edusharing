@@ -1,4 +1,6 @@
 import { defineConfig } from 'cypress'
+import { EdusharingServer } from './src/edusharing-server-mock'
+import { loadEnvConfig } from './src/server-utils'
 
 export default defineConfig({
   // Disable checks in chrome "same-origin" in HTTP requests. Normally cypress
@@ -11,8 +13,31 @@ export default defineConfig({
   chromeWebSecurity: false,
 
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
+    setupNodeEvents(on, _config) {
+      loadEnvConfig()
+      const server = new EdusharingServer()
+
+      on('before:run', () => {
+        return new Promise((resolve) => {
+          server.listen(8100, resolve)
+        })
+      })
+
+      on('task', {
+        initEdusharingServer() {
+          server.init()
+          return null
+        },
+        getSavedVersionsInEdusharing() {
+          return server.savedVersions
+        },
+        deleteDataToken() {
+          server.deleteDataToken()
+          return null
+        },
+      })
     },
   },
+
+  experimentalInteractiveRunEvents: true,
 })
