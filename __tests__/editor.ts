@@ -25,7 +25,7 @@ describe('endpoint "/platform/login"', () => {
       async (param) => {
         const searchParams = { ...correctParamaters }
         delete searchParams[param]
-        const response = await fetchLogin(searchParams)
+        const response = await fetchLogin({ searchParams })
 
         expect(response.status).toBe(400)
         expect(await response.text()).toBe(`${param} is not valid`)
@@ -35,8 +35,10 @@ describe('endpoint "/platform/login"', () => {
 
   test('fails when `lti_message_hint` is malformed JSON', async () => {
     const response = await fetchLogin({
-      ...correctParamaters,
-      lti_message_hint: 'invalid',
+      searchParams: {
+        ...correctParamaters,
+        lti_message_hint: 'invalid',
+      },
     })
 
     expect(response.status).toBe(400)
@@ -45,22 +47,39 @@ describe('endpoint "/platform/login"', () => {
 
   test('fails when `lti_message_hint` has invalid scheme', async () => {
     const response = await fetchLogin({
-      ...correctParamaters,
-      lti_message_hint: JSON.stringify({ foo: 'bar' }),
+      searchParams: {
+        ...correctParamaters,
+        lti_message_hint: JSON.stringify({ foo: 'bar' }),
+      },
     })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(`lti_message_hint is invalid`)
   })
 
-  function fetchLogin(searchParams: Partial<typeof correctParamaters>) {
+  test('fails when no cookie `deelinkFlowId` was send', async () => {
+    const response = await fetchLogin({ searchParams: correctParamaters })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(`cookie deeplinkFlowId is missing`)
+  })
+
+  function fetchLogin(args: {
+    searchParams: Partial<typeof correctParamaters>
+    deelinkFlowId?: string
+  }) {
+    const { searchParams, deelinkFlowId } = args
     const url = new URL('http://localhost:3000/platform/login')
 
     for (const [name, value] of Object.entries(searchParams)) {
       url.searchParams.append(name, value)
     }
 
-    return fetch(url.href)
+    const headers = deelinkFlowId
+      ? { Cookie: `deelinkFlowId=${deelinkFlowId}` }
+      : {}
+
+    return fetch(url.href, { headers })
   }
 })
 
