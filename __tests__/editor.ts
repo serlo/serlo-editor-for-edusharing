@@ -136,8 +136,6 @@ describe('endpoint "/platform/login"', () => {
       ? { Cookie: `deeplinkFlowId=${deeplinkFlowId}` }
       : {}
 
-    console.log(headers)
-
     return fetch(url.href, { headers })
   }
 })
