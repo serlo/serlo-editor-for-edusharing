@@ -51,7 +51,8 @@ Provider.setup(
       secure: false, // Set secure to true if the testing platform is in a different domain and https is being used
       sameSite: '', // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
     },
-    devMode: true, // Set DevMode to false if running in a production environment with https
+    // Set DevMode to false if running in a production environment with https
+    devMode: isDevEnvironment,
   }
 )
 
