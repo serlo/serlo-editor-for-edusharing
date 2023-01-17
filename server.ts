@@ -52,7 +52,7 @@ Provider.setup(
       sameSite: '', // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
     },
     // Set DevMode to false if running in a production environment with https
-    devMode: isDevEnvironment,
+    devMode: process.env.IS_LOCAL_DOCKER_RUN === 'true' || isDevEnvironment,
   }
 )
 
