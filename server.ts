@@ -25,7 +25,7 @@ import {
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
 const app = next({ dev: isDevEnvironment })
-const handle = app.getRequestHandler()
+const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
 
@@ -56,27 +56,31 @@ Provider.setup(
   }
 )
 
-// Registers callback to execute when serlo editor was sucessfully launched as a tool. All lti exchange until here is handled by lti.js.
+// Register callback to execute when serlo editor was successfully launched as a LTI tool.
+// See: https://cvmcosta.me/ltijs/#/provider?id=onconnect
 Provider.onConnect(async (_token, _req, res) => {
-  const { custom } = res.locals.context
+  res.send(await fetchIndexPageHtml())
 
-  // Fetch the editor html created by nextjs.
-  const response = await fetch('http://localhost:3000', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      mayEdit:
-        custom !== undefined && typeof custom.postContentApiUrl === 'string',
-      ltik: res.locals.ltik,
-    }),
-  })
-  // Sends the received html as a response to this request. This will render the editor in the browser. 
-  res.send(await response.text())
+  async function fetchIndexPageHtml() {
+    const { custom } = res.locals.context
+
+    const response = await fetch('http://localhost:3000', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        mayEdit:
+          custom !== undefined && typeof custom.postContentApiUrl === 'string',
+        ltik: res.locals.ltik,
+      }),
+    })
+
+    return response.text()
+  }
 })
 
-// @@@ Creates an async function assigned to server and call it directly afterwards. 
+// Create an async function assigned to server and call it directly afterwards.
 const server = (async () => {
   await mongoClient.connect()
 
@@ -97,8 +101,13 @@ const server = (async () => {
 
   server.use('/platform', cookieParser())
   server.use(express.urlencoded({ extended: true }))
+
+  // Use lti.js as a express.js middleware
+  // All request to paths '/lti' and '/lti/...' are going through lti.js middleware.
+  // See: https://cvmcosta.me/ltijs/#/provider?id=deploying-ltijs-as-part-of-another-server
   server.use('/lti', Provider.app)
 
+  // Called when user clicks on "embed content from edusharing"
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
 
@@ -124,6 +133,8 @@ const server = (async () => {
       `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/; SameSite=Lax;`
     )
 
+    // Create a Third-party Initiated Login request
+    // See: https://www.imsglobal.org/spec/security/v1p0/#step-1-third-party-initiated-login
     createAutoFromResponse({
       res,
       method: 'GET',
@@ -198,6 +209,8 @@ const server = (async () => {
     })
   })
 
+  // Receives an Authentication Request in payload
+  // See: https://www.imsglobal.org/spec/security/v1p0/#step-2-authentication-request
   server.get('/platform/login', async (req, res) => {
     const nonce = req.query['nonce']
     const state = req.query['state']
@@ -250,8 +263,12 @@ const server = (async () => {
       return
     }
 
+    // Construct a Authentication Response
+    // See: https://www.imsglobal.org/spec/security/v1p0/#step-3-authentication-response
+    // An id token is sent back containing a LTI Deep Linking Request Message.
+    // See: https://www.imsglobal.org/spec/lti-dl/v2p0#dfn-deep-linking-request-message
     // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-request-example
-    // for an example of a deep linking requst payload
+    // for an example of a deep linking request payload
     const payload = {
       iss: process.env.EDITOR_URL,
 
@@ -295,6 +312,9 @@ const server = (async () => {
     })
   })
 
+  // Receives a LTI Deep Linking Response Message in payload
+  // See: https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-response-message
+  // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-response-example for an example response payload
   server.post('/platform/done', async (req, res) => {
     if (req.headers['content-type'] !== 'application/x-www-form-urlencoded') {
       res
@@ -445,9 +465,9 @@ const server = (async () => {
     return res.status(response.status).send(await response.text())
   })
 
-  // @@@ Does this catch all requests?
+  // Forward all requests that did not get handled until here to the nextjs request handler.
   server.all('*', (req, res) => {
-    return handle(req, res)
+    return nextJsRequestHandler(req, res)
   })
 
   server.listen(port, () => {
@@ -487,5 +507,4 @@ function parseDeepflowId({
   }
 }
 
-// @@@ Why is server exporter here? 
 export default server
