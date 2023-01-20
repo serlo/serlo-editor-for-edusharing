@@ -75,8 +75,7 @@ jobs:
           cache: yarn
           node-version: 16
       - run: yarn --immutable --immutable-cache
-      - run: yarn test:with-server
-      - run: yarn stop:mongodb
+      - run: yarn test
 
   # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
   cypress:
@@ -94,7 +93,7 @@ jobs:
         with:
           install-command: yarn --immutable --immutable-cache
           browser: chrome
-          start: yarn start:server-with-mongodb
+          start: yarn start:server
           wait-on: 'http://localhost:3000'
 
       - uses: actions/upload-artifact@v3
