@@ -107,6 +107,82 @@ const server = (async () => {
   // See: https://cvmcosta.me/ltijs/#/provider?id=deploying-ltijs-as-part-of-another-server
   server.use('/lti', Provider.app)
 
+  server.get('/lti/get-content', async (_req, res) => {
+    const { token } = res.locals
+
+    const platform = await Provider.getPlatformById(token.platformId)
+
+    const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
+      token.platformContext.custom
+    const payload = {
+      appId,
+      nodeId,
+      user,
+      ...(version != null ? { version } : {}),
+      dataToken: dataToken ?? 'foo',
+    }
+    const message = signJwt({
+      payload,
+      key: await platform.platformPrivateKey(),
+      keyid: await platform.platformKid(),
+    })
+    const url = new URL(getContentApiUrl)
+    // TODO: Use a method here
+    if (process.env.EDUSHARING_NETWORK_HOST) {
+      url.host = process.env.EDUSHARING_NETWORK_HOST
+    }
+    url.searchParams.append('jwt', message)
+
+    const response = await fetch(url.href)
+
+    return res.status(response.status).send(await response.text())
+  })
+
+  server.post('/lti/save-content', async (req, res) => {
+    const { token } = res.locals
+
+    const platform = await Provider.getPlatformById(token.platformId)
+
+    const { appId, nodeId, user, postContentApiUrl, dataToken } =
+      token.platformContext.custom
+    const payload = { appId, nodeId, user, dataToken }
+    const message = signJwt({
+      payload,
+      key: await platform.platformPrivateKey(),
+      keyid: await platform.platformKid(),
+    })
+
+    const url = new URL(postContentApiUrl)
+    // TODO: Use a method here
+    if (process.env.EDUSHARING_NETWORK_HOST) {
+      url.host = process.env.EDUSHARING_NETWORK_HOST
+    }
+    url.searchParams.append('jwt', message)
+    url.searchParams.append('mimetype', 'application/json')
+
+    const comment = req.query['comment']
+    if (comment && typeof comment === 'string') {
+      url.searchParams.append('versionComment', comment)
+    }
+
+    const blob = new File([req.body], 'test.json')
+
+    const data = new FormData()
+    data.set('file', blob)
+
+    const encoder = new FormDataEncoder(data)
+
+    const request = new Request(url.href, {
+      method: 'POST',
+      headers: encoder.headers,
+      body: Readable.from(encoder.encode()),
+    })
+
+    const response = await fetch(request)
+
+    return res.status(response.status).send(await response.text())
+  })
+
   // Called when user clicks on "embed content from edusharing"
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
@@ -388,82 +464,6 @@ const server = (async () => {
           .end()
       },
     })
-  })
-
-  server.get('/lti/get-content', async (_req, res) => {
-    const { token } = res.locals
-
-    const platform = await Provider.getPlatformById(token.platformId)
-
-    const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
-      token.platformContext.custom
-    const payload = {
-      appId,
-      nodeId,
-      user,
-      ...(version != null ? { version } : {}),
-      dataToken: dataToken ?? 'foo',
-    }
-    const message = signJwt({
-      payload,
-      key: await platform.platformPrivateKey(),
-      keyid: await platform.platformKid(),
-    })
-    const url = new URL(getContentApiUrl)
-    // TODO: Use a method here
-    if (process.env.EDUSHARING_NETWORK_HOST) {
-      url.host = process.env.EDUSHARING_NETWORK_HOST
-    }
-    url.searchParams.append('jwt', message)
-
-    const response = await fetch(url.href)
-
-    return res.status(response.status).send(await response.text())
-  })
-
-  server.post('/lti/save-content', async (req, res) => {
-    const { token } = res.locals
-
-    const platform = await Provider.getPlatformById(token.platformId)
-
-    const { appId, nodeId, user, postContentApiUrl, dataToken } =
-      token.platformContext.custom
-    const payload = { appId, nodeId, user, dataToken }
-    const message = signJwt({
-      payload,
-      key: await platform.platformPrivateKey(),
-      keyid: await platform.platformKid(),
-    })
-
-    const url = new URL(postContentApiUrl)
-    // TODO: Use a method here
-    if (process.env.EDUSHARING_NETWORK_HOST) {
-      url.host = process.env.EDUSHARING_NETWORK_HOST
-    }
-    url.searchParams.append('jwt', message)
-    url.searchParams.append('mimetype', 'application/json')
-
-    const comment = req.query['comment']
-    if (comment && typeof comment === 'string') {
-      url.searchParams.append('versionComment', comment)
-    }
-
-    const blob = new File([req.body], 'test.json')
-
-    const data = new FormData()
-    data.set('file', blob)
-
-    const encoder = new FormDataEncoder(data)
-
-    const request = new Request(url.href, {
-      method: 'POST',
-      headers: encoder.headers,
-      body: Readable.from(encoder.encode()),
-    })
-
-    const response = await fetch(request)
-
-    return res.status(response.status).send(await response.text())
   })
 
   // Forward all requests that did not get handled until here to the nextjs request handler.
