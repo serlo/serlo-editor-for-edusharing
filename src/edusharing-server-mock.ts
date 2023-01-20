@@ -56,6 +56,7 @@ export class EdusharingServer {
       })
     })
 
+    // Called during opening editor as lti tool by lti.js
     this.app.get('/edu-sharing/rest/ltiplatform/v13/auth', (req, res) => {
       const payload = {
         nonce: req.query['nonce'],
@@ -93,7 +94,7 @@ export class EdusharingServer {
         },
         'https://purl.imsglobal.org/spec/lti/claim/message_type':
           'LtiResourceLinkRequest',
-        'https://purl.imsglobal.org/spec/lti/claim/custom': this.custom,
+        'https://purl.imsglobal.org/spec/lti/claim/custom': this.custom, // Custom object is sent to the tool server. There it is available through res.locals.token.platformContext.custom
       }
 
       createAutoFromResponse({
