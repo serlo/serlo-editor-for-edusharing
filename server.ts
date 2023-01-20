@@ -508,4 +508,21 @@ function parseDeepflowId({
   }
 }
 
+async function isPortOpen(port: number): Promise<boolean> {
+  const server = createServer()
+
+  return new Promise((resolve) => {
+    server.once('error', function () {
+      // There was an error -> port is probably not open
+      server.close(() => resolve(false))
+    })
+
+    server.once('listening', function () {
+      server.close(() => resolve(true))
+    })
+
+    server.listen(port)
+  })
+}
+
 export default server
