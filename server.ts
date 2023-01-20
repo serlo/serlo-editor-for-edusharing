@@ -16,6 +16,8 @@ import {
   signJwt,
   createJWKSResponse,
   verifyJwt,
+  sendCustomInvalidErrorMessage,
+  createErrorHtml,
 } from './src/server-utils'
 import {
   DeeplinkFlow,
@@ -79,14 +81,7 @@ Provider.onConnect(async (_token, _req, res) => {
   const custom: unknown = res.locals.context.custom
 
   if (!customType.is(custom)) {
-    res
-      .status(500)
-      .setHeader('Content-type', 'text/html')
-      .send(
-        createErrorHtml(
-          `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${_req.path}`
-        )
-      )
+    sendCustomInvalidErrorMessage(res, _req.path)
     return
   }
 
@@ -129,14 +124,7 @@ const server = (async () => {
     const custom: unknown = res.locals.context.custom
 
     if (!customType.is(custom)) {
-      res
-        .status(500)
-        .setHeader('Content-type', 'text/html')
-        .send(
-          createErrorHtml(
-            `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${_req.path}`
-          )
-        )
+      sendCustomInvalidErrorMessage(res, _req.path)
       return
     }
 
@@ -421,14 +409,7 @@ const server = (async () => {
     const custom: unknown = res.locals.context.custom
 
     if (!customType.is(custom)) {
-      res
-        .status(500)
-        .setHeader('Content-type', 'text/html')
-        .send(
-          createErrorHtml(
-            `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${_req.path}`
-          )
-        )
+      sendCustomInvalidErrorMessage(res, _req.path)
       return
     }
 
@@ -465,14 +446,7 @@ const server = (async () => {
     const custom: unknown = res.locals.context.custom
 
     if (!customType.is(custom)) {
-      res
-        .status(500)
-        .setHeader('Content-type', 'text/html')
-        .send(
-          createErrorHtml(
-            `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}`
-          )
-        )
+      sendCustomInvalidErrorMessage(res, req.path)
       return
     }
 
@@ -539,14 +513,6 @@ const server = (async () => {
     },
   })
 })()
-
-function createErrorHtml(message: string) {
-  // TODO: Add support contact
-  const serverErrorMessageHeader =
-    'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!'
-
-  return `<html><body><h1>${serverErrorMessageHeader}</h1><p>Error: ${message}</p></body></html>`
-}
 
 function parseDeepflowId({
   req,
