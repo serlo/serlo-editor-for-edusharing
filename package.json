@@ -33,7 +33,7 @@
     "start:all-docker": "npm-run-all start:mongodb docker:run",
     "start:edusharing": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch edusharing-server.ts --watch src/server-utils.ts --watch src/edusharing-server-mock.ts edusharing-server.ts",
     "start:in-docker-container": "NODE_ENV=production node --experimental-modules --experimental-specifier-resolution=node server.js",
-    "start:mongodb": "docker-compose up -d",
+    "start:mongodb": "yarn scripts:is-server-running --reverse-mode 27017 && docker-compose up -d || node -e 'process.exit(0)'",
     "start:server": "TS_NODE_PROJECT='tsconfig.server.json' NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch server.ts --watch src server.ts",
     "start:server-with-mongodb": "npm-run-all start:mongodb start:server",
     "stop:mongodb": "docker-compose down",
