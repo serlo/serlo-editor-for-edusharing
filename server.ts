@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
 import next from 'next'
+import { createServer } from 'net'
 import fetch from 'node-fetch'
 import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
@@ -24,6 +25,15 @@ import {
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
+
+if (isDevEnvironment && !(await isPortOpen(port))) {
+  console.error(`ERROR: Cannot listen on port ${port}`)
+  console.error(
+    `Probably there is already a dev server running -> so we do not start another server`
+  )
+  process.exit(0)
+}
+
 const app = next({ dev: isDevEnvironment })
 const nextJsRequestHandler = app.getRequestHandler()
 
@@ -510,6 +520,23 @@ function parseDeepflowId({
     res.status(400).send('cookie deeplinkFlowId is malformed').end()
     return null
   }
+}
+
+async function isPortOpen(port: number): Promise<boolean> {
+  const server = createServer()
+
+  return new Promise((resolve) => {
+    server.once('error', function () {
+      // There was an error -> port is probably not open
+      server.close(() => resolve(false))
+    })
+
+    server.once('listening', function () {
+      server.close(() => resolve(true))
+    })
+
+    server.listen(port)
+  })
 }
 
 export default server
