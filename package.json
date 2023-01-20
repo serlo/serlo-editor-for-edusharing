@@ -37,8 +37,9 @@
     "start:server": "TS_NODE_PROJECT='tsconfig.server.json' NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch server.ts --watch src server.ts",
     "start:server-with-mongodb": "npm-run-all start:mongodb start:server",
     "stop:mongodb": "docker-compose down",
-    "test": "start-server-and-test start:server-with-mongodb '3000' 'yarn _jest'",
-    "_jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "npm-run-all --parallel --race start:server-with-mongodb 'test:jest {@}' --",
+    "test:jest": "yarn scripts:is-server-running --wait-for 20 3000 && node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "scripts:is-server-running": "ts-node-esm --transpileOnly scripts/is-server-running.ts"
   },
   "resolutions": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
