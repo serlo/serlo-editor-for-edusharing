@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 
-import { kitchenSink } from '../fixtures/kitchen-sink'
+import { kitchenSink } from '../kitchen-sink'
 import { Layout } from '../layout'
 import { migrate, emptyDocument } from '../storage-format'
 import { createPlugins } from '../plugins'
