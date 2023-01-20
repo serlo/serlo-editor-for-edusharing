@@ -312,7 +312,8 @@ const server = (async () => {
     })
   })
 
-  // Receives a LTI Deep Linking Response Message in payload
+  // Called after the resource selection on Edusharing (within iframe) when user selected what resource to embed.
+  // Receives a LTI Deep Linking Response Message in payload. Contains content_items array that specifies which resource should be embedded.
   // See: https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-response-message
   // See https://www.imsglobal.org/spec/lti-dl/v2p0#deep-linking-response-example for an example response payload
   server.post('/platform/done', async (req, res) => {

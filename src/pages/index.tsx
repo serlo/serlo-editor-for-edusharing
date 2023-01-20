@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     return {
       props: {
         state: migrate({ ...emptyDocument, document: kitchenSink }),
-        ltik: '', // @@@ Why is ltik not used even though it will be send along in the POST request?
+        ltik: '',
         mayEdit: true,
         providerUrl,
       },
