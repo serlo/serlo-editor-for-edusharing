@@ -8,6 +8,7 @@ import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
+import * as t from 'io-ts'
 import {
   createAutoFromResponse,
   loadEnvConfig,
@@ -36,6 +37,23 @@ mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
 const mongoClient = new MongoClient(mongoUrl.href)
 
+// Define type for the LTI claim https://purl.imsglobal.org/spec/lti/claim/custom.
+// Partial contains optional properties.
+const customType = t.intersection([
+  t.type({
+    getContentApiUrl: t.string,
+    getDetailsSnippetUrl: t.string,
+    dataToken: t.string,
+    appId: t.string,
+    nodeId: t.string,
+    user: t.string,
+  }),
+  t.partial({
+    fileName: t.string,
+    postContentApiUrl: t.string,
+  }),
+])
+
 Provider.setup(
   process.env.PLATFORM_SECRET, //
   {
@@ -57,7 +75,19 @@ Provider.setup(
 )
 
 Provider.onConnect(async (_token, _req, res) => {
-  const { custom } = res.locals.context
+  const custom: unknown = res.locals.context.custom
+
+  if (!customType.is(custom)) {
+    res
+      .status(500)
+      .setHeader('Content-type', 'text/html')
+      .send(
+        createErrorHtml(
+          'The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during the tool launch.'
+        )
+      )
+    return
+  }
 
   const response = await fetch('http://localhost:3000', {
     method: 'POST',
@@ -65,8 +95,7 @@ Provider.onConnect(async (_token, _req, res) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      mayEdit:
-        custom !== undefined && typeof custom.postContentApiUrl === 'string',
+      mayEdit: typeof custom.postContentApiUrl === 'string',
       ltik: res.locals.ltik,
     }),
   })
@@ -461,6 +490,14 @@ const server = (async () => {
     },
   })
 })()
+
+function createErrorHtml(message: string) {
+  // TODO: Add support contact
+  const defaultHeader =
+    'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!'
+
+  return `<html><body><h1>${defaultHeader}</h1><p>${message}</p></body></html>`
+}
 
 function parseDeepflowId({
   req,

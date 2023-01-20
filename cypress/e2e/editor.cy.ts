@@ -8,6 +8,18 @@ it('The editor can be called via the LTI Workflow', () => {
   cy.contains('Benannte Version speichern')
 })
 
+describe('Opening the editor as tool', () => {
+  it('fails when the LTI custom claim (sent by edusharing) is missing a non-optional property', () => {
+    cy.task('deleteDataToken')
+
+    openSerloEditorWithLTI()
+
+    cy.contains(
+      'The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during the tool launch.'
+    )
+  })
+})
+
 it('Button "Saved named version" saves a named version', () => {
   openSerloEditorWithLTI()
 
@@ -29,17 +41,6 @@ it('Assets from edu-sharing can be included', () => {
   embedEdusharingAsset()
 
   cy.contains('Inhalt von edu-sharing')
-})
-
-describe('Including assets from edu-sharing', () => {
-  it('fails when edu-sharing has not provided a dataToken in the LTI flow', () => {
-    cy.task('deleteDataToken')
-
-    openSerloEditorWithLTI()
-    embedEdusharingAsset()
-
-    cy.getIframe().contains('dataToken is not set')
-  })
 })
 
 function embedEdusharingAsset() {
