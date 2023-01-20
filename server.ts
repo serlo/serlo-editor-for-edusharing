@@ -51,6 +51,7 @@ const customType = t.intersection([
   t.partial({
     fileName: t.string,
     postContentApiUrl: t.string,
+    version: t.string,
   }),
 ])
 
@@ -83,7 +84,7 @@ Provider.onConnect(async (_token, _req, res) => {
       .setHeader('Content-type', 'text/html')
       .send(
         createErrorHtml(
-          'The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during the tool launch.'
+          `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${_req.path}`
         )
       )
     return
@@ -125,13 +126,27 @@ const server = (async () => {
   server.use('/lti', Provider.app)
 
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
-    const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
+    const custom: unknown = res.locals.context.custom
+
+    if (!customType.is(custom)) {
+      res
+        .status(500)
+        .setHeader('Content-type', 'text/html')
+        .send(
+          createErrorHtml(
+            `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${_req.path}`
+          )
+        )
+      return
+    }
+
+    const { user, dataToken, nodeId } = custom
 
     if (dataToken == null) {
       res
         .status(500)
         .setHeader('Content-type', 'text/html')
-        .send('<html><body><p>dataToken is not set</p></body></html>')
+        .send(createErrorHtml('dataToken is not set'))
       return
     }
 
@@ -165,16 +180,24 @@ const server = (async () => {
   })
 
   server.get('/lti/get-embed-html', async (req, res) => {
+    const custom: unknown = res.locals.context.custom
+
+    if (!customType.is(custom)) {
+      res.json({
+        details: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
+      })
+      return
+    }
+
     const nodeId = req.query['nodeId']
     const repositoryId = req.query['repositoryId']
-    const { token } = res.locals
 
     const payload = {
       aud: process.env.EDITOR_CLIENT_ID,
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
         process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
-      dataToken: token.platformContext.custom.dataToken,
+      dataToken: custom.dataToken,
       'https://purl.imsglobal.org/spec/lti/claim/context': {
         id: process.env.EDITOR_CLIENT_ID,
       },
@@ -395,18 +418,31 @@ const server = (async () => {
   })
 
   server.get('/lti/get-content', async (_req, res) => {
+    const custom: unknown = res.locals.context.custom
+
+    if (!customType.is(custom)) {
+      res
+        .status(500)
+        .setHeader('Content-type', 'text/html')
+        .send(
+          createErrorHtml(
+            `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${_req.path}`
+          )
+        )
+      return
+    }
+
     const { token } = res.locals
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
-      token.platformContext.custom
+    const { appId, nodeId, user, getContentApiUrl, version, dataToken } = custom
     const payload = {
       appId,
       nodeId,
       user,
       ...(version != null ? { version } : {}),
-      dataToken: dataToken ?? 'foo',
+      dataToken: dataToken ?? 'foo', // TODO should dataToken be always present?
     }
     const message = signJwt({
       payload,
@@ -426,12 +462,25 @@ const server = (async () => {
   })
 
   server.post('/lti/save-content', async (req, res) => {
+    const custom: unknown = res.locals.context.custom
+
+    if (!customType.is(custom)) {
+      res
+        .status(500)
+        .setHeader('Content-type', 'text/html')
+        .send(
+          createErrorHtml(
+            `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}`
+          )
+        )
+      return
+    }
+
     const { token } = res.locals
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, postContentApiUrl, dataToken } =
-      token.platformContext.custom
+    const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
     const payload = { appId, nodeId, user, dataToken }
     const message = signJwt({
       payload,

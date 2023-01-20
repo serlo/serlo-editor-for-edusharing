@@ -14,17 +14,17 @@ describe('Opening the editor as tool', () => {
 
     openSerloEditorWithLTI()
 
-    cy.contains(
-      'The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during the tool launch.'
-    )
+    // TODO Could pull the exact error message from server.ts
+    cy.contains('Something went wrong!')
   })
 
-  // TODO this test passes but editor does not appear. 
+  // TODO this test passes but editor does not appear.
   it('succeeds when the LTI custom claim (sent by edusharing) is missing an optional property', () => {
     cy.task('deletePostContentApiUrl')
 
     openSerloEditorWithLTI()
 
+    // TODO Could pull the exact error message from server.ts
     cy.contains('Something went wrong!').should('not.exist')
   })
 })
