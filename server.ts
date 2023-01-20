@@ -18,8 +18,9 @@ import {
   verifyJwt,
 } from './src/server-utils'
 import {
-  DeeplinkFlow,
-  jwtDeepflowResponseDecoder,
+  DeeplinkFlowDecoder,
+  JwtDeepflowResponseDecoder,
+  LtiMessageHintDecoder,
   LtiMessageHint,
 } from './src/utils/decoders'
 
@@ -333,7 +334,7 @@ const server = (async () => {
       return
     }
 
-    if (!LtiMessageHint.is(messageHintDecoded)) {
+    if (!LtiMessageHintDecoder.is(messageHintDecoded)) {
       res.status(400).send('lti_message_hint is invalid').end()
       return
     }
@@ -427,7 +428,7 @@ const server = (async () => {
       _id: flowId,
     })
 
-    if (!DeeplinkFlow.is(deeplinkSession)) {
+    if (!DeeplinkFlowDecoder.is(deeplinkSession)) {
       res.status(400).send('deeplinkFlowSession is invalid').end()
       return
     }
@@ -449,7 +450,7 @@ const server = (async () => {
         nonce,
       },
       callback(decoded) {
-        if (!jwtDeepflowResponseDecoder.is(decoded)) {
+        if (!JwtDeepflowResponseDecoder.is(decoded)) {
           res.status(400).send('malformed custom claim in JWT send').end()
           return
         }

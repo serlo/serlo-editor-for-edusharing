@@ -10,6 +10,7 @@ import Modal from 'react-modal'
 import Image from 'next/image'
 import { Button } from '../components/button'
 import { useEffect, useRef, useState } from 'react'
+import { EdusharingAssetDecoder } from '../utils/decoders'
 
 const state = object({
   edusharingAsset: optional(
@@ -66,7 +67,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     function handleIFrameEvent({ data, source }: MessageEvent) {
       if (source !== iframeRef.current?.contentWindow) return
 
-      if (typeof data === 'object' && typeof data.nodeId === 'string') {
+      if (typeof data === 'object' && EdusharingAssetDecoder.is(data)) {
         const newEdusharingAsset = {
           nodeId: data.nodeId,
           repositoryId: data.repositoryId,
