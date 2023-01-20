@@ -1,56 +1,32 @@
-# Educational Content Editor as a Service
+# Docker container for integrating the Serlo Editor into edu-sharing
 
-## Starting the editor locally
+## Usage
 
-- `yarn mongodb:start` starts the MongoDB server.
-- `yarn dev` starts the Next.js server on http://localhost:3000/.
+You can use the Serlo Editor via docker. You can pull the container from
+[the GitHub Packages](https://github.com/serlo/ece-as-a-service/pkgs/container/ece-as-a-service).
+The container is configured by environment variables. Which you can use are
+defined in the file [`.env`](./.env).
 
-## LTI Workflow
+## Setup
 
-### Deep Linking
+1. Clone this repository
+2. Install tools from [`.tool-versions`](./.tool-versions) (for example via
+   [`asdf`](https://asdf-vm.com/))
+3. Install `docker` and `docker-compose`
+4. Run `yarn`
 
-On a Deep Linking request, we show a simple form where the user can create a new
-document. Returns with a Resource Link where `custom.state` is an empty
-document.
+## Local development
 
-### Resource Link
+You can use `yarn run` to see which scripts you can use in the local
+development. The most important ones are:
 
-A resource link expects the following custom parameters:
-
-```ts
-interface CustomParameters {
-  // The editor state as created by the Deep Linking form or later save requests.
-  state: {
-    version: number
-    document: { plugin: string; state?: unknown }
-  }
-  // Whether the user should be able to save the document
-  mayEdit?: 'true'
-  // The endpoint that will be used when the user initiates a save. Should be set when mayEdit is true.
-  saveUrl?: string
-  // Arbitrary additional information that we should pass when the user iniates a save.
-  // (e.g. user id, token, ...)
-  savePayload?: unknown
-}
-```
-
-If `mayEdit` is false, we only render the document. If `mayEdit` is true, we
-also load the editor and show an edit button. When the user clicks "Save" after
-editing a document, we do a POST request to the specified `saveUrl` with the
-following JSON body:
-
-```ts
-interface SavePayload {
-  // The (JSON) state of the document.
-  state: {
-    version: number
-    document: { plugin: string; state?: unknown }
-  }
-  // The additional information that was specified via `savePayload`.
-  payload: unknown
-}
-```
-
-## Integration
-
-- [Docker image](https://github.com/serlo/ece-as-a-service/pkgs/container/ece-as-a-service)
+- `yarn dev`: Starts the server on http://localhost:3000/ together with a mock
+  of edu-sharing. You can open http://localhost:8100/ in order to open the Serlo
+  Editor via LTI (as edu-sharing will be). You can also test the saving and the
+  embedding with the edu-sharing mock.
+- `yarn start:server`: Only starts the Serlo editor (this is needed for tests
+  since the tests need to start the edu-sharing mock by themself).
+- `yarn test`: Run all jest tests.
+- `yarn e2e`: Run all e2e tests with cypress.
+- `yarn lint`: Run all lints (eslint, prettier, ...).
+- `yarn format`: Format all source code.
