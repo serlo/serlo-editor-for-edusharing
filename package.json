@@ -37,6 +37,7 @@
     "stop:mongodb": "docker-compose down",
     "test": "npm-run-all --parallel --race start:server 'test:jest {@}' --",
     "test:jest": "yarn scripts:is-server-running --wait-for 20 3000 && node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:docker-build": "npm-run-all -c docker:build docker:run test docker:stop docker:rm",
     "scripts:is-server-running": "ts-node-esm --transpileOnly scripts/is-server-running.ts"
   },
   "resolutions": {
