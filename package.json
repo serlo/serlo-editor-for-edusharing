@@ -18,8 +18,8 @@
     "docker:run": "docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name ece-as-a-service-from-local-build ece-as-a-service-local-build",
     "docker:stop": "docker container stop ece-as-a-service-from-local-build && docker container rm ece-as-a-service-from-local-build",
     "docker:rm": "docker image rm ece-as-a-service-local-build",
-    "e2e": "cypress run",
-    "e2e:with-server": "start-server-and-test start:server-with-mongodb '3000' e2e",
+    "e2e": "npm-run-all --parallel --race start:server-with-mongodb 'e2e:run {@}' --",
+    "e2e:run": "yarn scripts:is-server-running --wait-for 20 3000 && cypress run",
     "e2e:cypress": "cypress open",
     "e2e:with-docker": "npm-run-all -c docker:build start:mongodb docker:run e2e docker:stop docker:rm",
     "format": "run-p -c \"format:*\"",
@@ -117,7 +117,6 @@
     "postcss": "^8.4.21",
     "prettier": "^2.8.3",
     "prettier-plugin-packagejson": "^2.4.0",
-    "start-server-and-test": "^1.15.2",
     "tailwindcss": "^3.2.4",
     "ts-jest": "^29.0.5",
     "typescript": "^4.9.4"
