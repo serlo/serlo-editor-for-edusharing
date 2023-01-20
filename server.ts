@@ -493,10 +493,10 @@ const server = (async () => {
 
 function createErrorHtml(message: string) {
   // TODO: Add support contact
-  const defaultHeader =
+  const serverErrorMessageHeader =
     'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!'
 
-  return `<html><body><h1>${defaultHeader}</h1><p>${message}</p></body></html>`
+  return `<html><body><h1>${serverErrorMessageHeader}</h1><p>Error: ${message}</p></body></html>`
 }
 
 function parseDeepflowId({

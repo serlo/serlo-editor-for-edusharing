@@ -35,6 +35,10 @@ export default defineConfig({
           server.deleteDataToken()
           return null
         },
+        deletePostContentApiUrl() {
+          server.deletePostContentApiUrl()
+          return null
+        },
       })
     },
   },

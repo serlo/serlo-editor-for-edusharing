@@ -18,6 +18,15 @@ describe('Opening the editor as tool', () => {
       'The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during the tool launch.'
     )
   })
+
+  // TODO this test passes but editor does not appear. 
+  it('succeeds when the LTI custom claim (sent by edusharing) is missing an optional property', () => {
+    cy.task('deletePostContentApiUrl')
+
+    openSerloEditorWithLTI()
+
+    cy.contains('Something went wrong!').should('not.exist')
+  })
 })
 
 it('Button "Saved named version" saves a named version', () => {

@@ -268,6 +268,10 @@ export class EdusharingServer {
     delete this.custom['dataToken']
   }
 
+  deletePostContentApiUrl() {
+    delete this.custom['postContentApiUrl']
+  }
+
   listen(port: number, callback: () => void) {
     this.app.listen(port, callback)
   }
