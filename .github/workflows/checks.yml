@@ -121,5 +121,5 @@ jobs:
           install-command: yarn --immutable --immutable-cache
           browser: chrome
           build: yarn docker:build
-          start: yarn start:all-docker
+          start: yarn docker:run
           wait-on: 'http://localhost:3000'
