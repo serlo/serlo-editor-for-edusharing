@@ -46,6 +46,9 @@ mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
 const mongoClient = new MongoClient(mongoUrl.href)
 
+const ltijsIsServedInDevMode =
+  process.env.IS_LOCAL_DOCKER_RUN === 'true' || isDevEnvironment
+
 Provider.setup(
   process.env.PLATFORM_SECRET, //
   {
@@ -56,13 +59,14 @@ Provider.setup(
     },
   },
   {
-    // Options
     cookies: {
-      secure: false, // Set secure to true if the testing platform is in a different domain and https is being used
-      sameSite: '', // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
+      // Set secure to true if the testing platform is in a different domain and https is being used
+      secure: false,
+      // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
+      sameSite: 'Lax',
     },
     // Set DevMode to false if running in a production environment with https
-    devMode: process.env.IS_LOCAL_DOCKER_RUN === 'true' || isDevEnvironment,
+    devMode: ltijsIsServedInDevMode,
   }
 )
 
