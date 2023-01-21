@@ -1,30 +1,19 @@
 import { GetServerSideProps } from 'next'
 
-import { kitchenSink } from '../storage-format/kitchen-sink'
 import { migrate, emptyDocument } from '../storage-format'
 import { SerloEditor, SerloEditorProps } from '../frontend'
-import { getJsonBody } from '../utils/get-json-body'
 
 export const getServerSideProps: GetServerSideProps<SerloEditorProps> = async (
   context
 ) => {
-  const providerUrl = process.env.EDITOR_URL
+  const mayEdit = context.query.mayEdit === 'true'
+  const ltik = Array.isArray(context.query.ltik)
+    ? context.query.ltik[0]
+    : context.query.ltik
 
-  if (context.req.method !== 'POST') {
-    return {
-      props: {
-        state: migrate({ ...emptyDocument, document: kitchenSink }),
-        ltik: '',
-        mayEdit: true,
-        providerUrl,
-      },
-    }
-  }
-
-  const props = await getJsonBody<SerloEditorProps>(context)
   const response = await fetch(process.env.EDITOR_URL + 'lti/get-content', {
     headers: {
-      Authorization: `Bearer ${props.ltik}`,
+      Authorization: `Bearer ${ltik}`,
     },
   })
 
@@ -33,9 +22,10 @@ export const getServerSideProps: GetServerSideProps<SerloEditorProps> = async (
 
   return {
     props: {
-      ...props,
+      mayEdit,
+      ltik,
       state: migrate(state),
-      providerUrl,
+      providerUrl: process.env.EDITOR_URL,
     },
   }
 }

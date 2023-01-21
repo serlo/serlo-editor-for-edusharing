@@ -78,18 +78,14 @@ Provider.onConnect(async (_token, _req, res) => {
 
   async function fetchIndexPageHtml() {
     const { custom } = res.locals.context
+    const mayEdit =
+      custom !== undefined && typeof custom.postContentApiUrl === 'string'
 
-    const response = await fetch('http://localhost:3000', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        mayEdit:
-          custom !== undefined && typeof custom.postContentApiUrl === 'string',
-        ltik: res.locals.ltik,
-      }),
-    })
+    const url = new URL('http://localhost:3000/editor-for-edusharing')
+    url.searchParams.append('ltik', res.locals.ltik)
+    url.searchParams.append('mayEdit', mayEdit.toString())
+
+    const response = await fetch(url.href)
 
     return response.text()
   }
