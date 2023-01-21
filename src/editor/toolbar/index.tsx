@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useScopedDispatch, useScopedSelector } from '@edtr-io/core'
-import { ToolbarButton } from './toolbar-button'
+import { ToolbarButton } from './button'
 import { hasPendingChanges as hasPendingChangesSelector } from '@edtr-io/store'
 
 export const savedBySerloString =
