@@ -18,7 +18,7 @@ import { useDebounce } from 'rooks'
 
 import { Layout } from './layout'
 import { createPlugins } from './plugins'
-import { StorageFormat, documentType } from '../storage-format'
+import { StorageFormat, documentType } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 

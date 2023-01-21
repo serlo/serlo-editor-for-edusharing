@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { emptyDocument } from '../storage-format'
+import { emptyDocument } from '../shared/storage-format'
 import {
   createAutoFromResponse,
   createJWKSResponse,

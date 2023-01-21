@@ -26,7 +26,7 @@ ENV NODE_ENV=production
 COPY --from=build /usr/src/app/.next .next
 COPY --from=build /usr/src/app/src/backend/server.js src/backend/server.js
 COPY --from=build /usr/src/app/src/server-utils.js src/server-utils.js
-COPY --from=build /usr/src/app/src/decoders.js src/decoders.js
+COPY --from=build /usr/src/app/src/shared src/shared
 
 ENTRYPOINT ["node", "--experimental-modules", "--experimental-specifier-resolution=node", "src/backend/server.js"]
 EXPOSE 3000

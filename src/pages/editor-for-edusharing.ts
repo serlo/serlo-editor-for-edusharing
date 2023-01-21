@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 
-import { migrate, emptyDocument } from '../storage-format'
+import { migrate, emptyDocument } from '../shared/storage-format'
 import { SerloEditor, SerloEditorProps } from '../frontend'
 
 export const getServerSideProps: GetServerSideProps<SerloEditorProps> = async (
