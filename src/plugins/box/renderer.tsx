@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { useState } from 'react'
 
 import { BoxProps } from '.'
-import { FaIcon } from '../../components/fa-icon'
+import { FaIcon } from '../common-components'
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle'
 import { faHandPointRight } from '@fortawesome/free-solid-svg-icons/faHandPointRight'
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons/faLightbulb'
