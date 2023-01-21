@@ -28,7 +28,7 @@ export function migrate(state: StorageFormat): StorageFormat {
 
 type Migration = (state: StorageFormat['document']) => StorageFormat['document']
 
-interface StorageFormat {
+export interface StorageFormat {
   type: typeof documentType
   version: number
   document: { plugin: string; state?: unknown }
