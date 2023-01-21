@@ -1,24 +1,12 @@
 export const documentType = 'https://github.com/serlo/ece-as-a-service'
+const migrations: Migration[] = []
+const currentVersion = migrations.length
 
 export const emptyDocument: StorageFormat = {
   type: documentType,
   version: 0,
   document: { plugin: 'rows' },
 }
-
-export interface StorageFormat {
-  type: typeof documentType
-  version: number
-  document: { plugin: string; state?: unknown }
-}
-
-export type Migration = (
-  state: StorageFormat['document']
-) => StorageFormat['document']
-
-const migrations: Migration[] = []
-
-export const currentVersion = migrations.length
 
 export function migrate(state: StorageFormat): StorageFormat {
   const migrationsToApply = migrations.slice(
@@ -36,4 +24,12 @@ export function migrate(state: StorageFormat): StorageFormat {
     version: currentVersion,
     document,
   }
+}
+
+type Migration = (state: StorageFormat['document']) => StorageFormat['document']
+
+interface StorageFormat {
+  type: typeof documentType
+  version: number
+  document: { plugin: string; state?: unknown }
 }
