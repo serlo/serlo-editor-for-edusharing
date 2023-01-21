@@ -22,7 +22,7 @@ import {
   JwtDeepflowResponseDecoder,
   LtiMessageHintDecoder,
   LtiMessageHint,
-} from './src/utils/decoders'
+} from './src/decoders'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
