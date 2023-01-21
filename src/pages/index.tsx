@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 
-import { kitchenSink } from '../kitchen-sink'
+import { kitchenSink } from '../storage-format/kitchen-sink'
 import { migrate, emptyDocument } from '../storage-format'
 import { createPlugins, Layout, EditorProps } from '../frontend'
 import { getJsonBody } from '../utils/get-json-body'
