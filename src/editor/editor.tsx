@@ -16,7 +16,7 @@ import {
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
-import { Layout } from '../components/'
+import { Layout } from './layout'
 import { createPlugins } from './plugins'
 import { StorageFormat, documentType } from '../storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
