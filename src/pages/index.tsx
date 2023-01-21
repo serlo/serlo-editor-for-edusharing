@@ -7,7 +7,7 @@ import { migrate, emptyDocument } from '../storage-format'
 import { createPlugins } from '../editor'
 import { getJsonBody } from '../utils/get-json-body'
 import { Renderer } from '@edtr-io/renderer'
-import type { EditorProps } from '../editor/editor'
+import type { EditorProps } from '../editor'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../editor/editor').then((mod) => mod.Editor)
