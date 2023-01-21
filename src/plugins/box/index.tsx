@@ -5,12 +5,12 @@ import {
   object,
   string,
 } from '@edtr-io/plugin'
-import { getPluginRegistry } from '../../plugins'
+import { getPluginRegistry } from '../registry'
 
 import { BoxRenderer } from './renderer'
 
 export function createBoxState() {
-  const plugins = getPluginRegistry('box', [
+  const plugins = getPluginRegistry([
     'text',
     'image',
     'equations',
