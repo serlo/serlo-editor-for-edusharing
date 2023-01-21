@@ -1,3 +1,3 @@
-export { EditorProps } from './editor'
+export type { EditorProps } from './editor'
 export { createPlugins } from './plugins'
 export { Layout } from './layout'
