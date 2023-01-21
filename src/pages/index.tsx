@@ -3,13 +3,12 @@ import dynamic from 'next/dynamic'
 
 import { kitchenSink } from '../kitchen-sink'
 import { migrate, emptyDocument } from '../storage-format'
-import { createPlugins, Layout } from '../editor'
+import { createPlugins, Layout, EditorProps } from '../frontend'
 import { getJsonBody } from '../utils/get-json-body'
 import { Renderer } from '@edtr-io/renderer'
-import type { EditorProps } from '../editor'
 
 const Editor = dynamic<EditorProps>(() =>
-  import('../editor/editor').then((mod) => mod.Editor)
+  import('../frontend/editor').then((mod) => mod.Editor)
 )
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
