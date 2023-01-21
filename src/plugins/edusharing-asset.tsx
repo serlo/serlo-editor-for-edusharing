@@ -8,7 +8,7 @@ import {
 import clsx from 'clsx'
 import Modal from 'react-modal'
 import Image from 'next/image'
-import { Button } from '../components/button'
+import { MouseEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { EdusharingAssetDecoder } from '../utils/decoders'
 
@@ -167,4 +167,20 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       </Modal>
     )
   }
+}
+
+interface ButtonProps {
+  onClick?: (event?: MouseEvent) => void
+  children?: React.ReactNode
+}
+
+function Button({ onClick, children }: ButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="block rounded-md px-2 py-1 text-white bg-sky-800 absolute right-2 bottom-2 focus:bg-sky-500"
+    >
+      {children}
+    </button>
+  )
 }
