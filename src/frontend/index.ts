@@ -1,3 +1,2 @@
-export type { EditorProps } from './editor'
-export { createPlugins } from './plugins'
-export { Layout } from './layout'
+export { SerloEditor } from './serlo-editor'
+export type { SerloEditorProps } from './serlo-editor'

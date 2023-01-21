@@ -1,17 +1,11 @@
 import { GetServerSideProps } from 'next'
-import dynamic from 'next/dynamic'
 
 import { kitchenSink } from '../storage-format/kitchen-sink'
 import { migrate, emptyDocument } from '../storage-format'
-import { createPlugins, Layout, EditorProps } from '../frontend'
+import { SerloEditor, SerloEditorProps } from '../frontend'
 import { getJsonBody } from '../utils/get-json-body'
-import { Renderer } from '@edtr-io/renderer'
 
-const Editor = dynamic<EditorProps>(() =>
-  import('../frontend/editor').then((mod) => mod.Editor)
-)
-
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
+export const getServerSideProps: GetServerSideProps<SerloEditorProps> = async (
   context
 ) => {
   const providerUrl = process.env.EDITOR_URL
@@ -27,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
     }
   }
 
-  const props = await getJsonBody<PageProps>(context)
+  const props = await getJsonBody<SerloEditorProps>(context)
   const response = await fetch(process.env.EDITOR_URL + 'lti/get-content', {
     headers: {
       Authorization: `Bearer ${props.ltik}`,
@@ -46,21 +40,4 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
   }
 }
 
-export interface PageProps extends EditorProps {
-  mayEdit: boolean
-}
-
-export default function Page(props: PageProps) {
-  if (props.mayEdit) {
-    return <Editor {...props} />
-  } else {
-    return (
-      <Layout>
-        <Renderer
-          plugins={createPlugins({ ltik: props.ltik })}
-          state={props.state.document}
-        />
-      </Layout>
-    )
-  }
-}
+export default SerloEditor
