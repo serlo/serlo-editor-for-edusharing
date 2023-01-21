@@ -17,7 +17,7 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
 import { Layout } from '../components/'
-import { createPlugins } from '../plugins'
+import { createPlugins } from './plugins'
 import { StorageFormat, documentType } from '../storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'

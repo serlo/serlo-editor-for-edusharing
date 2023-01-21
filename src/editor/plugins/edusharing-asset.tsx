@@ -10,7 +10,7 @@ import Modal from 'react-modal'
 import Image from 'next/image'
 import { MouseEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { EdusharingAssetDecoder } from '../utils/decoders'
+import { EdusharingAssetDecoder } from '../../utils/decoders'
 
 const state = object({
   edusharingAsset: optional(
