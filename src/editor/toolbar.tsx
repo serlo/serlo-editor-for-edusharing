@@ -6,7 +6,9 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useScopedDispatch, useScopedSelector } from '@edtr-io/core'
 import { ToolbarButton } from './toolbar-button'
 import { hasPendingChanges as hasPendingChangesSelector } from '@edtr-io/store'
-import { savedBySerloString } from './editor'
+
+export const savedBySerloString =
+  'Diese Version wurde automatisch vom Serlo-Editor erstellt'
 
 export interface ToolbarProps {
   mode: 'edit' | 'render'

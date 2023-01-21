@@ -19,7 +19,7 @@ import { useDebounce } from 'rooks'
 import { Layout } from '../components/'
 import { createPlugins } from '../plugins'
 import { StorageFormat, documentType } from '../storage-format'
-import { Toolbar } from './toolbar'
+import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 
 export interface EditorProps {
@@ -27,9 +27,6 @@ export interface EditorProps {
   ltik: string
   providerUrl: string
 }
-
-export const savedBySerloString =
-  'Diese Version wurde automatisch vom Serlo-Editor erstellt'
 
 export function Editor(props: EditorProps) {
   return (
