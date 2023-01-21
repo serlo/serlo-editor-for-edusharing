@@ -1,5 +1,5 @@
-import { loadEnvConfig } from './src/server-utils'
-import { EdusharingServer } from './src/edusharing-server-mock'
+import { loadEnvConfig } from '../server-utils'
+import { EdusharingServer } from './server'
 
 loadEnvConfig()
 

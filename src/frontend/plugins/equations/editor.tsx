@@ -2,7 +2,6 @@ import { HotKeys, useScopedSelector, useScopedStore } from '@edtr-io/core'
 // eslint-disable-next-line import/no-internal-modules
 import { PreferenceContext, setDefaultPreference } from '@edtr-io/core/beta'
 // eslint-disable-next-line import/no-internal-modules
-import { AddButton } from '@edtr-io/editor-ui/internal'
 import { MathEditor } from '@edtr-io/math'
 import { StateTypeReturnType, StringStateType } from '@edtr-io/plugin'
 import {
@@ -37,7 +36,7 @@ const equationStrings = {
 }
 
 import { EquationsProps, stepProps } from '.'
-import { FaIcon } from '../../components/fa-icon'
+import { FaIcon } from '../common-components'
 import {
   EquationsRenderer,
   ExplanationTr,

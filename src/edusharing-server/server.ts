@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express'
-import { emptyDocument } from './storage-format'
+import { emptyDocument } from '../shared/storage-format'
 import {
   createAutoFromResponse,
   createJWKSResponse,
   signJwtWithBase64Key,
   verifyJwt,
-} from './server-utils'
+} from '../server-utils'
 
 export class EdusharingServer {
   private keyid = 'key'

@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["server.ts", "src/server-utils.ts", "src/utils/decoders.ts"],
+  "include": ["src/backend/*.ts", "src/server-utils.ts", "src/shared/**/*.ts"],
   "compilerOptions": {
     "allowJs": false,
     "noEmit": false
