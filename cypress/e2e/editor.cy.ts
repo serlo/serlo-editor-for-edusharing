@@ -10,7 +10,7 @@ it('The editor can be called via the LTI Workflow', () => {
 
 describe('Opening the editor as tool', () => {
   it('fails when the LTI custom claim (sent by edusharing) is missing a non-optional property', () => {
-    cy.task('deleteDataToken')
+    cy.task('removePropertyInCustom', 'dataToken')
 
     openSerloEditorWithLTI()
 
@@ -20,7 +20,7 @@ describe('Opening the editor as tool', () => {
 
   // TODO this test passes but editor does not appear.
   it('succeeds when the LTI custom claim (sent by edusharing) is missing an optional property', () => {
-    cy.task('deletePostContentApiUrl')
+    cy.task('removePropertyInCustom', 'postContentApiUrl')
 
     openSerloEditorWithLTI()
 
