@@ -5,6 +5,7 @@ COPY .yarn .yarn
 COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
+COPY public .
 RUN yarn --immutable --silent
 
 FROM dependencies as build
@@ -15,7 +16,6 @@ COPY next.config.mjs .
 COPY next-env.d.ts .
 COPY tsconfig.server.json .
 COPY postcss.config.json .
-COPY public .
 COPY tailwind.config.cjs .
 COPY tsconfig.json .
 RUN yarn build
