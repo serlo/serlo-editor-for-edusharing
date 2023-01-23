@@ -8,7 +8,6 @@ import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
-import * as t from 'io-ts'
 import {
   createAutoFromResponse,
   loadEnvConfig,
@@ -23,6 +22,7 @@ import {
   DeeplinkFlow,
   jwtDeepflowResponseDecoder,
   LtiMessageHint,
+  LtiCustomType,
 } from './src/utils/decoders'
 
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -38,24 +38,6 @@ const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
 const mongoClient = new MongoClient(mongoUrl.href)
-
-// Define type for the LTI claim https://purl.imsglobal.org/spec/lti/claim/custom.
-// Partial contains optional properties.
-const customType = t.intersection([
-  t.type({
-    getContentApiUrl: t.string,
-    getDetailsSnippetUrl: t.string,
-    dataToken: t.string,
-    appId: t.string,
-    nodeId: t.string,
-    user: t.string,
-  }),
-  t.partial({
-    fileName: t.string,
-    postContentApiUrl: t.string,
-    version: t.string,
-  }),
-])
 
 Provider.setup(
   process.env.PLATFORM_SECRET, //
@@ -80,7 +62,7 @@ Provider.setup(
 Provider.onConnect(async (_token, _req, res) => {
   const custom: unknown = res.locals.context.custom
 
-  if (!customType.is(custom)) {
+  if (!LtiCustomType.is(custom)) {
     sendCustomInvalidErrorMessage(res, _req.path)
     return
   }
@@ -123,7 +105,7 @@ const server = (async () => {
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
     const custom: unknown = res.locals.context.custom
 
-    if (!customType.is(custom)) {
+    if (!LtiCustomType.is(custom)) {
       sendCustomInvalidErrorMessage(res, _req.path)
       return
     }
@@ -170,7 +152,7 @@ const server = (async () => {
   server.get('/lti/get-embed-html', async (req, res) => {
     const custom: unknown = res.locals.context.custom
 
-    if (!customType.is(custom)) {
+    if (!LtiCustomType.is(custom)) {
       res.json({
         details: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
       })
@@ -408,7 +390,7 @@ const server = (async () => {
   server.get('/lti/get-content', async (_req, res) => {
     const custom: unknown = res.locals.context.custom
 
-    if (!customType.is(custom)) {
+    if (!LtiCustomType.is(custom)) {
       sendCustomInvalidErrorMessage(res, _req.path)
       return
     }
@@ -445,7 +427,7 @@ const server = (async () => {
   server.post('/lti/save-content', async (req, res) => {
     const custom: unknown = res.locals.context.custom
 
-    if (!customType.is(custom)) {
+    if (!LtiCustomType.is(custom)) {
       sendCustomInvalidErrorMessage(res, req.path)
       return
     }
