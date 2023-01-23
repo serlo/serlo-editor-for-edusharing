@@ -5,7 +5,7 @@ COPY .yarn .yarn
 COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
-COPY public .
+COPY public public
 RUN yarn --immutable --silent
 
 FROM dependencies as build
