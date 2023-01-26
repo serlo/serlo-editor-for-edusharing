@@ -107,7 +107,7 @@ export class EdusharingServer {
             keyid: this.keyid,
             key: this.key,
           }),
-          state: req.query['nonce'].toString(),
+          state: req.query['state'].toString(),
         },
       })
     })
