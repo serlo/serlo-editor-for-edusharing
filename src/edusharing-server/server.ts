@@ -100,7 +100,7 @@ export class EdusharingServer {
       createAutoFromResponse({
         res,
         method: 'POST',
-        targetUrl: process.env.EDITOR_URL + '/lti',
+        targetUrl: process.env.EDITOR_URL + 'lti',
         params: {
           id_token: signJwtWithBase64Key({
             payload,
