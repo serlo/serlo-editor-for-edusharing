@@ -2,7 +2,10 @@ import { createAnchorPlugin } from '@edtr-io/plugin-anchor'
 import { createBlockquotePlugin } from '@edtr-io/plugin-blockquote'
 import { createGeogebraPlugin } from '@edtr-io/plugin-geogebra'
 import { createHighlightPlugin } from '@edtr-io/plugin-highlight'
-import { createInputExercisePlugin } from '@edtr-io/plugin-input-exercise'
+import {
+  createInputExercisePlugin,
+  InputExerciseType,
+} from '@edtr-io/plugin-input-exercise'
 import { createMultimediaExplanationPlugin } from '@edtr-io/plugin-multimedia-explanation'
 import { createRowsPlugin } from '@edtr-io/plugin-rows'
 import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
@@ -33,11 +36,24 @@ export function createPlugins(config: EdusharingConfig) {
     geogebra: createGeogebraPlugin(),
     highlight: createHighlightPlugin(),
     inputExercise: createInputExercisePlugin({
-      feedback: {
-        plugin: 'text',
-        config: {
-          registry: [],
+      feedback: { plugin: 'text', config: { registry: [] } },
+      i18n: {
+        types: {
+          [InputExerciseType.InputStringNormalizedMatchChallenge]: 'Text',
+          [InputExerciseType.InputNumberExactMatchChallenge]: 'Zahl',
+          [InputExerciseType.InputExpressionEqualMatchChallenge]:
+            'Mathematischer Ausdruck',
         },
+        type: { label: 'Wähle einen Aufgabentyp' },
+        unit: { label: 'Einheit' },
+        answer: {
+          label: 'Antwort',
+          addLabel: 'Antwort hinzufügen',
+          value: { placeholder: 'Trage einen Wert ein' },
+        },
+        feedback: { label: 'Feedback' },
+        inputPlaceholder: 'Deine Lösung',
+        fallbackFeedback: { correct: 'Korrekt!', wrong: 'Leider falsch' },
       },
     }),
     multimediaExplanation: createMultimediaExplanationPlugin({
