@@ -29,7 +29,7 @@ export function createPlugins(config: EdusharingConfig) {
     box: createBoxPlugin(),
     edusharingAsset: createEdusharingAssetPlugin(config),
     equations: equationsPlugin,
-    geogebra: createGeogebraPlugin(),
+    geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
     highlight: createHighlightPlugin(),
     inputExercise: createInputExercisePlugin({
       feedback: { plugin: 'text', config: { registry: [] } },
