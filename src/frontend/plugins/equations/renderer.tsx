@@ -52,7 +52,7 @@ export function EquationsRenderer({ state }: EquationsProps) {
   const tdPadding = 'px-1 pt-1 pb-3'
 
   return (
-    <div className="no-prose text-xl">
+    <div className="not-prose text-xl">
       <TableWrapper>
         <Table>
           <tbody>

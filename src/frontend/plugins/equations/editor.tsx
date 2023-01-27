@@ -179,7 +179,7 @@ export function EquationsEditor(props: EquationsProps) {
           </select>
         </div>
       )}
-      <div className="no-prose text-xl">
+      <div className="not-prose text-xl">
         <TableWrapper>
           <DragDropContext
             onDragEnd={(result) => {
@@ -339,7 +339,7 @@ export function EquationsEditor(props: EquationsProps) {
 
     return (
       <button
-        className="ece-button-blue text-sm"
+        className="ece-button-blue text-sm mt-4"
         onClick={() => insertNewEquationWithFocus(state.steps.length)}
       >
         <FaIcon icon={faPlusCircle} /> {equationStrings.addNew}
