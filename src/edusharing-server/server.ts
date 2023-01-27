@@ -255,7 +255,7 @@ export class EdusharingServer {
 
     this.app.all('*', (req, res) => {
       console.error(`${req.method} call to ${req.url} registered`)
-      res.send(404).end()
+      res.sendStatus(404).end()
     })
   }
 
