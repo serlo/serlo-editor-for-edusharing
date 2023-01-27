@@ -26,7 +26,7 @@
     @apply mt-0 mb-block special-hyphens-auto text-lg leading-cozy;
   }
   .serlo-table {
-    @apply border-collapse whitespace-nowrap mobile:whitespace-normal break-normal special-hyphens-auto;
+    @apply mx-4 border-collapse whitespace-nowrap mobile:whitespace-normal break-normal special-hyphens-auto;
   }
   .serlo-th {
     @apply p-1.5 border-3 border-sky-200 text-left pl-3 bg-sky-100;
