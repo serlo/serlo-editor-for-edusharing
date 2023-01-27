@@ -217,7 +217,7 @@ const server = (async () => {
     ).insertedId.toString()
     res.setHeader(
       'Set-Cookie',
-      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/platform; SameSite=None;`
+      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/platform; SameSite=None; Secure`
     )
 
     // Create a Third-party Initiated Login request
