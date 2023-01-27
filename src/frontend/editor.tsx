@@ -106,11 +106,9 @@ function EditInner({
 
   useEffect(() => {
     window.onbeforeunload = () => {
-      if (hasPendingChanges) {
-        void save(savedBySerloString)
-      }
+      void save(savedBySerloString)
     }
-  }, [hasPendingChanges, save])
+  }, [save])
 
   if (!isEditing) {
     return (
