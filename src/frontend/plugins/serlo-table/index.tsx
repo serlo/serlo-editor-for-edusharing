@@ -1,28 +1,24 @@
 import { useScopedSelector, useScopedStore } from '@edtr-io/core'
 import {
   child,
-  ChildStateType,
   EditorPlugin,
   EditorPluginProps,
   list,
   object,
-  StateTypesReturnType,
   string,
 } from '@edtr-io/plugin'
 import {
   getFocused,
   isEmpty,
   focus,
-  getDocument,
   focusNext,
   focusPrevious,
 } from '@edtr-io/store'
-import { Icon, faImages, faParagraph } from '@edtr-io/ui'
+import { Icon } from '@edtr-io/ui'
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan'
 import clsx from 'clsx'
 import { KeyboardEvent } from 'react'
-import { FaIcon } from '../../components/fa-icon'
 
 import { SerloTableRenderer, TableType } from './renderer'
 
