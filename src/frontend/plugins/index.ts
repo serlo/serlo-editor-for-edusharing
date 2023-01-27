@@ -20,7 +20,7 @@ import {
 } from './edusharing-asset'
 import { equationsPlugin } from './equations'
 import { serloTablePlugin } from './serlo-table'
-import { registry } from './registry'
+import { registry, getPluginRegistry } from './registry'
 
 export function createPlugins(config: EdusharingConfig) {
   return {
@@ -58,12 +58,7 @@ export function createPlugins(config: EdusharingConfig) {
     }),
     multimediaExplanation: createMultimediaExplanationPlugin({
       explanation: { plugin: 'rows' },
-      plugins: [
-        {
-          name: 'geogebra',
-          title: 'GeoGebra Applet',
-        },
-      ],
+      plugins: getPluginRegistry(['geogebra', 'edusharingAsset']),
     }),
     rows: createRowsPlugin({
       content: { plugin: 'text' },
