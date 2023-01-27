@@ -56,6 +56,25 @@ export function createPlugins(config: EdusharingConfig) {
     scMcExercise: createScMcExercisePlugin({
       content: { plugin: 'text', config: { registry: [] } },
       feedback: { plugin: 'text', config: { registry: [] } },
+      i18n: {
+        types: {
+          singleChoice: 'Single Choice',
+          multipleChoice: 'Multiple Choice',
+        },
+        answer: {
+          label: 'Antwort',
+          addLabel: 'Antwort hinzufügen',
+          fallbackFeedback: { wrong: 'Falsch' },
+        },
+        feedback: { label: 'Feedback' },
+        globalFeedback: {
+          missingCorrectAnswers:
+            'Fast! Dir fehlt mindestens eine richtige Antwort',
+          correct: 'Korrekt!',
+          wrong: 'Leider falsch',
+        },
+        isSingleChoice: { label: 'Wähle den Aufgabentyp aus' },
+      },
     }),
     serloTable: serloTablePlugin,
     serloInjection: createSerloInjectionPlugin(),
