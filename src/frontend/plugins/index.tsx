@@ -131,6 +131,94 @@ export function createPlugins(config: EdusharingConfig) {
     }),
     text: createTextPlugin({
       registry,
+      placeholder: 'Gebe Text ein oder füge neue Inhalte mit \u2295 hinzu.',
+      i18n: {
+        blockquote: {
+          toggleTitle: 'Zitat',
+        },
+        code: {
+          toggleTitle: 'Code',
+        },
+        colors: {
+          setColorTitle: 'Farbe ändern',
+          resetColorTitle: 'Farbe zurücksetzen',
+          openMenuTitle: 'Farben',
+          closeMenuTitle: 'Untermenü schließen',
+        },
+        headings: {
+          setHeadingTitle(level: number) {
+            return `Überschrift der Ebene ${level}`
+          },
+          openMenuTitle: 'Überschriften',
+          closeMenuTitle: 'Untermenü schließen',
+        },
+        link: {
+          toggleTitle: 'Link (Strg + K)',
+          placeholder: 'URL eingeben…',
+          openInNewTabTitle: 'In neuem Tab öffnen',
+        },
+        list: {
+          toggleOrderedList: 'Geordnete Liste',
+          toggleUnorderedList: 'Ungeordnete Liste',
+          openMenuTitle: 'Listen',
+          closeMenuTitle: 'Untermenü schließen',
+        },
+        math: {
+          toggleTitle: 'Matheformel (Strg + M)',
+          displayBlockLabel: 'Im Blockmodus darstellen',
+          placeholder: '[Formel]',
+          editors: {
+            visual: 'visueller Modus',
+            latex: 'LaTeX',
+            noVisualEditorAvailableMessage: 'Nur im LaTeX-Modus verfügbar',
+          },
+          helpText(
+            KeySpan: React.ComponentType<{ children: React.ReactNode }>
+          ) {
+            return (
+              <>
+                Tastaturkürzel:
+                <br />
+                <br />
+                <p>
+                  Brüche: <KeySpan>/</KeySpan>
+                </p>
+                <p>
+                  Superscript: <KeySpan>↑</KeySpan> or <KeySpan>^</KeySpan>
+                </p>
+                <p>
+                  Subscript: <KeySpan>↓</KeySpan> oder <KeySpan>_</KeySpan>
+                </p>
+                <p>
+                  π, α, β, γ: <KeySpan>pi</KeySpan>, <KeySpan>alpha</KeySpan>,{' '}
+                  <KeySpan>beta</KeySpan>,<KeySpan>gamma</KeySpan>
+                </p>
+                <p>
+                  ≤, ≥: <KeySpan>{'<='}</KeySpan>, <KeySpan>{'>='}</KeySpan>
+                </p>
+                <p>
+                  Wurzel: <KeySpan>\sqrt</KeySpan>, <KeySpan>\nthroot</KeySpan>
+                </p>
+                <p>
+                  Symbole: <KeySpan>{'\\<NAME>'}</KeySpan>, e.g.{' '}
+                  <KeySpan>\neq</KeySpan> (≠), <KeySpan>\pm</KeySpan> (±), ...
+                </p>
+                <p>
+                  Funktionen: <KeySpan>sin</KeySpan>, <KeySpan>cos</KeySpan>,{' '}
+                  <KeySpan>ln</KeySpan>, ...
+                </p>
+              </>
+            )
+          },
+        },
+        richText: {
+          toggleStrongTitle: 'Fett (Strg + B)',
+          toggleEmphasizeTitle: 'Kursiv (Strg + I)',
+        },
+        suggestions: {
+          noResultsMessage: 'Keine Ergebnisse gefunden',
+        },
+      },
     }),
   }
 }
