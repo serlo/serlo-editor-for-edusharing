@@ -40,6 +40,7 @@ import { FaIcon } from '../common-components'
 import {
   EquationsRenderer,
   ExplanationTr,
+  FirstExplanationTr,
   LeftTd,
   MathTd,
   renderDownArrow,
@@ -290,7 +291,7 @@ export function EquationsEditor(props: EquationsProps) {
 
     return (
       <tbody onFocus={() => gridFocus.setFocus('firstExplanation')}>
-        <ExplanationTr>
+        <FirstExplanationTr>
           <td />
           <td colSpan={3}>
             {state.firstExplanation.render({
@@ -299,7 +300,7 @@ export function EquationsEditor(props: EquationsProps) {
               },
             })}
           </td>
-        </ExplanationTr>
+        </FirstExplanationTr>
         <tr style={{ height: '30px' }}>
           <td />
           <td />
