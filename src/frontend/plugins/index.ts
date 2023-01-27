@@ -70,10 +70,35 @@ export function createPlugins(config: EdusharingConfig) {
     multimediaExplanation: createMultimediaExplanationPlugin({
       explanation: { plugin: 'rows' },
       plugins: getPluginRegistry(['geogebra', 'edusharingAsset']),
+      i18n: {
+        reset: 'Multimedia Inhalt zurücksetzen',
+        changeMultimediaType: 'Art des Multimedia Inhalts ändern',
+        illustrating: {
+          label: 'Wie wichtig ist der Multimedia Inhalt?',
+          values: {
+            illustrating: 'Es ist eine Illustration',
+            explaining: 'Es ist essentiell',
+          },
+        },
+      },
     }),
     rows: createRowsPlugin({
       content: { plugin: 'text' },
       plugins: registry,
+      i18n: {
+        menu: {
+          searchPlaceholder: 'Inhaltstyp suchen…',
+        },
+        settings: {
+          duplicateLabel: 'Duplizieren',
+          removeLabel: 'Löschen',
+          closeLabel: 'Schließen',
+        },
+        toolbar: {
+          dragLabel: 'Inhalt an andere Position verschieben',
+        },
+        addLabel: 'Neuen Inhalt hinzufügen',
+      },
     }),
     scMcExercise: createScMcExercisePlugin({
       content: { plugin: 'text', config: { registry: [] } },
@@ -102,6 +127,7 @@ export function createPlugins(config: EdusharingConfig) {
     serloInjection: createSerloInjectionPlugin(),
     spoiler: createSpoilerPlugin({
       content: { plugin: 'rows' },
+      i18n: { title: { placeholder: 'Spoiler-Titel eingeben…' } },
     }),
     text: createTextPlugin({
       registry,
