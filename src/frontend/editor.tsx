@@ -101,8 +101,8 @@ function EditInner({
   const debouncedSave = useDebounce(save, 5000)
 
   useEffect(() => {
-    void debouncedSave()
-  }, [debouncedSave, pendingChanges])
+    if (hasPendingChanges) void debouncedSave()
+  }, [hasPendingChanges, debouncedSave, pendingChanges])
 
   useEffect(() => {
     window.onbeforeunload = () => {
