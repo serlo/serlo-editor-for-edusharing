@@ -59,7 +59,7 @@ Provider.setup(
   {
     cookies: {
       secure: true,
-      sameSite: isDevEnvironment ? 'None' : 'Lax',
+      sameSite: 'None',
     },
     devMode: false,
   }
