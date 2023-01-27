@@ -24,7 +24,9 @@ import { registry, getPluginRegistry } from './registry'
 
 export function createPlugins(config: EdusharingConfig) {
   return {
-    anchor: createAnchorPlugin(),
+    anchor: createAnchorPlugin({
+      i18n: { label: 'Name', placeholder: 'ID des Ankers' },
+    }),
     blockquote: createBlockquotePlugin({
       content: {
         plugin: 'text',
