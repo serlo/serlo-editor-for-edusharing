@@ -50,7 +50,6 @@
     "@edtr-io/core": "^2.8.2",
     "@edtr-io/plugin": "^2.8.2",
     "@edtr-io/plugin-anchor": "^2.8.2",
-    "@edtr-io/plugin-blockquote": "^2.8.2",
     "@edtr-io/plugin-geogebra": "^2.8.2",
     "@edtr-io/plugin-highlight": "^2.8.2",
     "@edtr-io/plugin-input-exercise": "^2.8.2",

@@ -1,5 +1,4 @@
 import { createAnchorPlugin } from '@edtr-io/plugin-anchor'
-import { createBlockquotePlugin } from '@edtr-io/plugin-blockquote'
 import { createGeogebraPlugin } from '@edtr-io/plugin-geogebra'
 import { createHighlightPlugin } from '@edtr-io/plugin-highlight'
 import {
@@ -26,11 +25,6 @@ export function createPlugins(config: EdusharingConfig) {
   return {
     anchor: createAnchorPlugin({
       i18n: { label: 'Name', placeholder: 'ID des Ankers' },
-    }),
-    blockquote: createBlockquotePlugin({
-      content: {
-        plugin: 'text',
-      },
     }),
     box: createBoxPlugin(),
     edusharingAsset: createEdusharingAssetPlugin(config),
