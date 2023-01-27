@@ -30,7 +30,22 @@ export function createPlugins(config: EdusharingConfig) {
     edusharingAsset: createEdusharingAssetPlugin(config),
     equations: equationsPlugin,
     geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
-    highlight: createHighlightPlugin(),
+    highlight: createHighlightPlugin({
+      i18n: {
+        code: {
+          label: 'Hier klicken und Quelltext eingeben…',
+          placeholder:
+            'Füge hier deinen Quellcode ein. Verlasse den Bereich, um eine Vorschau zu sehen.',
+        },
+        language: {
+          label: 'Programmiersprache',
+          placeholder: 'java',
+        },
+        showLineNumbers: {
+          label: 'Zeilennummern anzeigen',
+        },
+      },
+    }),
     inputExercise: createInputExercisePlugin({
       feedback: { plugin: 'text', config: { registry: [] } },
       i18n: {
