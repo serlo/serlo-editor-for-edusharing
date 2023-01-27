@@ -47,9 +47,6 @@ mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
 const mongoClient = new MongoClient(mongoUrl.href)
 
-const ltijsIsServedInDevMode =
-  process.env.IS_LOCAL_DOCKER_RUN === 'true' || isDevEnvironment
-
 Provider.setup(
   process.env.PLATFORM_SECRET, //
   {
@@ -61,34 +58,25 @@ Provider.setup(
   },
   {
     cookies: {
-      // Set secure to true if the testing platform is in a different domain and https is being used
-      secure: false,
-      // Set sameSite to 'None' if the testing platform is in a different domain and https is being used
-      sameSite: 'Lax',
+      secure: true,
+      sameSite: isDevEnvironment ? 'None' : 'Lax',
     },
-    // Set DevMode to false if running in a production environment with https
-    devMode: ltijsIsServedInDevMode,
+    devMode: false,
   }
 )
 
 // Register callback to execute when serlo editor was successfully launched as a LTI tool.
 // See: https://cvmcosta.me/ltijs/#/provider?id=onconnect
-Provider.onConnect(async (_token, _req, res) => {
-  res.send(await fetchIndexPageHtml())
+Provider.onConnect((_token, _req, res) => {
+  const { custom } = res.locals.context
+  const mayEdit =
+    custom !== undefined && typeof custom.postContentApiUrl === 'string'
 
-  async function fetchIndexPageHtml() {
-    const { custom } = res.locals.context
-    const mayEdit =
-      custom !== undefined && typeof custom.postContentApiUrl === 'string'
+  const url = new URL('http://localhost:3000/editor-for-edusharing')
+  url.searchParams.append('ltik', res.locals.ltik)
+  url.searchParams.append('mayEdit', mayEdit.toString())
 
-    const url = new URL('http://localhost:3000/editor-for-edusharing')
-    url.searchParams.append('ltik', res.locals.ltik)
-    url.searchParams.append('mayEdit', mayEdit.toString())
-
-    const response = await fetch(url.href)
-
-    return response.text()
-  }
+  res.redirect(302, url.href)
 })
 
 // Create an async function assigned to server and call it directly afterwards.
