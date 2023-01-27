@@ -1,4 +1,3 @@
-import { RowsConfig } from '@edtr-io/plugin-rows'
 import {
   createIcon,
   faAnchor,
@@ -98,6 +97,6 @@ export const registry = [
   },
 ]
 
-export function getPluginRegistry(include: string[]): RowsConfig['plugins'] {
+export function getPluginRegistry(include: string[]) {
   return registry.filter((plugin) => include.includes(plugin.name))
 }

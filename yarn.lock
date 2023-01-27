@@ -1635,30 +1635,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edtr-io/plugin-blockquote@npm:^2.8.2":
-  version: 2.8.2
-  resolution: "@edtr-io/plugin-blockquote@npm:2.8.2"
-  dependencies:
-    "@edtr-io/plugin": ^2.8.2
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
-    "@types/styled-components": ^5.1.24
-  peerDependencies:
-    "@edtr-io/core": ">= 1"
-    "@fortawesome/fontawesome-svg-core": ">= 1"
-    "@fortawesome/free-solid-svg-icons": ">= 5"
-    "@fortawesome/react-fontawesome": ">= 0.1.0"
-    react: ">= 17"
-    react-dnd: ">= 14"
-    react-dnd-html5-backend: ">= 14"
-    react-dom: ">= 17"
-    react-is: ">= 17"
-    redux: ">= 4"
-    styled-components: ">= 4"
-  checksum: d45546bdcca3225539eeeef80ea3d3ce61df37ee097fc271550b43a078ea8953917f72ab2d13012a25c8f5c02abc5329f0d7c36057f053000934f23096ef44b1
-  languageName: node
-  linkType: hard
-
 "@edtr-io/plugin-geogebra@npm:^2.8.2":
   version: 2.8.2
   resolution: "@edtr-io/plugin-geogebra@npm:2.8.2"
@@ -2757,7 +2733,6 @@ __metadata:
     "@edtr-io/core": ^2.8.2
     "@edtr-io/plugin": ^2.8.2
     "@edtr-io/plugin-anchor": ^2.8.2
-    "@edtr-io/plugin-blockquote": ^2.8.2
     "@edtr-io/plugin-geogebra": ^2.8.2
     "@edtr-io/plugin-highlight": ^2.8.2
     "@edtr-io/plugin-input-exercise": ^2.8.2

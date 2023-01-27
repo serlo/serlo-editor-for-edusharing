@@ -100,14 +100,14 @@ export class EdusharingServer {
       createAutoFromResponse({
         res,
         method: 'POST',
-        targetUrl: process.env.EDITOR_URL + '/lti',
+        targetUrl: process.env.EDITOR_URL + 'lti',
         params: {
           id_token: signJwtWithBase64Key({
             payload,
             keyid: this.keyid,
             key: this.key,
           }),
-          state: req.query['nonce'].toString(),
+          state: req.query['state'].toString(),
         },
       })
     })
@@ -255,7 +255,7 @@ export class EdusharingServer {
 
     this.app.all('*', (req, res) => {
       console.error(`${req.method} call to ${req.url} registered`)
-      res.send(404).end()
+      res.sendStatus(404).end()
     })
   }
 
