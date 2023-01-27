@@ -8,7 +8,6 @@ import {
 import clsx from 'clsx'
 import Modal from 'react-modal'
 import Image from 'next/image'
-import { MouseEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { EdusharingAssetDecoder } from '../../shared/decoders'
 
@@ -113,9 +112,12 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
         />
       )}
       {editable && (!edusharingAsset.defined || focused) ? (
-        <Button onClick={() => setModalIsOpen(true)}>
+        <button
+          className="ece-button-blue text-sm absolute right-2 bottom-2"
+          onClick={() => setModalIsOpen(true)}
+        >
           Datei von edu-sharing einbinden
-        </Button>
+        </button>
       ) : null}
     </figure>
   )
@@ -167,20 +169,4 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       </Modal>
     )
   }
-}
-
-interface ButtonProps {
-  onClick?: (event?: MouseEvent) => void
-  children?: React.ReactNode
-}
-
-function Button({ onClick, children }: ButtonProps) {
-  return (
-    <button
-      onClick={onClick}
-      className="block rounded-md px-2 py-1 text-white bg-sky-800 absolute right-2 bottom-2 focus:bg-sky-500"
-    >
-      {children}
-    </button>
-  )
 }
