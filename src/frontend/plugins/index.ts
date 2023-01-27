@@ -24,7 +24,7 @@ import { registry, getPluginRegistry } from './registry'
 export function createPlugins(config: EdusharingConfig) {
   return {
     anchor: createAnchorPlugin({
-      i18n: { label: 'Name', placeholder: 'ID des Ankers' },
+      i18n: { label: 'ID des Ankers', placeholder: 'aufgabe' },
     }),
     box: createBoxPlugin(),
     edusharingAsset: createEdusharingAssetPlugin(config),
