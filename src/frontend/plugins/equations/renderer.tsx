@@ -31,10 +31,7 @@ export const TransformTd = styled(MathTd)({
   paddingLeft: '5px',
 })
 
-export const ExplanationTr = styled.tr({
-  color: '#688312',
-  div: { margin: 0 },
-})
+export const ExplanationTr = styled.tr({ div: { margin: 0 } })
 export const FirstExplanationTr = styled(ExplanationTr)({
   textAlign: 'center',
 })
