@@ -1,5 +1,5 @@
 import { defineConfig } from 'cypress'
-import { EdusharingServer } from './src/edusharing-server-mock'
+import { EdusharingServer } from './src/edusharing-server/server'
 import { loadEnvConfig } from './src/server-utils'
 
 export default defineConfig({

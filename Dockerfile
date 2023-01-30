@@ -5,6 +5,7 @@ COPY .yarn .yarn
 COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
+COPY public public
 RUN yarn --immutable --silent
 
 FROM dependencies as build
@@ -15,18 +16,17 @@ COPY next.config.mjs .
 COPY next-env.d.ts .
 COPY tsconfig.server.json .
 COPY postcss.config.json .
-COPY public .
-COPY server.ts .
 COPY tailwind.config.cjs .
 COPY tsconfig.json .
 RUN yarn build
 RUN yarn tsc -p tsconfig.server.json
 
 FROM dependencies as release
+ENV NODE_ENV=production
 COPY --from=build /usr/src/app/.next .next
-COPY --from=build /usr/src/app/server.js server.js
+COPY --from=build /usr/src/app/src/backend/server.js src/backend/server.js
 COPY --from=build /usr/src/app/src/server-utils.js src/server-utils.js
-COPY --from=build /usr/src/app/src/utils/decoders.js src/utils/decoders.js
+COPY --from=build /usr/src/app/src/shared src/shared
 
-ENTRYPOINT ["yarn", "start:in-docker-container"]
+ENTRYPOINT ["node", "--experimental-modules", "--experimental-specifier-resolution=node", "src/backend/server.js"]
 EXPOSE 3000

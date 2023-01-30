@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 
+// See: https://cvmcosta.me/ltijs/#/provider?id=request-authentication
 describe('All requests to editor endpoints /lti/... shall return Unauthorized (401) if url parameter "ltik" is missing or invalid.', () => {
   const baseUrl = 'http://localhost:3000'
 
