@@ -72,7 +72,7 @@ Provider.onConnect((_token, _req, res) => {
   const mayEdit =
     custom !== undefined && typeof custom.postContentApiUrl === 'string'
 
-  const url = new URL('http://localhost:3000/editor-for-edusharing')
+  const url = new URL(process.env.EDITOR_URL + 'editor-for-edusharing')
   url.searchParams.append('ltik', res.locals.ltik)
   url.searchParams.append('mayEdit', mayEdit.toString())
 
