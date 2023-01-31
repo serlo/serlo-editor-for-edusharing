@@ -196,10 +196,13 @@ export function sendCustomInvalidErrorMessage(
 
 export function createErrorHtml(message: string) {
   // TODO: Add support contact
-  const headerForAllErrorMessages =
-    escapeHTML('Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!')
+  const headerForAllErrorMessages = escapeHTML(
+    'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!'
+  )
 
-  return `<html><body><h1>${headerForAllErrorMessages}</h1><p>Error: ${escapeHTML(message)}</p></body></html>`
+  return `<html><body><h1>${headerForAllErrorMessages}</h1><p>Error: ${escapeHTML(
+    message
+  )}</p></body></html>`
 }
 
 function escapeHTML(text: string): string {

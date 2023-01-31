@@ -132,7 +132,7 @@ const server = (async () => {
       nodeId,
       user,
       ...(version != null ? { version } : {}),
-      dataToken: dataToken ?? 'foo', // TODO should dataToken be always present?
+      dataToken,
     }
     const message = signJwt({
       payload,
