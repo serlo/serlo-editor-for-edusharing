@@ -16,12 +16,15 @@ import {
   signJwt,
   createJWKSResponse,
   verifyJwt,
+  sendCustomInvalidErrorMessage,
+  createErrorHtml,
 } from '../server-utils'
 import {
   DeeplinkFlowDecoder,
   JwtDeepflowResponseDecoder,
   LtiMessageHintDecoder,
   LtiMessageHint,
+  LtiCustomType,
 } from '../shared/decoders'
 
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -68,9 +71,14 @@ Provider.setup(
 // Register callback to execute when serlo editor was successfully launched as a LTI tool.
 // See: https://cvmcosta.me/ltijs/#/provider?id=onconnect
 Provider.onConnect((_token, _req, res) => {
-  const { custom } = res.locals.context
-  const mayEdit =
-    custom !== undefined && typeof custom.postContentApiUrl === 'string'
+  const custom: unknown = res.locals.context.custom
+
+  if (!LtiCustomType.is(custom)) {
+    sendCustomInvalidErrorMessage(res, _req.path)
+    return
+  }
+
+  const mayEdit = typeof custom.postContentApiUrl === 'string'
 
   const url = new URL(process.env.EDITOR_URL + 'editor-for-edusharing')
   url.searchParams.append('ltik', res.locals.ltik)
@@ -107,18 +115,24 @@ const server = (async () => {
   server.use('/lti', Provider.app)
 
   server.get('/lti/get-content', async (_req, res) => {
+    const custom: unknown = res.locals.context.custom
+
+    if (!LtiCustomType.is(custom)) {
+      sendCustomInvalidErrorMessage(res, _req.path)
+      return
+    }
+
     const { token } = res.locals
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, getContentApiUrl, version, dataToken } =
-      token.platformContext.custom
+    const { appId, nodeId, user, getContentApiUrl, version, dataToken } = custom
     const payload = {
       appId,
       nodeId,
       user,
       ...(version != null ? { version } : {}),
-      dataToken: dataToken ?? 'foo',
+      dataToken,
     }
     const message = signJwt({
       payload,
@@ -138,12 +152,18 @@ const server = (async () => {
   })
 
   server.post('/lti/save-content', async (req, res) => {
+    const custom: unknown = res.locals.context.custom
+
+    if (!LtiCustomType.is(custom)) {
+      sendCustomInvalidErrorMessage(res, req.path)
+      return
+    }
+
     const { token } = res.locals
 
     const platform = await Provider.getPlatformById(token.platformId)
 
-    const { appId, nodeId, user, postContentApiUrl, dataToken } =
-      token.platformContext.custom
+    const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
     const payload = { appId, nodeId, user, dataToken }
     const message = signJwt({
       payload,
@@ -184,13 +204,20 @@ const server = (async () => {
 
   // Called when user clicks on "embed content from edusharing"
   server.use('/lti/start-edusharing-deeplink-flow', async (_req, res) => {
-    const { user, dataToken, nodeId } = res.locals.token.platformContext.custom
+    const custom: unknown = res.locals.context.custom
+
+    if (!LtiCustomType.is(custom)) {
+      sendCustomInvalidErrorMessage(res, _req.path)
+      return
+    }
+
+    const { user, dataToken, nodeId } = custom
 
     if (dataToken == null) {
       res
         .status(500)
         .setHeader('Content-type', 'text/html')
-        .send('<html><body><p>dataToken is not set</p></body></html>')
+        .send(createErrorHtml('dataToken is not set'))
       return
     }
 
@@ -226,6 +253,15 @@ const server = (async () => {
   })
 
   server.get('/lti/get-embed-html', async (req, res) => {
+    const custom: unknown = res.locals.context.custom
+
+    if (!LtiCustomType.is(custom)) {
+      res.json({
+        details: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
+      })
+      return
+    }
+
     const nodeId = req.query['nodeId']
     const repositoryId = req.query['repositoryId']
     const { token } = res.locals
@@ -235,7 +271,7 @@ const server = (async () => {
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
         process.env.EDITOR_DEPLOYMENT_ID,
       expiresIn: 60,
-      dataToken: token.platformContext.custom.dataToken,
+      dataToken: custom.dataToken,
       'https://purl.imsglobal.org/spec/lti/claim/context': {
         id: process.env.EDITOR_CLIENT_ID,
       },

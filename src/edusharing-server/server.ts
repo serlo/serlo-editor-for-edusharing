@@ -264,9 +264,12 @@ export class EdusharingServer {
     this.custom = { ...this.defaultCustom }
   }
 
-  // TODO: Better function
-  deleteDataToken() {
-    delete this.custom['dataToken']
+  removePropertyInCustom(propertyName: string): boolean {
+    if (!(propertyName in this.custom)) {
+      return false
+    }
+
+    return delete this.custom[propertyName]
   }
 
   listen(port: number, callback: () => void) {

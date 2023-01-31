@@ -180,6 +180,31 @@ export function createAutoFromResponse({
   res.end()
 }
 
+export function sendCustomInvalidErrorMessage(
+  res: Response,
+  requestPath: string
+) {
+  res
+    .status(500)
+    .setHeader('Content-type', 'text/html')
+    .send(
+      createErrorHtml(
+        `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${requestPath}`
+      )
+    )
+}
+
+export function createErrorHtml(message: string) {
+  // TODO: Add support contact
+  const headerForAllErrorMessages = escapeHTML(
+    'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!'
+  )
+
+  return `<html><body><h1>${headerForAllErrorMessages}</h1><p>Error: ${escapeHTML(
+    message
+  )}</p></body></html>`
+}
+
 function escapeHTML(text: string): string {
   return text
     .replaceAll('&', '&amp;')

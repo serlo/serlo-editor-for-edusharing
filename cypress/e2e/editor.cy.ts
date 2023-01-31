@@ -8,6 +8,27 @@ it('The editor can be called via the LTI Workflow', () => {
   cy.contains('Benannte Version speichern')
 })
 
+describe('Opening the editor as tool', () => {
+  it('fails when the LTI custom claim (sent by edusharing) is missing a non-optional property', () => {
+    cy.task('removePropertyInCustom', 'dataToken')
+
+    openSerloEditorWithLTI()
+
+    // TODO Could pull the exact error message from server.ts
+    cy.contains('Something went wrong!')
+  })
+
+  // TODO this test passes but editor does not appear.
+  it('succeeds when the LTI custom claim (sent by edusharing) is missing an optional property', () => {
+    cy.task('removePropertyInCustom', 'postContentApiUrl')
+
+    openSerloEditorWithLTI()
+
+    // TODO Could pull the exact error message from server.ts
+    cy.contains('Something went wrong!').should('not.exist')
+  })
+})
+
 it('Button "Saved named version" saves a named version', () => {
   openSerloEditorWithLTI()
 
@@ -29,17 +50,6 @@ it('Assets from edu-sharing can be included', () => {
   embedEdusharingAsset()
 
   cy.contains('Inhalt von edu-sharing')
-})
-
-describe('Including assets from edu-sharing', () => {
-  it('fails when edu-sharing has not provided a dataToken in the LTI flow', () => {
-    cy.task('deleteDataToken')
-
-    openSerloEditorWithLTI()
-    embedEdusharingAsset()
-
-    cy.getIframe().contains('dataToken is not set')
-  })
 })
 
 function embedEdusharingAsset() {

@@ -15,25 +15,25 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on, _config) {
       loadEnvConfig()
-      const server = new EdusharingServer()
+      const serverMock = new EdusharingServer()
 
       on('before:run', () => {
         return new Promise((resolve) => {
-          server.listen(8100, resolve)
+          serverMock.listen(8100, resolve)
         })
       })
 
       on('task', {
         initEdusharingServer() {
-          server.init()
+          serverMock.init()
           return null
         },
         getSavedVersionsInEdusharing() {
-          return server.savedVersions
+          return serverMock.savedVersions
         },
-        deleteDataToken() {
-          server.deleteDataToken()
-          return null
+        removePropertyInCustom(propertyName: string) {
+          const success = serverMock.removePropertyInCustom(propertyName)
+          return success ? null : undefined // undefined makes task fail
         },
       })
     },
