@@ -1,3 +1,5 @@
+import { kitchenSink } from './kitchen-sink'
+
 export const documentType = 'https://github.com/serlo/ece-as-a-service'
 const migrations: Migration[] = []
 const currentVersion = migrations.length
@@ -6,6 +8,12 @@ export const emptyDocument: StorageFormat = {
   type: documentType,
   version: 0,
   document: { plugin: 'rows' },
+}
+
+export const kitchenSinkDocument: StorageFormat = {
+  type: documentType,
+  version: 0,
+  document: kitchenSink,
 }
 
 export function migrate(state: StorageFormat): StorageFormat {
