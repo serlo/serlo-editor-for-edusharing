@@ -265,7 +265,7 @@ export class EdusharingServer {
   }
 
   removePropertyInCustom(propertyName: string): boolean {
-    if (propertyName in this.custom === false) {
+    if (!(propertyName in this.custom)) {
       return false
     }
 
