@@ -6,6 +6,7 @@ it('The editor can be called via the LTI Workflow', () => {
   openSerloEditorWithLTI()
 
   cy.contains('Benannte Version speichern')
+  cy.contains('Pluginübersicht')
 })
 
 describe('Opening the editor as tool', () => {
@@ -18,14 +19,13 @@ describe('Opening the editor as tool', () => {
     cy.contains('Something went wrong!')
   })
 
-  // TODO this test passes but editor does not appear.
-  it('succeeds when the LTI custom claim (sent by edusharing) is missing an optional property', () => {
+  it('succeeds when the editor is opened in view mode (postContentApiUrl is missing)', () => {
     cy.task('removePropertyInCustom', 'postContentApiUrl')
 
     openSerloEditorWithLTI()
 
-    // TODO Could pull the exact error message from server.ts
-    cy.contains('Something went wrong!').should('not.exist')
+    cy.contains('Benannte Version speichern').should('not.exist')
+    cy.contains('Pluginübersicht')
   })
 })
 
