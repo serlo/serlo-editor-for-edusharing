@@ -18,6 +18,14 @@ describe('Opening the editor as tool', () => {
     cy.contains('Something went wrong!')
   })
 
+  it('fails when iss in Authentication Response is not registered as a platform', () => {
+    cy.task('changeIssuer', 'http://example.com/')
+
+    openSerloEditorWithLTI()
+
+    cy.contains('Benannte Version speichern').should('not.exist')
+  })
+
   // TODO this test passes but editor does not appear.
   it('succeeds when the LTI custom claim (sent by edusharing) is missing an optional property', () => {
     cy.task('removePropertyInCustom', 'postContentApiUrl')

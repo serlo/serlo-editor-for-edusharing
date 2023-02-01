@@ -35,6 +35,10 @@ export default defineConfig({
           const success = serverMock.removePropertyInCustom(propertyName)
           return success ? null : undefined // undefined makes task fail
         },
+        changeIssuer(newValue: string) {
+          serverMock.changeIssuer(newValue)
+          return null
+        },
       })
     },
   },

@@ -26,6 +26,7 @@ export class EdusharingServer {
     nodeId: '604f62c1-6463-4206-a571-8c57097a54ae',
     user: 'admin',
   }
+  private issuer = 'http://repository.127.0.0.1.nip.io:8100/edu-sharing'
   private user = 'admin'
   private custom = this.defaultCustom
   private app = express()
@@ -60,7 +61,7 @@ export class EdusharingServer {
     this.app.get('/edu-sharing/rest/ltiplatform/v13/auth', (req, res) => {
       const payload = {
         nonce: req.query['nonce'],
-        iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
+        iss: this.issuer,
         aud: process.env.PLATFORM_CLIENT_ID,
         sub: this.user,
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '1',
@@ -270,6 +271,10 @@ export class EdusharingServer {
     }
 
     return delete this.custom[propertyName]
+  }
+
+  changeIssuer(newValue: string) {
+    this.issuer = newValue
   }
 
   listen(port: number, callback: () => void) {
