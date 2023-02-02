@@ -488,9 +488,6 @@ describe('endpoint "/platform/done"', () => {
     deeplinkFlowId?: string
   }) {
     const { JWT, deeplinkFlowId } = args
-    const body = {
-      ...(JWT ? { JWT } : {}),
-    }
     return fetchDone({
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
@@ -498,9 +495,7 @@ describe('endpoint "/platform/done"', () => {
           ? { Cookie: `deeplinkFlowId=${deeplinkFlowId}` }
           : {}),
       },
-      ...(Object.values(body).length > 0
-        ? { body: new URLSearchParams(body) }
-        : {}),
+      ...(JWT ? { body: new URLSearchParams({ JWT }) } : {}),
     })
   }
 
