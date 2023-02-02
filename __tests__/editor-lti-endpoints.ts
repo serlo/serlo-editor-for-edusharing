@@ -27,3 +27,27 @@ describe('All requests to editor endpoints /lti/... shall return Unauthorized (4
     })
   }
 })
+
+describe('endpoint "/lti/login"', () => {
+  test('fails, when a wrong issuer is submitted', async () => {
+    const response = await fetch('http://localhost:3000/lti/login', {
+      method: 'POST',
+      body: new URLSearchParams({
+        target_link_uri: 'http://localhost:3000/lti',
+        iss: 'wrong-issuer',
+        login_hint: 'admin',
+        lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
+        lti_deployment_id: '1',
+        client_id: process.env.PLATFORM_CLIENT_ID,
+      }),
+      redirect: 'manual',
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.json()).toEqual({
+      status: 400,
+      error: 'Bad Request',
+      details: { message: 'UNREGISTERED_PLATFORM' },
+    })
+  })
+})
