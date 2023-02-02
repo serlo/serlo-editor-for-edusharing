@@ -20,7 +20,7 @@ export const LtiMessageHintDecoder = t.type({
 })
 export type LtiMessageHint = t.TypeOf<typeof LtiMessageHintDecoder>
 
-export const DeeplinkFlowDecoder = t.type({ nonce: t.string, state: t.string })
+export const DeeplinkFlowDecoder = t.type({ nonce: t.string })
 
 // Define type for the LTI claim https://purl.imsglobal.org/spec/lti/claim/custom
 // Partial contains optional properties.
