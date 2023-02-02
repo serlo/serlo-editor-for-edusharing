@@ -366,7 +366,7 @@ const server = (async () => {
 
     const flowUpdate = await deeplinkFlows.updateOne(
       { _id: flowId },
-      { $set: { nonce, state } }
+      { $set: { nonce } }
     )
 
     if (flowUpdate.modifiedCount === 0) {
@@ -453,12 +453,7 @@ const server = (async () => {
       return
     }
 
-    const { state, nonce } = deeplinkSession
-
-    if (req.body.state !== state) {
-      res.status(400).send('state is invalid').end()
-      return
-    }
+    const { nonce } = deeplinkSession
 
     verifyJwt({
       res,
