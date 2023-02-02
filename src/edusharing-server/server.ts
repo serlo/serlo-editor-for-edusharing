@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { emptyDocument } from '../shared/storage-format'
+import { kitchenSinkDocument } from '../shared/storage-format'
 import {
   createAutoFromResponse,
   createJWKSResponse,
@@ -122,7 +122,7 @@ export class EdusharingServer {
     })
 
     this.app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
-      res.json(emptyDocument).end()
+      res.json(kitchenSinkDocument).end()
     })
 
     this.app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
