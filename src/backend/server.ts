@@ -159,10 +159,7 @@ const server = (async () => {
       return
     }
 
-    const { token } = res.locals
-
-    const platform = await Provider.getPlatformById(token.platformId)
-
+    const platform = await Provider.getPlatformById(res.locals.token.platformId)
     const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
     const payload = { appId, nodeId, user, dataToken }
     const message = signJwt({
