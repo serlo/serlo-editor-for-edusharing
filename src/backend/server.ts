@@ -264,7 +264,6 @@ const server = (async () => {
 
     const nodeId = req.query['nodeId']
     const repositoryId = req.query['repositoryId']
-    const { token } = res.locals
 
     const payload = {
       aud: process.env.EDITOR_CLIENT_ID,
