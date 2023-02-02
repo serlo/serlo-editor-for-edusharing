@@ -236,33 +236,19 @@ describe('endpoint "/platform/done"', () => {
   })
 
   describe('when a valid session is stored in mongodb', () => {
-    const validStateValue = 'state-value'
     let deeplinkFlowId: string
 
     beforeEach(async () => {
       const session = await sessions.insertOne({
         createdAt: new Date(),
-        state: validStateValue,
         nonce: validNonceValue,
       })
       deeplinkFlowId = session.insertedId.toString()
     })
 
-    test('fails when wrong state is send', async () => {
-      const response = await fetchDoneWithJWTValue({
-        JWT: 'some JWT (state check is before)',
-        state: 'invalid-state',
-        deeplinkFlowId,
-      })
-
-      expect(response.status).toBe(400)
-      expect(await response.text()).toBe('state is invalid')
-    })
-
     test('fails when a malformed JWT is send', async () => {
       const response = await fetchDoneWithJWTValue({
         JWT: 'foobar',
-        state: 'state-value',
         deeplinkFlowId,
       })
 
@@ -493,7 +479,6 @@ describe('endpoint "/platform/done"', () => {
       return fetchDoneWithJWTValue({
         JWT: jwtValue,
         deeplinkFlowId,
-        state: validStateValue,
       })
     }
   })
@@ -501,12 +486,10 @@ describe('endpoint "/platform/done"', () => {
   function fetchDoneWithJWTValue(args: {
     JWT?: string
     deeplinkFlowId?: string
-    state?: string
   }) {
-    const { JWT, deeplinkFlowId, state } = args
+    const { JWT, deeplinkFlowId } = args
     const body = {
       ...(JWT ? { JWT } : {}),
-      ...(state ? { state } : {}),
     }
     return fetchDone({
       headers: {
