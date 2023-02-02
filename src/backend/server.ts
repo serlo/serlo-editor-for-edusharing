@@ -254,7 +254,7 @@ const server = (async () => {
 
     if (!LtiCustomType.is(custom)) {
       res.json({
-        details: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
+        detailsSnippet: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
       })
       return
     }
@@ -298,10 +298,12 @@ const server = (async () => {
     })
 
     if (response.status != 200) {
-      console.error('Status-Code', response.status)
-      console.error(await response.text())
-
-      res.json({ details: '<b>ERROR!</b>' })
+      res.json({
+        responseStatus: response.status,
+        responseText: await response.text(),
+        detailsSnippet:
+          '<b>Es ist ein Fehler aufgetreten, den edu-sharing Inhalt einzubinden. Bitte wenden Sie sich an den Systemadministrator.</b>',
+      })
     } else {
       // TODO: Error handling
       res.json(await response.json())
