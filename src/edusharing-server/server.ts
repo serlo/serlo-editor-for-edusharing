@@ -26,7 +26,8 @@ export class EdusharingServer {
     nodeId: '604f62c1-6463-4206-a571-8c57097a54ae',
     user: 'admin',
   }
-  private issuer = 'http://repository.127.0.0.1.nip.io:8100/edu-sharing'
+  private defaultIssuer = 'http://repository.127.0.0.1.nip.io:8100/edu-sharing'
+  private issuer = this.defaultIssuer
   private user = 'admin'
   private custom = this.defaultCustom
   private app = express()
@@ -263,6 +264,7 @@ export class EdusharingServer {
   init() {
     this.savedVersions = []
     this.custom = { ...this.defaultCustom }
+    this.issuer = this.defaultIssuer
   }
 
   removePropertyInCustom(propertyName: string): boolean {
