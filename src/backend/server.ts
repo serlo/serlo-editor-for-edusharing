@@ -280,7 +280,7 @@ const server = (async () => {
     })
 
     const url = new URL(
-      process.env.EDITOR_EDUSHARING_DETAILS_URL + repositoryId + '/' + nodeId
+      process.env.EDITOR_EDUSHARING_DETAILS_URL + `/${repositoryId}/${nodeId}`
     )
 
     url.searchParams.append('displayMode', 'inline')
