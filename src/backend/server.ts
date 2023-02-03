@@ -159,10 +159,7 @@ const server = (async () => {
       return
     }
 
-    const { token } = res.locals
-
-    const platform = await Provider.getPlatformById(token.platformId)
-
+    const platform = await Provider.getPlatformById(res.locals.token.platformId)
     const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
     const payload = { appId, nodeId, user, dataToken }
     const message = signJwt({
@@ -257,7 +254,7 @@ const server = (async () => {
 
     if (!LtiCustomType.is(custom)) {
       res.json({
-        details: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
+        detailsSnippet: `<b>The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${req.path}</b>`,
       })
       return
     }
@@ -283,7 +280,7 @@ const server = (async () => {
     })
 
     const url = new URL(
-      process.env.EDITOR_EDUSHARING_DETAILS_URL + repositoryId + '/' + nodeId
+      process.env.EDITOR_EDUSHARING_DETAILS_URL + `/${repositoryId}/${nodeId}`
     )
 
     url.searchParams.append('displayMode', 'inline')
@@ -301,10 +298,12 @@ const server = (async () => {
     })
 
     if (response.status != 200) {
-      console.error('Status-Code', response.status)
-      console.error(await response.text())
-
-      res.json({ details: '<b>ERROR!</b>' })
+      res.json({
+        responseStatus: response.status,
+        responseText: await response.text(),
+        detailsSnippet:
+          '<b>Es ist ein Fehler aufgetreten, den edu-sharing Inhalt einzubinden. Bitte wenden Sie sich an den Systemadministrator.</b>',
+      })
     } else {
       // TODO: Error handling
       res.json(await response.json())
