@@ -1,4 +1,5 @@
 import { kitchenSink } from './kitchen-sink'
+import * as t from 'io-ts'
 
 export const documentType = 'https://github.com/serlo/ece-as-a-service'
 const variantType = 'https://github.com/serlo/serlo-editor-for-edusharing'
@@ -40,9 +41,18 @@ export function migrate(state: StorageFormat): StorageFormat {
 
 type Migration = (state: StorageFormat['document']) => StorageFormat['document']
 
-export interface StorageFormat {
-  type: typeof documentType
-  variant: typeof variantType
-  version: number
-  document: { plugin: string; state?: unknown }
-}
+export const StorageFormatRuntimeType = t.type({
+  type: t.string,
+  variant: t.string,
+  version: t.number,
+  document: t.intersection([
+    t.type({
+      plugin: t.string,
+    }),
+    t.partial({
+      state: t.unknown,
+    }),
+  ]),
+})
+
+export type StorageFormat = t.TypeOf<typeof StorageFormatRuntimeType>
