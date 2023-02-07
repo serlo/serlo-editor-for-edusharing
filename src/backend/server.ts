@@ -138,6 +138,7 @@ const server = (async () => {
       payload,
       key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
+      expireAfterSeconds: 60,
     })
     const url = new URL(getContentApiUrl)
     // TODO: Use a method here
@@ -166,6 +167,7 @@ const server = (async () => {
       payload,
       key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
+      expireAfterSeconds: 60,
     })
 
     const url = new URL(postContentApiUrl)
@@ -277,6 +279,7 @@ const server = (async () => {
       payload,
       keyid: process.env.EDITOR_KEY_ID,
       key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      expireAfterSeconds: 60,
     })
 
     const url = new URL(
@@ -411,6 +414,7 @@ const server = (async () => {
       payload,
       keyid: process.env.EDITOR_KEY_ID,
       key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      expireAfterSeconds: 60,
     })
 
     createAutoFromResponse({

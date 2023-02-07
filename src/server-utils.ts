@@ -47,15 +47,18 @@ export function signJwtWithBase64Key({
   payload,
   keyid,
   key,
+  expireAfterSeconds,
 }: {
   payload: Omit<jwt.JwtPayload, 'iat'>
   keyid: string
   key: string
+  expireAfterSeconds: number
 }) {
   return signJwt({
     payload,
     keyid,
     key: Buffer.from(key, 'base64').toString('utf-8'),
+    expireAfterSeconds: expireAfterSeconds,
   })
 }
 
@@ -63,14 +66,16 @@ export function signJwt({
   payload,
   keyid,
   key,
+  expireAfterSeconds,
 }: {
   payload: Omit<jwt.JwtPayload, 'iat'>
   keyid: string
   key: string
+  expireAfterSeconds: number
 }) {
   return jwt.sign({ ...payload, iat: Math.floor(Date.now() / 1000) }, key, {
     algorithm: 'RS256',
-    expiresIn: 60,
+    expiresIn: expireAfterSeconds,
     keyid,
   })
 }
