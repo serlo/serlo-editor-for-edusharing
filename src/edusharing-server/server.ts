@@ -123,7 +123,9 @@ export class EdusharingServer {
 
     this.app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
       if (this.shouldSendMalformedContent) {
-        res.json({ somethingIsNotRightHere: 'something is not right here!' }).end()
+        res
+          .json({ somethingIsNotRightHere: 'something is not right here!' })
+          .end()
         return
       }
 

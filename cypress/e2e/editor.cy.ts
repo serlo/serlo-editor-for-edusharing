@@ -18,7 +18,7 @@ describe('Opening the editor as tool', () => {
     // TODO Could pull the exact error message from server.ts
     cy.contains('Something went wrong!')
   })
-  
+
   it('fails and shows error message when content format is malformed', () => {
     cy.task('makeEdusharingMockSendMalformedContent')
 
