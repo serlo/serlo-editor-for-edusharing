@@ -18,6 +18,15 @@ describe('Opening the editor as tool', () => {
     // TODO Could pull the exact error message from server.ts
     cy.contains('Something went wrong!')
   })
+  
+  it('fails and shows error message when content format is malformed', () => {
+    cy.task('makeEdusharingMockSendMalformedContent')
+
+    openSerloEditorWithLTI()
+
+    cy.contains('Content json received from lti/get-content was malformed.')
+    cy.contains('Benannte Version speichern').should('not.exist')
+  })
 
   it('succeeds when the editor is opened in view mode (postContentApiUrl is missing)', () => {
     cy.task('removePropertyInCustom', 'postContentApiUrl')
