@@ -29,7 +29,7 @@ export class EdusharingServer {
   private user = 'admin'
   private custom = this.defaultCustom
   private app = express()
-  private shouldSendMalformedContent = false
+  private content: unknown = kitchenSinkDocument
   public savedVersions: Array<{ comment: string }> = []
 
   constructor() {
@@ -122,14 +122,7 @@ export class EdusharingServer {
     })
 
     this.app.get('/edu-sharing/rest/ltiplatform/v13/content', (_req, res) => {
-      if (this.shouldSendMalformedContent) {
-        res
-          .json({ somethingIsNotRightHere: 'something is not right here!' })
-          .end()
-        return
-      }
-
-      res.json(kitchenSinkDocument).end()
+      res.json(this.content).end()
     })
 
     this.app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
@@ -270,7 +263,7 @@ export class EdusharingServer {
   init() {
     this.savedVersions = []
     this.custom = { ...this.defaultCustom }
-    this.shouldSendMalformedContent = false
+    this.content = kitchenSinkDocument
   }
 
   removePropertyInCustom(propertyName: string): boolean {
@@ -281,8 +274,8 @@ export class EdusharingServer {
     return delete this.custom[propertyName]
   }
 
-  sendMalformedContentWhenReceivingRequest() {
-    this.shouldSendMalformedContent = true
+  willSendContent(content: unknown) {
+    this.content = content
   }
 
   listen(port: number, callback: () => void) {

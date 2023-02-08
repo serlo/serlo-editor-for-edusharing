@@ -20,11 +20,13 @@ describe('Opening the editor as tool', () => {
   })
 
   it('fails and shows error message when content format is malformed', () => {
-    cy.task('makeEdusharingMockSendMalformedContent')
+    cy.task('willSendContent', {
+      somethingIsNotRightHere: 'something is not right here!',
+    })
 
     openSerloEditorWithLTI()
 
-    cy.contains('Content json received from lti/get-content was malformed.')
+    cy.contains('Content json received from edu-sharing was malformed.')
     cy.contains('Benannte Version speichern').should('not.exist')
   })
 
