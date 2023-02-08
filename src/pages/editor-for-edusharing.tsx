@@ -26,8 +26,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 
 export default function Page(props: PageProps) {
   const { ltik, providerUrl } = props
-  const [errorMessages, setErrorMessages] = useState<string[]>([])
-  const [state, setState] = useState<SerloEditorProps['state'] | null>(null)
+  const [state, setState] = useState<PageState>({ type: 'loading' })
 
   useEffect(() => {
     void getContent()
@@ -41,44 +40,48 @@ export default function Page(props: PageProps) {
 
       const requestFailed = response.status >= 400
       if (requestFailed) {
-        setErrorMessages((previousErrorMessages) => [
-          ...previousErrorMessages,
-          `Request to lti/get-content resulted in error code: ${response.status}`,
-        ])
+        setState({
+          type: 'error',
+          message: `Request to lti/get-content resulted in error code: ${response.status}`,
+        })
         return
       }
 
       // Server will send code 204 when newly created content was opened in the editor and there is no saved state on the server yet.
       const noContentReceived = response.status === 204
       if (noContentReceived) {
-        setState(migrate(emptyDocument))
+        setState({ type: 'content-fetched', content: migrate(emptyDocument) })
         return
       }
 
       const contentJson: unknown = await response.json()
 
       if (!StorageFormatRuntimeType.is(contentJson)) {
-        setErrorMessages((previousErrorMessages) => {
-          return [
-            ...previousErrorMessages,
-            'Content json received from lti/get-content was malformed.',
-          ]
+        setState({
+          type: 'error',
+          message: 'Content json received from edu-sharing was malformed.',
         })
         return
       }
 
-      setState(migrate(contentJson))
+      setState({ type: 'content-fetched', content: migrate(contentJson) })
     }
   }, [ltik, providerUrl])
 
-  return (
-    <>
-      {errorMessages.length > 0
-        ? errorMessages.map((message, i) => <p key={i}>{message}</p>)
-        : null}
-      {state !== null ? <SerloEditor state={state} {...props} /> : null}
-    </>
-  )
+  switch (state.type) {
+    case 'loading':
+      return null
+    // TODO: Design
+    case 'error':
+      return <p>Fehler: {state.message}</p>
+    case 'content-fetched':
+      return <SerloEditor state={state.content} {...props} />
+  }
 }
 
 type PageProps = Omit<SerloEditorProps, 'state'>
+
+type PageState =
+  | { type: 'loading' }
+  | { type: 'error'; message: string }
+  | { type: 'content-fetched'; content: SerloEditorProps['state'] }
