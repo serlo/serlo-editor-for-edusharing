@@ -121,43 +121,6 @@ describe('endpoint "/lti"', () => {
   let keysetRequestHandler = defaultKeysetRequestHandler
   let server: Server
 
-  type RequestParametersToOverwrite = {
-    issuer?: string
-    idTokenExpireAfterSeconds?: number
-    nonce?: string
-    audience?: string
-  }
-  async function sendRequestToLtiEndpoint(params: {
-    overwriteParameters: RequestParametersToOverwrite
-  }) {
-    let payloadInIdToken = { ...validPayloadInIdToken }
-    if ('issuer' in params.overwriteParameters) {
-      payloadInIdToken.iss = params.overwriteParameters.issuer
-    }
-    if ('nonce' in params.overwriteParameters) {
-      payloadInIdToken.nonce = params.overwriteParameters.nonce
-    }
-    if ('audience' in params.overwriteParameters) {
-      payloadInIdToken.aud = params.overwriteParameters.audience
-    }
-
-    return fetch('http://localhost:3000/lti', {
-      method: 'POST',
-      headers: { Cookie: validCookieValue },
-      body: new URLSearchParams({
-        id_token: signJwtWithBase64Key({
-          payload: payloadInIdToken,
-          keyid: validKeyid,
-          key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
-          expireAfterSeconds:
-            params.overwriteParameters.idTokenExpireAfterSeconds,
-        }),
-        state: validState,
-      }),
-      redirect: 'manual',
-    })
-  }
-
   beforeAll((done) => {
     const app = express()
 
@@ -328,4 +291,42 @@ describe('endpoint "/lti"', () => {
       },
     })
   })
+
+  type RequestParametersToOverwrite = {
+    issuer?: string
+    idTokenExpireAfterSeconds?: number
+    nonce?: string
+    audience?: string
+  }
+  async function sendRequestToLtiEndpoint(params: {
+    overwriteParameters: RequestParametersToOverwrite
+  }) {
+    let payloadInIdToken = { ...validPayloadInIdToken }
+    if ('issuer' in params.overwriteParameters) {
+      payloadInIdToken.iss = params.overwriteParameters.issuer
+    }
+    if ('nonce' in params.overwriteParameters) {
+      payloadInIdToken.nonce = params.overwriteParameters.nonce
+    }
+    if ('audience' in params.overwriteParameters) {
+      payloadInIdToken.aud = params.overwriteParameters.audience
+    }
+
+    return fetch('http://localhost:3000/lti', {
+      method: 'POST',
+      headers: { Cookie: validCookieValue },
+      body: new URLSearchParams({
+        id_token: signJwtWithBase64Key({
+          payload: payloadInIdToken,
+          keyid: validKeyid,
+          key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+          expireAfterSeconds:
+            params.overwriteParameters.idTokenExpireAfterSeconds,
+        }),
+        state: validState,
+      }),
+      redirect: 'manual',
+    })
+  }
+
 })
