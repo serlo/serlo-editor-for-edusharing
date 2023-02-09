@@ -150,9 +150,7 @@ describe('endpoint "/lti"', () => {
           keyid: validKeyid,
           key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
           expireAfterSeconds:
-            'idTokenExpireAfterSeconds' in params.overwriteParameters
-              ? params.overwriteParameters.idTokenExpireAfterSeconds
-              : 60,
+            params.overwriteParameters.idTokenExpireAfterSeconds,
         }),
         state: validState,
       }),
