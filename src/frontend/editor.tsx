@@ -18,7 +18,11 @@ import { useDebounce } from 'rooks'
 
 import { Layout } from './layout'
 import { createPlugins } from './plugins'
-import { StorageFormat, documentType, variantType } from '../shared/storage-format'
+import {
+  StorageFormat,
+  documentType,
+  variantType,
+} from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 
@@ -77,8 +81,10 @@ function EditInner({
 
         const document = serializeRootDocument()(store.getState())
 
-        if(document === null) {
-          throw new Error("Transforming the document content into a saveable format failed!")
+        if (document === null) {
+          throw new Error(
+            'Transforming the document content into a saveable format failed!'
+          )
         }
 
         const body: StorageFormat = {
