@@ -328,5 +328,4 @@ describe('endpoint "/lti"', () => {
       redirect: 'manual',
     })
   }
-
 })
