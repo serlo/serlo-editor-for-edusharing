@@ -2,7 +2,8 @@ import { kitchenSink } from './kitchen-sink'
 import * as t from 'io-ts'
 
 export const documentType = 'https://github.com/serlo/ece-as-a-service'
-const variantType = 'https://github.com/serlo/serlo-editor-for-edusharing'
+export const variantType =
+  'https://github.com/serlo/serlo-editor-for-edusharing'
 const migrations: Migration[] = []
 const currentVersion = migrations.length
 

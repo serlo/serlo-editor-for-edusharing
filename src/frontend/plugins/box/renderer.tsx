@@ -120,7 +120,7 @@ export function BoxRenderer(props: BoxProps) {
         )}
         <div className="block -ml-1 max-h-6 min-w-[15rem] font-bold prose-lg">
           {title.render({
-            config: { placeholder: '(optional title)' },
+            config: { placeholder: boxStrings.titlePlaceholder },
           })}
         </div>
       </figcaption>
@@ -138,7 +138,7 @@ export function BoxRenderer(props: BoxProps) {
   function renderInlineSettings() {
     return (
       <>
-        <b className="block pb-4">Type of box</b>
+        <b className="block pb-4">{boxStrings.type}</b>
         <ul className="pb-8 unstyled-list">{renderSettingsLis()}</ul>
       </>
     )

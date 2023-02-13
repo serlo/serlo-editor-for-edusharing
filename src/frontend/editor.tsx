@@ -18,7 +18,11 @@ import { useDebounce } from 'rooks'
 
 import { Layout } from './layout'
 import { createPlugins } from './plugins'
-import { StorageFormat, documentType } from '../shared/storage-format'
+import {
+  StorageFormat,
+  documentType,
+  variantType,
+} from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 
@@ -75,10 +79,19 @@ function EditInner({
           saveUrl.searchParams.append('comment', comment)
         }
 
+        const document = serializeRootDocument()(store.getState())
+
+        if (document === null) {
+          throw new Error(
+            'Transforming the document content into a saveable format failed!'
+          )
+        }
+
         const body: StorageFormat = {
           type: documentType,
+          variant: variantType,
           version: state.version,
-          document: serializeRootDocument()(store.getState()),
+          document: document,
         }
 
         const response = await fetch(saveUrl.href, {
