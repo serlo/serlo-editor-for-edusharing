@@ -49,7 +49,7 @@ export function signJwtWithBase64Key({
   payload,
   keyid,
   key,
-  expireAfterSeconds = defaultExpireAfterSeconds,
+  expireAfterSeconds,
 }: {
   payload: Omit<jwt.JwtPayload, 'iat'>
   keyid: string
@@ -60,7 +60,7 @@ export function signJwtWithBase64Key({
     payload,
     keyid,
     key: Buffer.from(key, 'base64').toString('utf-8'),
-    expireAfterSeconds: expireAfterSeconds,
+    expireAfterSeconds,
   })
 }
 
