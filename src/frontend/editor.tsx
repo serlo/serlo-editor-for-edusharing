@@ -104,7 +104,9 @@ function EditInner({
           dispatch(persist())
         }
       } catch (error) {
-        console.error(error)
+        window.alert(
+          `Aktuelle version konnte nicht gespeichert werden. Fehlermeldung: ${error.message}`
+        )
       } finally {
         setIsSaving(false)
       }
