@@ -104,7 +104,7 @@ function EditInner({
           dispatch(persist())
         }
       } catch (error) {
-        console.error(error)
+        alert(error)
       } finally {
         setIsSaving(false)
       }
