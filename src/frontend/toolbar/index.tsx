@@ -88,10 +88,11 @@ export function Toolbar({
   }
 
   function renderManualSaveButton() {
+    if (save == null) return
     return (
       <ToolbarButton
         className="ml-12"
-        active={hasPendingChanges}
+        active
         onClick={async () => {
           await save(savedBySerloString)
           if (canBeClosed) setShouldClose(true)
