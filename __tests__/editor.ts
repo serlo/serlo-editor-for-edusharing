@@ -132,11 +132,11 @@ describe('endpoint "/platform/login"', () => {
       url.searchParams.append(name, value)
     }
 
-    const headers = deeplinkFlowId
-      ? { Cookie: `deeplinkFlowId=${deeplinkFlowId}` }
-      : {}
-
-    return fetch(url.href, { headers })
+    return fetch(url.href, {
+      ...(deeplinkFlowId
+        ? { headers: { Cookie: `deeplinkFlowId=${deeplinkFlowId}` } }
+        : {}),
+    })
   }
 })
 
