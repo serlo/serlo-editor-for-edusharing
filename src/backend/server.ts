@@ -168,6 +168,11 @@ const server = (async () => {
       keyid: await platform.platformKid(),
     })
 
+    if (postContentApiUrl == null) {
+      res.status(400).json({ error: 'Editor was not opened in edit mode' })
+      return
+    }
+
     const url = new URL(postContentApiUrl)
     // TODO: Use a method here
     if (process.env.EDUSHARING_NETWORK_HOST) {
