@@ -43,7 +43,7 @@ const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
 
-const deeplinkFlowMaxAge = 60
+const deeplinkFlowMaxAge = 20
 
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
