@@ -20,7 +20,7 @@ import {
   createErrorHtml,
 } from '../server-utils'
 import {
-  DeeplinkFlowDecoder,
+  DeeplinkNonce,
   DeeplinkLoginData,
   JwtDeepflowResponseDecoder,
   LtiCustomType,
@@ -90,13 +90,13 @@ Provider.onConnect((_token, _req, res) => {
 const server = (async () => {
   await mongoClient.connect()
 
-  const deeplinkFlows = mongoClient.db().collection('deeplink_flows')
+  const deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
   const deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
   // Make documents in the mongodb collections expire after `deeplinkFlowMaxAge`
   // seconds.
   //
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
-  await deeplinkFlows.createIndex(
+  await deeplinkNonces.createIndex(
     { createdAt: 1 },
     { expireAfterSeconds: deeplinkFlowMaxAge }
   )
@@ -234,14 +234,6 @@ const server = (async () => {
       nodeId,
     })
 
-    const flowId = (
-      await deeplinkFlows.insertOne({ createdAt: new Date() })
-    ).insertedId.toString()
-    res.setHeader(
-      'Set-Cookie',
-      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/platform; SameSite=None; Secure`
-    )
-
     // Create a Third-party Initiated Login request
     // See: https://www.imsglobal.org/spec/security/v1p0/#step-1-third-party-initiated-login
     createAutoFromResponse({
@@ -371,18 +363,10 @@ const server = (async () => {
 
     const { user, nodeId, dataToken } = loginData
 
-    const flowId = parseDeepflowId({ req, res })
-    if (flowId == null) return
-
-    const flowUpdate = await deeplinkFlows.updateOne(
-      { _id: flowId },
-      { $set: { nonce } }
-    )
-
-    if (flowUpdate.modifiedCount === 0) {
-      res.status(400).send('cookie deeplinkFlowId is invalid').end()
-      return
-    }
+    const nonceId = await deeplinkNonces.insertOne({
+      createdAt: new Date(),
+      nonce,
+    })
 
     // Construct a Authentication Response
     // See: https://www.imsglobal.org/spec/security/v1p0/#step-3-authentication-response
@@ -416,6 +400,7 @@ const server = (async () => {
         deep_link_return_url: `${process.env.EDITOR_URL}platform/done`,
         title: '',
         text: '',
+        data: nonceId.insertedId.toString(),
       },
     }
 
@@ -423,6 +408,11 @@ const server = (async () => {
       payload,
       keyid: process.env.EDITOR_KEY_ID,
       key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+    })
+
+    await deeplinkNonces.insertOne({
+      createdAt: new Date(),
+      nonce,
     })
 
     createAutoFromResponse({
@@ -451,44 +441,60 @@ const server = (async () => {
       return
     }
 
-    const flowId = parseDeepflowId({ req, res })
-    if (flowId == null) return
-
-    const { value: deeplinkSession } = await deeplinkFlows.findOneAndDelete({
-      _id: flowId,
-    })
-
-    if (!DeeplinkFlowDecoder.is(deeplinkSession)) {
-      res.status(400).send('deeplinkFlowSession is invalid').end()
-      return
-    }
-
-    const { nonce } = deeplinkSession
-
-    verifyJwt({
+    const verifyResult = await verifyJwt({
       res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
         issuer: process.env.EDITOR_CLIENT_ID,
         audience: process.env.EDITOR_URL,
-        nonce,
       },
-      callback(decoded) {
-        if (!JwtDeepflowResponseDecoder.is(decoded)) {
-          res.status(400).send('malformed custom claim in JWT send').end()
-          return
-        }
+    })
 
-        const { repositoryId, nodeId } =
-          decoded[
-            'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
-          ][0].custom
+    if (!verifyResult.success) return
 
-        res
-          .setHeader('Content-type', 'text/html')
-          .send(
-            `<!DOCTYPE html>
+    const { decoded } = verifyResult
+    const data = decoded['https://purl.imsglobal.org/spec/lti-dl/claim/data']
+
+    if (typeof data !== 'string') {
+      res.status(400).send('data claim in JWT is missing').end()
+      return
+    }
+
+    const nonceId = parseObjectId(data)
+
+    if (nonceId == null) {
+      res.status(400).send('data claim in JWT is invalid').end()
+      return
+    }
+
+    const { value: nonceData } = await deeplinkNonces.findOneAndDelete({
+      _id: nonceId,
+    })
+
+    if (!DeeplinkNonce.is(nonceData)) {
+      res.status(400).send('deeplink flow session expired').end()
+      return
+    }
+
+    if (decoded.nonce !== nonceData.nonce) {
+      res.status(400).send('nonce is invalid').end()
+      return
+    }
+
+    if (!JwtDeepflowResponseDecoder.is(decoded)) {
+      res.status(400).send('malformed custom claim in JWT send').end()
+      return
+    }
+
+    const { repositoryId, nodeId } =
+      decoded['https://purl.imsglobal.org/spec/lti-dl/claim/content_items'][0]
+        .custom
+
+    res
+      .setHeader('Content-type', 'text/html')
+      .send(
+        `<!DOCTYPE html>
             <html>
               <body>
                 <script type="text/javascript">
@@ -500,10 +506,8 @@ const server = (async () => {
               </body>
             </html>
           `
-          )
-          .end()
-      },
-    })
+      )
+      .end()
   })
 
   // Forward all requests that did not get handled until here to the nextjs request handler.
@@ -527,26 +531,6 @@ const server = (async () => {
     },
   })
 })()
-
-function parseDeepflowId({
-  req,
-  res,
-}: {
-  req: express.Request
-  res: express.Response
-}): ObjectId | null {
-  if (typeof req.cookies.deeplinkFlowId != 'string') {
-    res.status(400).send('cookie deeplinkFlowId is missing').end()
-    return null
-  }
-
-  try {
-    return new ObjectId(req.cookies.deeplinkFlowId)
-  } catch {
-    res.status(400).send('cookie deeplinkFlowId is malformed').end()
-    return null
-  }
-}
 
 function parseObjectId(objectId: string): ObjectId | null {
   try {

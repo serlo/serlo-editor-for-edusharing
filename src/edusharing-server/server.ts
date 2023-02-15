@@ -168,7 +168,7 @@ export class EdusharingServer {
       }
     )
 
-    this.app.post('/edu-sharing/rest/lti/v13/lti13', (req, res) => {
+    this.app.post('/edu-sharing/rest/lti/v13/lti13', async (req, res) => {
       if (
         isEditorValueInvalid({
           req,
@@ -185,7 +185,7 @@ export class EdusharingServer {
         return
       }
 
-      verifyJwt({
+      const verifyResult = await verifyJwt({
         res,
         keysetUrl: 'http://localhost:3000/platform/keys',
         token: req.body.id_token,
@@ -195,47 +195,52 @@ export class EdusharingServer {
           subject: this.user,
           nonce: this.nonce,
         },
-        callback: () => {
-          const payload = {
-            iss: 'editor',
-            aud: 'http://localhost:3000/',
-            nonce: this.nonce,
-            azp: 'http://localhost:3000/',
-            'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
-            'https://purl.imsglobal.org/spec/lti/claim/message_type':
-              'LtiDeepLinkingResponse',
-            'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
-            'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': [
-              {
-                custom: {
-                  repositoryId: 'serlo-edusharing',
-                  nodeId: '960c48d0-5e01-45ca-aaf6-d648269f0db2',
-                },
-                icon: {
-                  width: 'null',
-                  url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/themes/default/images/common/mime-types/svg/file-image.svg',
-                  height: 'null',
-                },
-                type: 'ltiResourceLink',
-                title: '2020-11-13-152700_392x305_scrot.png',
-                url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
-              },
-            ],
-          }
+      })
 
-          createAutoFromResponse({
-            res,
-            method: 'POST',
-            targetUrl: process.env.EDITOR_URL + 'platform/done',
-            params: {
-              JWT: signJwtWithBase64Key({
-                payload,
-                keyid: this.keyid,
-                key: this.key,
-              }),
-              state: this.state,
+      if (!verifyResult.success) return
+
+      const payload = {
+        iss: 'editor',
+        aud: 'http://localhost:3000/',
+        nonce: this.nonce,
+        azp: 'http://localhost:3000/',
+        'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
+        'https://purl.imsglobal.org/spec/lti/claim/message_type':
+          'LtiDeepLinkingResponse',
+        'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
+        'https://purl.imsglobal.org/spec/lti-dl/claim/data':
+          verifyResult.decoded[
+            'https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings'
+          ].data,
+        'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': [
+          {
+            custom: {
+              repositoryId: 'serlo-edusharing',
+              nodeId: '960c48d0-5e01-45ca-aaf6-d648269f0db2',
             },
-          })
+            icon: {
+              width: 'null',
+              url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/themes/default/images/common/mime-types/svg/file-image.svg',
+              height: 'null',
+            },
+            type: 'ltiResourceLink',
+            title: '2020-11-13-152700_392x305_scrot.png',
+            url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
+          },
+        ],
+      }
+
+      createAutoFromResponse({
+        res,
+        method: 'POST',
+        targetUrl: process.env.EDITOR_URL + 'platform/done',
+        params: {
+          JWT: signJwtWithBase64Key({
+            payload,
+            keyid: this.keyid,
+            key: this.key,
+          }),
+          state: this.state,
         },
       })
     })

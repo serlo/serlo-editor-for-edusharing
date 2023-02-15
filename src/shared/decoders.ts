@@ -13,7 +13,7 @@ export const JwtDeepflowResponseDecoder = t.type({
   ),
 })
 
-export const DeeplinkFlowDecoder = t.type({ nonce: t.string })
+export const DeeplinkNonce = t.type({ nonce: t.string })
 export const DeeplinkLoginData = t.type({
   dataToken: t.string,
   nodeId: t.string,

@@ -7,7 +7,7 @@ import { MongoClient, Collection } from 'mongodb'
 
 import { createJWKSResponse } from '../src/server-utils'
 
-let sessions: Collection
+let deeplinkNonces: Collection
 let deeplinkLoginData: Collection
 let mongoClient: MongoClient
 
@@ -21,7 +21,7 @@ beforeAll(async () => {
   mongoClient = new MongoClient(mongoUrl.href)
 
   await mongoClient.connect()
-  sessions = mongoClient.db().collection('deeplink_flows')
+  deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
   deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
 })
 
@@ -61,7 +61,7 @@ describe('endpoint "/platform/login"', () => {
   describe('fails when a needed parameter is not set', () => {
     test.each(parameters)('when %s is not set', async (param) => {
       delete searchParams[param]
-      const response = await fetchLogin({ searchParams })
+      const response = await fetchLogin(searchParams)
 
       expect(response.status).toBe(400)
       expect(await response.text()).toBe(`${param} is not valid`)
@@ -69,9 +69,7 @@ describe('endpoint "/platform/login"', () => {
   })
 
   test('fails when login_hint is not an object id', async () => {
-    const response = await fetchLogin({
-      searchParams: { ...searchParams, login_hint: 'foo' },
-    })
+    const response = await fetchLogin({ ...searchParams, login_hint: 'foo' })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe('login_hint is not valid')
@@ -83,7 +81,8 @@ describe('endpoint "/platform/login"', () => {
     ).insertedId.toString()
 
     const response = await fetchLogin({
-      searchParams: { ...searchParams, login_hint: invalidSession },
+      ...searchParams,
+      login_hint: invalidSession,
     })
 
     expect(response.status).toBe(400)
@@ -92,36 +91,8 @@ describe('endpoint "/platform/login"', () => {
     )
   })
 
-  test('fails when no cookie `deelinkFlowId` was send', async () => {
-    const response = await fetchLogin({ searchParams })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is missing`)
-  })
-
-  test('fails when cookie `deeplinkFlowId` is invalid', async () => {
-    const response = await fetchLogin({ searchParams, deeplinkFlowId: 'foo' })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is malformed`)
-  })
-
-  test('fails when no session for `deeplinkFlowId` can be found', async () => {
-    const response = await fetchLogin({
-      searchParams,
-      deeplinkFlowId: '5099803df3f4948bd2f98391',
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is invalid`)
-  })
-
   test('succeeds when proper arguments are given', async () => {
-    const deeplinkFlowId = (
-      await sessions.insertOne({ createdAt: Date() })
-    ).insertedId.toString()
-
-    const response = await fetchLogin({ searchParams, deeplinkFlowId })
+    const response = await fetchLogin(searchParams)
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe(
@@ -129,22 +100,14 @@ describe('endpoint "/platform/login"', () => {
     )
   })
 
-  function fetchLogin(args: {
-    searchParams: Partial<typeof searchParams>
-    deeplinkFlowId?: string
-  }) {
-    const { searchParams, deeplinkFlowId } = args
+  function fetchLogin(params: Partial<typeof searchParams>) {
     const url = new URL('http://localhost:3000/platform/login')
 
-    for (const [name, value] of Object.entries(searchParams)) {
+    for (const [name, value] of Object.entries(params)) {
       url.searchParams.append(name, value)
     }
 
-    return fetch(url.href, {
-      ...(deeplinkFlowId
-        ? { headers: { Cookie: `deeplinkFlowId=${deeplinkFlowId}` } }
-        : {}),
-    })
+    return fetch(url.href)
   }
 })
 
@@ -156,7 +119,7 @@ describe('endpoint "/platform/done"', () => {
   ).toString('utf-8')
   const iat = Math.floor(Date.now() / 1000)
   const validNonceValue = 'nonce-value'
-  const validPayload = {
+  const validPayloadWithDataClaim = {
     iss: 'editor',
     aud: 'http://localhost:3000/',
     iat,
@@ -201,64 +164,19 @@ describe('endpoint "/platform/done"', () => {
     expect(await response.text()).toBe('JWT token is missing in the request')
   })
 
-  test('fails when no cookie `deelinkFlowId` was send', async () => {
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: undefined,
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is missing`)
-  })
-
-  test('fails when cookie `deeplinkFlowId` is invalid', async () => {
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: 'invalid',
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is malformed`)
-  })
-
-  test('fails when no session for `deeplinkFlowId` can be found', async () => {
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: '5099803df3f4948bd2f98391',
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`deeplinkFlowSession is invalid`)
-  })
-
-  test('fails when session for `deeplinkFlowId` is not valid', async () => {
-    const session = await sessions.insertOne({ createdAt: new Date() })
-
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: session.insertedId.toString(),
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`deeplinkFlowSession is invalid`)
-  })
-
   describe('when a valid session is stored in mongodb', () => {
-    let deeplinkFlowId: string
+    let dataClaim: string
 
     beforeEach(async () => {
-      const session = await sessions.insertOne({
+      const nonceData = await deeplinkNonces.insertOne({
         createdAt: new Date(),
         nonce: validNonceValue,
       })
-      deeplinkFlowId = session.insertedId.toString()
+      dataClaim = nonceData.insertedId.toString()
     })
 
     test('fails when a malformed JWT is send', async () => {
-      const response = await fetchDoneWithJWTValue({
-        JWT: 'foobar',
-        deeplinkFlowId,
-      })
+      const response = await fetchDoneWithJWTValue({ JWT: 'foobar' })
 
       expect(response.status).toBe(400)
       expect(await response.text()).toBe('jwt malformed')
@@ -364,7 +282,7 @@ describe('endpoint "/platform/done"', () => {
       test('fails when the JWT is expired', async () => {
         const response = await fetchDoneWithJWT({
           keyid: validKeyid,
-          payload: { ...validPayload, exp: iat - 10 },
+          payload: { ...validPayloadWithDataClaim, exp: iat - 10 },
         })
 
         expect(response.status).toBe(400)
@@ -374,7 +292,7 @@ describe('endpoint "/platform/done"', () => {
       test('fails when "iss" is invalid', async () => {
         const response = await fetchDoneWithJWT({
           keyid: validKeyid,
-          payload: { ...validPayload, iss: 'foo' },
+          payload: { ...validPayloadWithDataClaim, iss: 'foo' },
         })
 
         expect(response.status).toBe(400)
@@ -386,7 +304,7 @@ describe('endpoint "/platform/done"', () => {
       test('fails when "aud" is invalid', async () => {
         const response = await fetchDoneWithJWT({
           keyid: validKeyid,
-          payload: { ...validPayload, aud: 'foo' },
+          payload: { ...validPayloadWithDataClaim, aud: 'foo' },
         })
 
         expect(response.status).toBe(400)
@@ -395,27 +313,64 @@ describe('endpoint "/platform/done"', () => {
         )
       })
 
-      test('fails when "nonce" is invalid', async () => {
+      test('fails when no data claim is send is invalid', async () => {
         const response = await fetchDoneWithJWT({
           keyid: validKeyid,
-          payload: { ...validPayload, nonce: 'foo' },
+          payload: validPayloadWithDataClaim,
         })
 
         expect(response.status).toBe(400)
-        expect(await response.text()).toBe(
-          'jwt nonce invalid. expected: nonce-value'
-        )
+        expect(await response.text()).toBe('data claim in JWT is missing')
+      })
+
+      test('fails when invalid data claim is send', async () => {
+        const response = await fetchDoneWithJWT({
+          keyid: validKeyid,
+          payload: validPayloadWithDataClaim,
+          dataClaim: 'foo',
+        })
+
+        expect(response.status).toBe(400)
+        expect(await response.text()).toBe('data claim in JWT is invalid')
+      })
+
+      test('fails when stored session is invalid', async () => {
+        const nonceData = await deeplinkNonces.insertOne({
+          createdAt: new Date(),
+        })
+        dataClaim = nonceData.insertedId.toString()
+
+        const response = await fetchDoneWithJWT({
+          keyid: validKeyid,
+          payload: validPayloadWithDataClaim,
+          dataClaim,
+        })
+
+        expect(response.status).toBe(400)
+        expect(await response.text()).toBe('deeplink flow session expired')
+      })
+
+      test('fails when "nonce" is invalid', async () => {
+        const response = await fetchDoneWithJWT({
+          keyid: validKeyid,
+          payload: { ...validPayloadWithDataClaim, nonce: 'foo' },
+          dataClaim,
+        })
+
+        expect(response.status).toBe(400)
+        expect(await response.text()).toBe('nonce is invalid')
       })
 
       test('fails when "custom" claim is malformed', async () => {
         const response = await fetchDoneWithJWT({
           keyid: validKeyid,
           payload: {
-            ...validPayload,
+            ...validPayloadWithDataClaim,
             'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': {
               custom: 1,
             },
           },
+          dataClaim,
         })
 
         expect(response.status).toBe(400)
@@ -463,7 +418,10 @@ describe('endpoint "/platform/done"', () => {
       })
 
       test('succeeds when valid values are send', async () => {
-        const response = await fetchDoneWithJWT({ keyid: validKeyid })
+        const response = await fetchDoneWithJWT({
+          keyid: validKeyid,
+          dataClaim,
+        })
 
         expect(response.status).toBe(200)
         expect(response.headers.get('content-type')).toBe(
@@ -476,32 +434,32 @@ describe('endpoint "/platform/done"', () => {
       keyid?: string | null
       key?: string
       payload?: jwt.JwtPayload
+      dataClaim?: string
     }) {
-      const { keyid, key, payload = validPayload } = args
+      const { keyid, key, payload = validPayloadWithDataClaim } = args
+      const { dataClaim } = args
 
-      const jwtValue = jwt.sign(payload, key ?? validKey, {
+      const jwtPayload = {
+        ...payload,
+        ...(dataClaim
+          ? { 'https://purl.imsglobal.org/spec/lti-dl/claim/data': dataClaim }
+          : {}),
+      }
+
+      const jwtValue = jwt.sign(jwtPayload, key ?? validKey, {
         algorithm: 'RS256',
         ...(keyid ? { keyid } : {}),
       })
 
-      return fetchDoneWithJWTValue({
-        JWT: jwtValue,
-        deeplinkFlowId,
-      })
+      return fetchDoneWithJWTValue({ JWT: jwtValue })
     }
   })
 
-  function fetchDoneWithJWTValue(args: {
-    JWT?: string
-    deeplinkFlowId?: string
-  }) {
-    const { JWT, deeplinkFlowId } = args
+  function fetchDoneWithJWTValue(args: { JWT?: string }) {
+    const { JWT } = args
     return fetchDone({
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        ...(deeplinkFlowId
-          ? { Cookie: `deeplinkFlowId=${deeplinkFlowId}` }
-          : {}),
       },
       ...(JWT ? { body: new URLSearchParams({ JWT }) } : {}),
     })
