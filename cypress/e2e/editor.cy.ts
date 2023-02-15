@@ -5,8 +5,7 @@ beforeEach(() => {
 it('The editor can be called via the LTI Workflow', () => {
   openSerloEditorWithLTI()
 
-  cy.contains('Benannte Version speichern')
-  cy.contains('Pluginübersicht')
+  expectEditorOpenedSuccessfully()
 })
 
 describe('Opening the editor as tool', () => {
@@ -43,6 +42,8 @@ describe('Opening the editor as tool', () => {
 it('Button "Saved named version" saves a named version', () => {
   openSerloEditorWithLTI()
 
+  expectEditorOpenedSuccessfully()
+
   cy.contains('Benannte Version speichern').click()
   cy.get('input[placeholder="Name der neuen Version"]').type('version-name')
   cy.contains(/^Speichern$/).click()
@@ -54,6 +55,70 @@ it('Button "Saved named version" saves a named version', () => {
       .that.deep.includes({ comment: 'version-name' })
   })
 })
+
+describe.only('An automatic save is created when', () => {
+  it('navigating to a new url while the editor is open.', () => {
+    openSerloEditorWithLTI()
+
+    expectEditorOpenedSuccessfully()
+
+    cy.wait(2000)
+
+    cy.visit('http://www.example.com/')
+
+    cy.wait(2000)
+
+    expectAutomaticSavedVersion()
+  })
+
+  it('page is reloaded', () => {
+    openSerloEditorWithLTI()
+    
+    expectEditorOpenedSuccessfully()
+
+    cy.reload()
+
+    expectEditorOpenedSuccessfully()
+
+    expectAutomaticSavedVersion()
+  })
+
+  it('the editor is open for long enough to trigger an automatic save and there are unsaved changes in the content.', () => {
+    openSerloEditorWithLTI()
+    
+    expectEditorOpenedSuccessfully()
+
+    // Create a new plugin
+    cy.get('div.add-trigger').eq(1).click()
+    cy.contains('Edusharing Inhalte').click()
+
+    cy.wait(6000)
+
+    expectAutomaticSavedVersion()
+  })
+
+  function expectAutomaticSavedVersion() {
+    cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+      if(!isNonEmptySavedVersionsArray(savedVersions)) {
+        throw new Error("Expected savedVersions to be an non-empty Array<{ comment: string } but it was not.")
+      }
+
+      const mostRecentSavedVersion = savedVersions.pop()
+      expect(mostRecentSavedVersion.comment.includes('automatisch'))
+    })
+  }
+
+  function isNonEmptySavedVersionsArray(obj: unknown): obj is Array<{ comment: string }> {
+    if(!Array.isArray(obj)) {
+      return false; 
+    }
+    if(obj.length === 0) {
+      return false;
+    }
+    const element = obj[0]
+    return 'comment' in element && typeof element.comment === 'string'
+  } 
+}) 
 
 it('Assets from edu-sharing can be included', () => {
   openSerloEditorWithLTI()
@@ -73,6 +138,10 @@ function embedEdusharingAsset() {
 
 function openSerloEditorWithLTI() {
   cy.visit('http://localhost:8100')
+}
+
+function expectEditorOpenedSuccessfully() {
+  cy.contains('Benannte Version speichern')
 }
 
 export {}

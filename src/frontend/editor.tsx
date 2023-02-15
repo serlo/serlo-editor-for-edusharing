@@ -120,9 +120,15 @@ function EditInner({
   }, [hasPendingChanges, debouncedSave, pendingChanges])
 
   useEffect(() => {
-    window.onbeforeunload = () => {
-      void save(savedBySerloString)
+    document.onvisibilitychange = async () => {
+      if(document.visibilityState === 'hidden') {
+        console.log("Saved!")
+        void save(savedBySerloString)
+      }
     }
+    // window.onbeforeunload = async () => {
+    //   await save(savedBySerloString)
+    // }
   }, [save])
 
   if (!isEditing) {
