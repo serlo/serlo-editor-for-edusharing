@@ -2750,8 +2750,6 @@ __metadata:
     "@fortawesome/react-fontawesome": ^0.2.0
     "@next/env": ^13.1.6
     "@tailwindcss/typography": ^0.5.9
-    "@types/body-parser": ^1.19.2
-    "@types/cookie-parser": ^1.4.3
     "@types/express": ^4.17.17
     "@types/jest": ^29.4.0
     "@types/jsonwebtoken": ^9.0.1
@@ -2760,7 +2758,6 @@ __metadata:
     "@types/react-dom": ^18.0.10
     autoprefixer: ^10.4.13
     clsx: ^1.2.1
-    cookie-parser: ^1.4.6
     cypress: ^12.5.1
     eslint: ^8.34.0
     eslint-config-next: ^13.1.6
@@ -2947,7 +2944,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/body-parser@npm:*, @types/body-parser@npm:^1.19.2":
+"@types/body-parser@npm:*":
   version: 1.19.2
   resolution: "@types/body-parser@npm:1.19.2"
   dependencies:
@@ -2978,15 +2975,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cookie-parser@npm:^1.4.3":
-  version: 1.4.3
-  resolution: "@types/cookie-parser@npm:1.4.3"
-  dependencies:
-    "@types/express": "*"
-  checksum: f390f3af1b1711190dee2c2ecd9af33af81fbde8d81ee820dadb6fe1e0d80c3faba40af37c6ed36fb88b04b64870f6a021f7e9edceecd17c42fe22abe0af5005
-  languageName: node
-  linkType: hard
-
 "@types/exenv@npm:^1.2.0":
   version: 1.2.0
   resolution: "@types/exenv@npm:1.2.0"
@@ -3005,7 +2993,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*, @types/express@npm:^4.17.14, @types/express@npm:^4.17.17":
+"@types/express@npm:^4.17.14, @types/express@npm:^4.17.17":
   version: 4.17.17
   resolution: "@types/express@npm:4.17.17"
   dependencies:
@@ -4565,7 +4553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:^1.4.5, cookie-parser@npm:^1.4.6":
+"cookie-parser@npm:^1.4.5":
   version: 1.4.6
   resolution: "cookie-parser@npm:1.4.6"
   dependencies:

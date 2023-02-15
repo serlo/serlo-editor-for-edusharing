@@ -1,5 +1,4 @@
 import express from 'express'
-import cookieParser from 'cookie-parser'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
 import next from 'next'
@@ -109,10 +108,7 @@ const server = (async () => {
   await Provider.deploy({ serverless: true })
 
   const server = express()
-
-  server.use('/platform', cookieParser())
   server.use(express.urlencoded({ extended: true }))
-
   // Use lti.js as a express.js middleware
   // All request to paths '/lti' and '/lti/...' are going through lti.js middleware.
   // See: https://cvmcosta.me/ltijs/#/provider?id=deploying-ltijs-as-part-of-another-server
