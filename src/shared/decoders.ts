@@ -13,14 +13,12 @@ export const JwtDeepflowResponseDecoder = t.type({
   ),
 })
 
-export const LtiMessageHintDecoder = t.type({
-  user: t.string,
+export const DeeplinkFlowDecoder = t.type({ nonce: t.string })
+export const DeeplinkLoginData = t.type({
   dataToken: t.string,
   nodeId: t.string,
+  user: t.string,
 })
-export type LtiMessageHint = t.TypeOf<typeof LtiMessageHintDecoder>
-
-export const DeeplinkFlowDecoder = t.type({ nonce: t.string })
 
 // Define type for the LTI claim https://purl.imsglobal.org/spec/lti/claim/custom
 // Partial contains optional properties.
@@ -28,11 +26,9 @@ export const LtiCustomType = t.intersection([
   t.type({
     getContentApiUrl: t.string,
     getDetailsSnippetUrl: t.string,
-    dataToken: t.string,
     appId: t.string,
-    nodeId: t.string,
-    user: t.string,
   }),
+  DeeplinkLoginData,
   t.partial({
     fileName: t.string,
     postContentApiUrl: t.string,

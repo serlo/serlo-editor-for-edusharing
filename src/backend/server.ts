@@ -21,9 +21,8 @@ import {
 } from '../server-utils'
 import {
   DeeplinkFlowDecoder,
+  DeeplinkLoginData,
   JwtDeepflowResponseDecoder,
-  LtiMessageHintDecoder,
-  LtiMessageHint,
   LtiCustomType,
 } from '../shared/decoders'
 
@@ -92,11 +91,16 @@ const server = (async () => {
   await mongoClient.connect()
 
   const deeplinkFlows = mongoClient.db().collection('deeplink_flows')
-  // Make documents in the `deeplink_flow` expire after `deeplinkFlowMaxAge`
+  const deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
+  // Make documents in the mongodb collections expire after `deeplinkFlowMaxAge`
   // seconds.
   //
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
   await deeplinkFlows.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: deeplinkFlowMaxAge }
+  )
+  await deeplinkLoginData.createIndex(
     { createdAt: 1 },
     { expireAfterSeconds: deeplinkFlowMaxAge }
   )
@@ -223,11 +227,12 @@ const server = (async () => {
       return
     }
 
-    const messageHint: LtiMessageHint = { user, dataToken, nodeId }
-    // TODO: edu-sharing seems to only forward this parameter without
-    // proper decoding. Thus we need to double encode this parameter.
-    // Delete this when edu-sharing has fixed the bug.
-    const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
+    const loginData = await deeplinkLoginData.insertOne({
+      createdAt: new Date(),
+      user,
+      dataToken,
+      nodeId,
+    })
 
     const flowId = (
       await deeplinkFlows.insertOne({ createdAt: new Date() })
@@ -246,10 +251,9 @@ const server = (async () => {
       params: {
         iss: process.env.EDITOR_URL,
         target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-        login_hint: process.env.EDITOR_CLIENT_ID,
+        login_hint: loginData.insertedId.toString(),
         client_id: process.env.EDITOR_CLIENT_ID,
         lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
-        lti_message_hint,
       },
     })
   })
@@ -328,7 +332,7 @@ const server = (async () => {
   server.get('/platform/login', async (req, res) => {
     const nonce = req.query['nonce']
     const state = req.query['state']
-    const messageHint = req.query['lti_message_hint']
+    const loginHint = req.query['login_hint']
 
     if (typeof nonce !== 'string') {
       res.status(400).send('nonce is not valid').end()
@@ -344,25 +348,28 @@ const server = (async () => {
     } else if (req.query['client_id'] !== process.env.EDITOR_CLIENT_ID) {
       res.status(400).send('client_id is not valid').end()
       return
-    } else if (typeof messageHint !== 'string') {
-      res.status(400).send('lti_message_hint is not valid').end()
+    } else if (typeof loginHint !== 'string') {
+      res.status(400).send('login_hint is not valid').end()
       return
     }
 
-    let messageHintDecoded: unknown
-    try {
-      messageHintDecoded = JSON.parse(messageHint)
-    } catch {
-      res.status(400).send('lti_message_hint is invalid').end()
+    const loginDataId = parseObjectId(loginHint)
+
+    if (loginDataId == null) {
+      res.status(400).send('login_hint is not valid').end()
       return
     }
 
-    if (!LtiMessageHintDecoder.is(messageHintDecoded)) {
-      res.status(400).send('lti_message_hint is invalid').end()
+    const { value: loginData } = await deeplinkLoginData.findOneAndDelete({
+      _id: loginDataId,
+    })
+
+    if (!DeeplinkLoginData.is(loginData)) {
+      res.status(400).send('login_hint is invalid or session is expired').end()
       return
     }
 
-    const { user, nodeId, dataToken } = messageHintDecoded
+    const { user, nodeId, dataToken } = loginData
 
     const flowId = parseDeepflowId({ req, res })
     if (flowId == null) return
@@ -537,6 +544,14 @@ function parseDeepflowId({
     return new ObjectId(req.cookies.deeplinkFlowId)
   } catch {
     res.status(400).send('cookie deeplinkFlowId is malformed').end()
+    return null
+  }
+}
+
+function parseObjectId(objectId: string): ObjectId | null {
+  try {
+    return new ObjectId(objectId)
+  } catch {
     return null
   }
 }

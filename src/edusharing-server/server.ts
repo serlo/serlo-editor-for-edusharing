@@ -141,7 +141,6 @@ export class EdusharingServer {
         const targetParameters = {
           iss: process.env.EDITOR_URL,
           target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-          login_hint: process.env.EDITOR_CLIENT_ID,
           client_id: process.env.EDITOR_CLIENT_ID,
           lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
         }
@@ -154,10 +153,6 @@ export class EdusharingServer {
           }
         }
 
-        const messageHint = decodeURIComponent(
-          req.query['lti_message_hint'].toString()
-        )
-
         createAutoFromResponse({
           res,
           method: 'GET',
@@ -165,7 +160,7 @@ export class EdusharingServer {
           params: {
             nonce: this.nonce,
             state: this.state,
-            lti_message_hint: messageHint,
+            login_hint: req.query['login_hint'].toString(),
             redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
             client_id: process.env.EDITOR_CLIENT_ID,
           },

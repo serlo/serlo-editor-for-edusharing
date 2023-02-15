@@ -8,6 +8,7 @@ import { MongoClient, Collection } from 'mongodb'
 import { createJWKSResponse } from '../src/server-utils'
 
 let sessions: Collection
+let deeplinkLoginData: Collection
 let mongoClient: MongoClient
 
 beforeAll(async () => {
@@ -21,6 +22,7 @@ beforeAll(async () => {
 
   await mongoClient.connect()
   sessions = mongoClient.db().collection('deeplink_flows')
+  deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
 })
 
 afterAll(async () => {
@@ -28,68 +30,77 @@ afterAll(async () => {
 })
 
 describe('endpoint "/platform/login"', () => {
-  const correctParamaters = {
-    nonce: 'bar',
-    state: 'foo',
-    lti_message_hint: JSON.stringify({
+  const parameters = [
+    'nonce',
+    'state',
+    'login_hint',
+    'client_id',
+    'redirect_uri',
+  ] as const
+  let validLoginHint: string
+  let searchParams: Record<(typeof parameters)[number], string>
+
+  beforeEach(async () => {
+    const loginData = deeplinkLoginData.insertOne({
+      createdAt: new Date(),
       user: 'admin',
       nodeId: 'foo',
       dataToken: 'bar',
-    }),
-    client_id: process.env.EDITOR_CLIENT_ID,
-    redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-  }
+    })
+    validLoginHint = (await loginData).insertedId.toString()
+
+    searchParams = {
+      nonce: 'bar',
+      state: 'foo',
+      login_hint: validLoginHint,
+      client_id: process.env.EDITOR_CLIENT_ID as string,
+      redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL as string,
+    }
+  })
 
   describe('fails when a needed parameter is not set', () => {
-    test.each(Object.keys(correctParamaters))(
-      'when %s is not set',
-      async (param) => {
-        const searchParams = { ...correctParamaters }
-        delete searchParams[param]
-        const response = await fetchLogin({ searchParams })
+    test.each(parameters)('when %s is not set', async (param) => {
+      delete searchParams[param]
+      const response = await fetchLogin({ searchParams })
 
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe(`${param} is not valid`)
-      }
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe(`${param} is not valid`)
+    })
+  })
+
+  test('fails when login_hint is not an object id', async () => {
+    const response = await fetchLogin({
+      searchParams: { ...searchParams, login_hint: 'foo' },
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe('login_hint is not valid')
+  })
+
+  test('fails when no session for login_hint could be found in the database', async () => {
+    const invalidSession = (
+      await deeplinkLoginData.insertOne({ createdAt: Date() })
+    ).insertedId.toString()
+
+    const response = await fetchLogin({
+      searchParams: { ...searchParams, login_hint: invalidSession },
+    })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(
+      'login_hint is invalid or session is expired'
     )
   })
 
-  test('fails when `lti_message_hint` is malformed JSON', async () => {
-    const response = await fetchLogin({
-      searchParams: {
-        ...correctParamaters,
-        lti_message_hint: 'invalid',
-      },
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`lti_message_hint is invalid`)
-  })
-
-  test('fails when `lti_message_hint` has invalid scheme', async () => {
-    const response = await fetchLogin({
-      searchParams: {
-        ...correctParamaters,
-        lti_message_hint: JSON.stringify({ foo: 'bar' }),
-      },
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`lti_message_hint is invalid`)
-  })
-
   test('fails when no cookie `deelinkFlowId` was send', async () => {
-    const response = await fetchLogin({ searchParams: correctParamaters })
+    const response = await fetchLogin({ searchParams })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(`cookie deeplinkFlowId is missing`)
   })
 
   test('fails when cookie `deeplinkFlowId` is invalid', async () => {
-    const response = await fetchLogin({
-      searchParams: correctParamaters,
-      deeplinkFlowId: 'foo',
-    })
+    const response = await fetchLogin({ searchParams, deeplinkFlowId: 'foo' })
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(`cookie deeplinkFlowId is malformed`)
@@ -97,7 +108,7 @@ describe('endpoint "/platform/login"', () => {
 
   test('fails when no session for `deeplinkFlowId` can be found', async () => {
     const response = await fetchLogin({
-      searchParams: correctParamaters,
+      searchParams,
       deeplinkFlowId: '5099803df3f4948bd2f98391',
     })
 
@@ -110,10 +121,7 @@ describe('endpoint "/platform/login"', () => {
       await sessions.insertOne({ createdAt: Date() })
     ).insertedId.toString()
 
-    const response = await fetchLogin({
-      searchParams: correctParamaters,
-      deeplinkFlowId,
-    })
+    const response = await fetchLogin({ searchParams, deeplinkFlowId })
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe(
@@ -122,7 +130,7 @@ describe('endpoint "/platform/login"', () => {
   })
 
   function fetchLogin(args: {
-    searchParams: Partial<typeof correctParamaters>
+    searchParams: Partial<typeof searchParams>
     deeplinkFlowId?: string
   }) {
     const { searchParams, deeplinkFlowId } = args
