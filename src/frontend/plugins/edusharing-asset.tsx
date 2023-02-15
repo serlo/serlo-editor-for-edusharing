@@ -165,7 +165,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
           },
           overlay: {
             zIndex: 100,
-          }
+          },
         }}
       >
         <iframe src={url.href} className="w-full h-full" ref={iframeRef} />
