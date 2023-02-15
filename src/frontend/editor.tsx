@@ -113,23 +113,30 @@ function EditInner({
     },
     [dispatch, ltik, providerUrl, state.version, store, isSaving]
   )
-  const debouncedSave = useDebounce(save, 5000)
+  const debouncedSave = useDebounce(save, 50000)
 
   useEffect(() => {
     if (hasPendingChanges) void debouncedSave()
   }, [hasPendingChanges, debouncedSave, pendingChanges])
 
   useEffect(() => {
-    document.onvisibilitychange = async () => {
-      if(document.visibilityState === 'hidden') {
-        console.log("Saved!")
-        void save(savedBySerloString)
+    // document.onvisibilitychange = () => {
+    //   if(document.visibilityState === 'hidden') {
+    //     console.log("visibilitychange event")
+    //     void save(savedBySerloString)
+    //   }
+    // }
+    // window.onpagehide = () => {
+    //   console.log('onpagehide event')
+    //   void save(savedBySerloString)
+    // }
+    window.onbeforeunload = () => {
+      console.log('onbeforeunload event')
+      if(hasPendingChanges) {
+        return 'Deine Änderungen wurde noch nicht gespeichert.'
       }
     }
-    // window.onbeforeunload = async () => {
-    //   await save(savedBySerloString)
-    // }
-  }, [save])
+  })
 
   if (!isEditing) {
     return (
