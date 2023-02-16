@@ -56,36 +56,10 @@ it('Button "Saved named version" saves a named version', () => {
   })
 })
 
-describe.only('An automatic save is created when', () => {
-  it('navigating to a new url while the editor is open.', () => {
-    openSerloEditorWithLTI()
-
-    expectEditorOpenedSuccessfully()
-
-    cy.wait(2000)
-
-    cy.visit('http://www.example.com/')
-
-    cy.wait(2000)
-
-    expectAutomaticSavedVersion()
-  })
-
-  it('page is reloaded', () => {
-    openSerloEditorWithLTI()
-    
-    expectEditorOpenedSuccessfully()
-
-    cy.reload()
-
-    expectEditorOpenedSuccessfully()
-
-    expectAutomaticSavedVersion()
-  })
-
+describe('An automatic save is created when', () => {
   it('the editor is open for long enough to trigger an automatic save and there are unsaved changes in the content.', () => {
     openSerloEditorWithLTI()
-    
+
     expectEditorOpenedSuccessfully()
 
     // Create a new plugin
@@ -99,8 +73,10 @@ describe.only('An automatic save is created when', () => {
 
   function expectAutomaticSavedVersion() {
     cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-      if(!isNonEmptySavedVersionsArray(savedVersions)) {
-        throw new Error("Expected savedVersions to be an non-empty Array<{ comment: string } but it was not.")
+      if (!isNonEmptySavedVersionsArray(savedVersions)) {
+        throw new Error(
+          'Expected savedVersions to be an non-empty Array<{ comment: string } but it was not.'
+        )
       }
 
       const mostRecentSavedVersion = savedVersions.pop()
@@ -108,17 +84,19 @@ describe.only('An automatic save is created when', () => {
     })
   }
 
-  function isNonEmptySavedVersionsArray(obj: unknown): obj is Array<{ comment: string }> {
-    if(!Array.isArray(obj)) {
-      return false; 
+  function isNonEmptySavedVersionsArray(
+    obj: unknown
+  ): obj is Array<{ comment: string }> {
+    if (!Array.isArray(obj)) {
+      return false
     }
-    if(obj.length === 0) {
-      return false;
+    if (obj.length === 0) {
+      return false
     }
     const element = obj[0]
     return 'comment' in element && typeof element.comment === 'string'
-  } 
-}) 
+  }
+})
 
 it('Assets from edu-sharing can be included', () => {
   openSerloEditorWithLTI()

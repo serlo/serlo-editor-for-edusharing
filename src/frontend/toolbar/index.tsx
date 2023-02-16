@@ -36,7 +36,7 @@ export function Toolbar({
 
   useEffect(() => {
     window.onbeforeunload = () => {
-      if(hasPendingChanges) {
+      if (hasPendingChanges) {
         return 'Deine Änderungen wurden noch nicht gespeichert.'
       }
     }
