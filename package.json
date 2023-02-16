@@ -79,6 +79,7 @@
     "jwks-rsa": "^3.0.1",
     "ltijs": "^5.9.0",
     "mongodb": "^5.0.1",
+    "mongoose": "^6.9.1",
     "next": "^13.1.6",
     "node-fetch": "^3.3.0",
     "raw-body": "^2.5.1",
