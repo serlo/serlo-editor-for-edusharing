@@ -2,10 +2,7 @@ FROM node:16-alpine as dependencies
 LABEL stage=build
 WORKDIR /usr/src/app
 COPY public public
-COPY yarn.lock .yarnrc.yml .
-COPY .yarn .yarn
-COPY package.minimal.json package.json
-RUN yarn && yarn cache clean --all
+RUN yarn add next mongoose && yarn cache clean --all
 
 FROM node:16-alpine as build
 LABEL stage=build
@@ -26,6 +23,7 @@ RUN yarn node scripts/esbuild.js
 
 FROM dependencies as release
 ENV NODE_ENV=production
+COPY package.json .
 COPY --from=build /usr/src/app/.next .next
 COPY --from=build /usr/src/app/.next/standalone/node_modules node_modules
 COPY --from=build /usr/src/app/.next/standalone/src src
