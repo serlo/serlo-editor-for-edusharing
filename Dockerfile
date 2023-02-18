@@ -27,9 +27,11 @@ RUN yarn node scripts/esbuild.js
 FROM dependencies as release
 ENV NODE_ENV=production
 COPY --from=build /usr/src/app/.next .next
+COPY --from=build /usr/src/app/.next/standalone/node_modules node_modules
+COPY --from=build /usr/src/app/.next/standalone/src src
 COPY --from=build /usr/src/app/dist/ dist/
 
 ENTRYPOINT ["node", "--experimental-modules", \
             "--experimental-specifier-resolution=node", \
-            "--enable-source-maps", "dist/server.js"]
+            "dist/server.js"]
 EXPOSE 3000
