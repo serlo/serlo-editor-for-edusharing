@@ -40,7 +40,6 @@
     "scripts:is-server-running": "ts-node-esm --transpileOnly scripts/is-server-running.ts"
   },
   "dependencies": {
-    "@next/env": "^13.1.6",
     "fp-ts": "^2.13.1",
     "io-ts": "^2.2.20",
     "mongoose": "^6.9.1",
