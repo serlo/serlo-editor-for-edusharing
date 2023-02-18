@@ -5,7 +5,7 @@ COPY public public
 COPY yarn.lock .yarnrc.yml .
 COPY .yarn .yarn
 COPY package.minimal.json package.json
-RUN yarn && yarn cache clean -a
+RUN yarn && yarn cache clean --all
 
 FROM node:16-alpine as build
 LABEL stage=build
