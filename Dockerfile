@@ -24,7 +24,9 @@ RUN yarn node scripts/esbuild.js
 FROM dependencies as release
 ENV NODE_ENV=production
 COPY package.json .
-COPY --from=build /usr/src/app/.next .next
+COPY --from=build /usr/src/app/.next/*json /usr/src/app/.next/BUILD_ID .next/
+COPY --from=build /usr/src/app/.next/static .next/static
+COPY --from=build /usr/src/app/.next/server .next/server
 COPY --from=build /usr/src/app/.next/standalone/node_modules node_modules
 COPY --from=build /usr/src/app/.next/standalone/src src
 COPY --from=build /usr/src/app/dist/ dist/
