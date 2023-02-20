@@ -2,7 +2,7 @@ FROM node:16-alpine as dependencies
 LABEL stage=build
 WORKDIR /usr/src/app
 COPY public public
-RUN yarn add next mongoose && yarn cache clean --all
+RUN yarn add mongoose && yarn cache clean --all
 
 FROM node:16-alpine as build
 LABEL stage=build

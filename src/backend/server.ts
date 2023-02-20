@@ -2,7 +2,10 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
-import next from 'next'
+import Server from 'next/dist/server/next-server.js'
+import nextLoadConfig from 'next/dist/server/config.js'
+import { PHASE_PRODUCTION_SERVER } from 'next/dist/shared/lib/constants'
+import { defaultImport } from 'default-import'
 import { createServer } from 'net'
 import fetch from 'node-fetch'
 import { Request } from 'node-fetch'
@@ -38,7 +41,20 @@ if (isDevEnvironment && !(await isPortOpen(port))) {
   process.exit(0)
 }
 
-const app = next({ dev: isDevEnvironment })
+const NextServer = defaultImport(Server)
+
+if (process.env.NODE_ENV !== 'production') {
+  const loadConfig = defaultImport(nextLoadConfig)
+  global.NEXT_CONFIG = /* @__PURE__ */ await loadConfig(
+    PHASE_PRODUCTION_SERVER,
+    process.cwd()
+  )
+}
+
+const app = new NextServer({
+  dev: isDevEnvironment,
+  conf: global.NEXT_CONFIG,
+})
 const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()

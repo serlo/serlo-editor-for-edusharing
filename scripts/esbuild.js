@@ -1,4 +1,13 @@
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { PHASE_PRODUCTION_SERVER } from 'next/dist/shared/lib/constants.js'
+import nextLoadConfig from 'next/dist/server/config.js'
+import { defaultImport } from 'default-import'
 import * as esbuild from 'esbuild'
+
+const projectDirectory = dirname(dirname(fileURLToPath(import.meta.url)))
+const loadConfig = defaultImport(nextLoadConfig)
+const nextConfig = await loadConfig(PHASE_PRODUCTION_SERVER, projectDirectory)
 
 await esbuild.build({
   entryPoints: ['src/backend/server.ts'],
@@ -9,6 +18,7 @@ await esbuild.build({
   },
   define: {
     'process.env.NODE_ENV': '"production"',
+    'global.NEXT_CONFIG': JSON.stringify(nextConfig),
   },
   bundle: true,
   platform: 'node',

@@ -2916,6 +2916,7 @@ __metadata:
     clsx: ^1.2.1
     cookie-parser: ^1.4.6
     cypress: ^12.5.1
+    default-import: ^1.1.5
     esbuild: ^0.17.8
     eslint: ^8.34.0
     eslint-config-next: ^13.1.6
@@ -4989,6 +4990,13 @@ __metadata:
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
   checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
+  languageName: node
+  linkType: hard
+
+"default-import@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "default-import@npm:1.1.5"
+  checksum: 9e8bcbdfe4fcb9ec5e30a6efba79d09bf5adc4cc968f103a4d0d7b3c3980d0779932c51f9c0667b773e3b373bc1cbb7d3da209768a2442792ae47f21d3f37312
   languageName: node
   linkType: hard
 
