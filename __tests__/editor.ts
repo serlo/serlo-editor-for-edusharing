@@ -7,7 +7,8 @@ import { MongoClient, Collection } from 'mongodb'
 
 import { createJWKSResponse } from '../src/server-utils'
 
-let sessions: Collection
+let deeplinkNonces: Collection
+let deeplinkLoginData: Collection
 let mongoClient: MongoClient
 
 beforeAll(async () => {
@@ -20,7 +21,8 @@ beforeAll(async () => {
   mongoClient = new MongoClient(mongoUrl.href)
 
   await mongoClient.connect()
-  sessions = mongoClient.db().collection('deeplink_flows')
+  deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
+  deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
 })
 
 afterAll(async () => {
@@ -28,92 +30,69 @@ afterAll(async () => {
 })
 
 describe('endpoint "/platform/login"', () => {
-  const correctParamaters = {
-    nonce: 'bar',
-    state: 'foo',
-    lti_message_hint: JSON.stringify({
+  const parameters = [
+    'nonce',
+    'state',
+    'login_hint',
+    'client_id',
+    'redirect_uri',
+  ] as const
+  let validLoginHint: string
+  let searchParams: Record<(typeof parameters)[number], string>
+
+  beforeEach(async () => {
+    const loginData = deeplinkLoginData.insertOne({
+      createdAt: new Date(),
       user: 'admin',
       nodeId: 'foo',
       dataToken: 'bar',
-    }),
-    client_id: process.env.EDITOR_CLIENT_ID,
-    redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-  }
+    })
+    validLoginHint = (await loginData).insertedId.toString()
+
+    searchParams = {
+      nonce: 'bar',
+      state: 'foo',
+      login_hint: validLoginHint,
+      client_id: process.env.EDITOR_CLIENT_ID as string,
+      redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL as string,
+    }
+  })
 
   describe('fails when a needed parameter is not set', () => {
-    test.each(Object.keys(correctParamaters))(
-      'when %s is not set',
-      async (param) => {
-        const searchParams = { ...correctParamaters }
-        delete searchParams[param]
-        const response = await fetchLogin({ searchParams })
+    test.each(parameters)('when %s is not set', async (param) => {
+      delete searchParams[param]
+      const response = await fetchLogin(searchParams)
 
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe(`${param} is not valid`)
-      }
-    )
-  })
-
-  test('fails when `lti_message_hint` is malformed JSON', async () => {
-    const response = await fetchLogin({
-      searchParams: {
-        ...correctParamaters,
-        lti_message_hint: 'invalid',
-      },
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe(`${param} is not valid`)
     })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`lti_message_hint is invalid`)
   })
 
-  test('fails when `lti_message_hint` has invalid scheme', async () => {
-    const response = await fetchLogin({
-      searchParams: {
-        ...correctParamaters,
-        lti_message_hint: JSON.stringify({ foo: 'bar' }),
-      },
-    })
+  test('fails when login_hint is not an object id', async () => {
+    const response = await fetchLogin({ ...searchParams, login_hint: 'foo' })
 
     expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`lti_message_hint is invalid`)
+    expect(await response.text()).toBe('login_hint is not valid')
   })
 
-  test('fails when no cookie `deelinkFlowId` was send', async () => {
-    const response = await fetchLogin({ searchParams: correctParamaters })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is missing`)
-  })
-
-  test('fails when cookie `deeplinkFlowId` is invalid', async () => {
-    const response = await fetchLogin({
-      searchParams: correctParamaters,
-      deeplinkFlowId: 'foo',
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is malformed`)
-  })
-
-  test('fails when no session for `deeplinkFlowId` can be found', async () => {
-    const response = await fetchLogin({
-      searchParams: correctParamaters,
-      deeplinkFlowId: '5099803df3f4948bd2f98391',
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is invalid`)
-  })
-
-  test('succeeds when proper arguments are given', async () => {
-    const deeplinkFlowId = (
-      await sessions.insertOne({ createdAt: Date() })
+  test('fails when no session for login_hint could be found in the database', async () => {
+    const invalidSession = (
+      await deeplinkLoginData.insertOne({ createdAt: Date() })
     ).insertedId.toString()
 
     const response = await fetchLogin({
-      searchParams: correctParamaters,
-      deeplinkFlowId,
+      ...searchParams,
+      login_hint: invalidSession,
     })
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toBe(
+      'login_hint is invalid or session is expired'
+    )
+  })
+
+  test('succeeds when proper arguments are given', async () => {
+    const response = await fetchLogin(searchParams)
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe(
@@ -121,22 +100,14 @@ describe('endpoint "/platform/login"', () => {
     )
   })
 
-  function fetchLogin(args: {
-    searchParams: Partial<typeof correctParamaters>
-    deeplinkFlowId?: string
-  }) {
-    const { searchParams, deeplinkFlowId } = args
+  function fetchLogin(params: Partial<typeof searchParams>) {
     const url = new URL('http://localhost:3000/platform/login')
 
-    for (const [name, value] of Object.entries(searchParams)) {
+    for (const [name, value] of Object.entries(params)) {
       url.searchParams.append(name, value)
     }
 
-    const headers = deeplinkFlowId
-      ? { Cookie: `deeplinkFlowId=${deeplinkFlowId}` }
-      : {}
-
-    return fetch(url.href, { headers })
+    return fetch(url.href)
   }
 })
 
@@ -148,7 +119,7 @@ describe('endpoint "/platform/done"', () => {
   ).toString('utf-8')
   const iat = Math.floor(Date.now() / 1000)
   const validNonceValue = 'nonce-value'
-  const validPayload = {
+  const validPayloadWithDataClaim = {
     iss: 'editor',
     aud: 'http://localhost:3000/',
     iat,
@@ -193,77 +164,66 @@ describe('endpoint "/platform/done"', () => {
     expect(await response.text()).toBe('JWT token is missing in the request')
   })
 
-  test('fails when no cookie `deelinkFlowId` was send', async () => {
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: undefined,
-    })
+  test('fails when a malformed JWT is send', async () => {
+    const response = await fetchDoneWithJWTValue({ JWT: 'foobar' })
 
     expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is missing`)
+    expect(await response.text()).toBe('jwt malformed')
   })
 
-  test('fails when cookie `deeplinkFlowId` is invalid', async () => {
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: 'invalid',
-    })
+  test('fails when no keyid is present in the JWT', async () => {
+    const response = await fetchDoneWithJWT({ keyid: undefined })
 
     expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`cookie deeplinkFlowId is malformed`)
+    expect(await response.text()).toBe('No keyid was provided in the JWT')
   })
 
-  test('fails when no session for `deeplinkFlowId` can be found', async () => {
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: '5099803df3f4948bd2f98391',
+  test('fails when keysetUrl cannot be fetched', async () => {
+    const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+    expect(response.status).toBe(502)
+    expect(await response.text()).toBe(
+      'An error occured while fetching key from the keyset URL'
+    )
+  })
+
+  describe('when editor can connect to keyset URL of edu-sharing', () => {
+    let dataClaim: string
+    let keysetRequestHandler: RequestHandler
+    let server: Server
+
+    beforeAll((done) => {
+      const app = express()
+
+      app.get('/edu-sharing/rest/lti/v13/jwks', (req, res, next) => {
+        keysetRequestHandler(req, res, next)
+      })
+
+      server = app.listen(8100, done)
     })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`deeplinkFlowSession is invalid`)
-  })
-
-  test('fails when session for `deeplinkFlowId` is not valid', async () => {
-    const session = await sessions.insertOne({ createdAt: new Date() })
-
-    const response = await fetchDoneWithJWTValue({
-      JWT: 'foobar',
-      deeplinkFlowId: session.insertedId.toString(),
-    })
-
-    expect(response.status).toBe(400)
-    expect(await response.text()).toBe(`deeplinkFlowSession is invalid`)
-  })
-
-  describe('when a valid session is stored in mongodb', () => {
-    let deeplinkFlowId: string
 
     beforeEach(async () => {
-      const session = await sessions.insertOne({
+      keysetRequestHandler = (_req, res) => {
+        createJWKSResponse({
+          res,
+          keyid: validKeyid,
+          key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+        })
+      }
+      const nonceData = await deeplinkNonces.insertOne({
         createdAt: new Date(),
         nonce: validNonceValue,
       })
-      deeplinkFlowId = session.insertedId.toString()
+      dataClaim = nonceData.insertedId.toString()
     })
 
-    test('fails when a malformed JWT is send', async () => {
-      const response = await fetchDoneWithJWTValue({
-        JWT: 'foobar',
-        deeplinkFlowId,
-      })
-
-      expect(response.status).toBe(400)
-      expect(await response.text()).toBe('jwt malformed')
+    afterAll((done) => {
+      server.close(done)
     })
 
-    test('fails when no keyid is present in the JWT', async () => {
-      const response = await fetchDoneWithJWT({ keyid: undefined })
+    test('fails when edu-sharing has an internal server error', async () => {
+      keysetRequestHandler = (_req, res) => res.sendStatus(500)
 
-      expect(response.status).toBe(400)
-      expect(await response.text()).toBe('No keyid was provided in the JWT')
-    })
-
-    test('fails when keysetUrl cannot be fetched', async () => {
       const response = await fetchDoneWithJWT({ keyid: validKeyid })
 
       expect(response.status).toBe(502)
@@ -272,150 +232,146 @@ describe('endpoint "/platform/done"', () => {
       )
     })
 
-    describe('when editor can connect to keyset URL of edu-sharing', () => {
-      let keysetRequestHandler: RequestHandler
-      let server: Server
+    test('fails when edu-sharing responses with text response', async () => {
+      keysetRequestHandler = (_req, res) => res.send('no json response')
 
-      beforeAll((done) => {
-        const app = express()
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
 
-        app.get('/edu-sharing/rest/lti/v13/jwks', (req, res, next) => {
-          keysetRequestHandler(req, res, next)
-        })
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
 
-        server = app.listen(8100, done)
+    test('fails when edu-sharing responses with malformed keyset', async () => {
+      keysetRequestHandler = (_req, res) => res.json('malformed')
+
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('fails when the keyset of edu-sharing is empty', async () => {
+      keysetRequestHandler = (_req, res) => res.json([])
+
+      const response = await fetchDoneWithJWT({ keyid: validKeyid })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('fails when the given keyid in the JWT cannot be found in the keyset', async () => {
+      const response = await fetchDoneWithJWT({ keyid: 'invalid-key' })
+
+      expect(response.status).toBe(502)
+      expect(await response.text()).toBe(
+        'An error occured while fetching key from the keyset URL'
+      )
+    })
+
+    test('fails when the JWT is expired', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayloadWithDataClaim, exp: iat - 10 },
       })
 
-      beforeEach(() => {
-        keysetRequestHandler = (_req, res) => {
-          createJWKSResponse({
-            res,
-            keyid: validKeyid,
-            key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
-          })
-        }
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('jwt expired')
+    })
+
+    test('fails when "iss" is invalid', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayloadWithDataClaim, iss: 'foo' },
       })
 
-      afterAll((done) => {
-        server.close(done)
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('jwt issuer invalid. expected: editor')
+    })
+
+    test('fails when "aud" is invalid', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayloadWithDataClaim, aud: 'foo' },
       })
 
-      test('fails when edu-sharing has an internal server error', async () => {
-        keysetRequestHandler = (_req, res) => res.sendStatus(500)
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe(
+        'jwt audience invalid. expected: http://localhost:3000/'
+      )
+    })
 
-        const response = await fetchDoneWithJWT({ keyid: validKeyid })
-
-        expect(response.status).toBe(502)
-        expect(await response.text()).toBe(
-          'An error occured while fetching key from the keyset URL'
-        )
+    test('fails when no data claim is send is invalid', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: validPayloadWithDataClaim,
       })
 
-      test('fails when edu-sharing responses with text response', async () => {
-        keysetRequestHandler = (_req, res) => res.send('no json response')
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('data claim in JWT is missing')
+    })
 
-        const response = await fetchDoneWithJWT({ keyid: validKeyid })
-
-        expect(response.status).toBe(502)
-        expect(await response.text()).toBe(
-          'An error occured while fetching key from the keyset URL'
-        )
+    test('fails when invalid data claim is send', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: validPayloadWithDataClaim,
+        dataClaim: 'foo',
       })
 
-      test('fails when edu-sharing responses with malformed keyset', async () => {
-        keysetRequestHandler = (_req, res) => res.json('malformed')
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('data claim in JWT is invalid')
+    })
 
-        const response = await fetchDoneWithJWT({ keyid: validKeyid })
+    test('fails when stored session is invalid', async () => {
+      const nonceData = await deeplinkNonces.insertOne({
+        createdAt: new Date(),
+      })
+      dataClaim = nonceData.insertedId.toString()
 
-        expect(response.status).toBe(502)
-        expect(await response.text()).toBe(
-          'An error occured while fetching key from the keyset URL'
-        )
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: validPayloadWithDataClaim,
+        dataClaim,
       })
 
-      test('fails when the keyset of edu-sharing is empty', async () => {
-        keysetRequestHandler = (_req, res) => res.json([])
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('deeplink flow session expired')
+    })
 
-        const response = await fetchDoneWithJWT({ keyid: validKeyid })
-
-        expect(response.status).toBe(502)
-        expect(await response.text()).toBe(
-          'An error occured while fetching key from the keyset URL'
-        )
+    test('fails when "nonce" is invalid', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: { ...validPayloadWithDataClaim, nonce: 'foo' },
+        dataClaim,
       })
 
-      test('fails when the given keyid in the JWT cannot be found in the keyset', async () => {
-        const response = await fetchDoneWithJWT({ keyid: 'invalid-key' })
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('nonce is invalid')
+    })
 
-        expect(response.status).toBe(502)
-        expect(await response.text()).toBe(
-          'An error occured while fetching key from the keyset URL'
-        )
-      })
-
-      test('fails when the JWT is expired', async () => {
-        const response = await fetchDoneWithJWT({
-          keyid: validKeyid,
-          payload: { ...validPayload, exp: iat - 10 },
-        })
-
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe('jwt expired')
-      })
-
-      test('fails when "iss" is invalid', async () => {
-        const response = await fetchDoneWithJWT({
-          keyid: validKeyid,
-          payload: { ...validPayload, iss: 'foo' },
-        })
-
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe(
-          'jwt issuer invalid. expected: editor'
-        )
-      })
-
-      test('fails when "aud" is invalid', async () => {
-        const response = await fetchDoneWithJWT({
-          keyid: validKeyid,
-          payload: { ...validPayload, aud: 'foo' },
-        })
-
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe(
-          'jwt audience invalid. expected: http://localhost:3000/'
-        )
-      })
-
-      test('fails when "nonce" is invalid', async () => {
-        const response = await fetchDoneWithJWT({
-          keyid: validKeyid,
-          payload: { ...validPayload, nonce: 'foo' },
-        })
-
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe(
-          'jwt nonce invalid. expected: nonce-value'
-        )
-      })
-
-      test('fails when "custom" claim is malformed', async () => {
-        const response = await fetchDoneWithJWT({
-          keyid: validKeyid,
-          payload: {
-            ...validPayload,
-            'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': {
-              custom: 1,
-            },
+    test('fails when "custom" claim is malformed', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        payload: {
+          ...validPayloadWithDataClaim,
+          'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': {
+            custom: 1,
           },
-        })
-
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe('malformed custom claim in JWT send')
+        },
+        dataClaim,
       })
 
-      test('fails when "jwt" is signed by another key', async () => {
-        const invalidKey = `
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('malformed custom claim in JWT send')
+    })
+
+    test('fails when "jwt" is signed by another key', async () => {
+      const invalidKey = `
         -----BEGIN RSA PRIVATE KEY-----
         MIIEpAIBAAKCAQEAplp60im+W3yZ6JAjJaZe42o9Ef5TkiGxVkKbUuTWCUV60Hf2
         0CmV/OcAPJoqBtQkPCLIsempMHbqFNbQpEZWKHEdITA00PXnVMa62vD1EM7Kn8iX
@@ -443,57 +399,59 @@ describe('endpoint "/platform/done"', () => {
         lAeIi6MzyKxKBTblHdzyJIBGQhtq2fjeoDXjYiLqYph0ml5TZoD2jHh6kTXAWKma
         L8ovrRvQ0MjWyIOrBeudSjU2rtOAHcgmoF3IOhjqk8/fcckvRoE4DA==
         -----END RSA PRIVATE KEY-----`
-          .trim()
-          .replace(/\n +/g, '\n')
-        const response = await fetchDoneWithJWT({
-          keyid: validKeyid,
-          key: invalidKey,
-        })
-
-        expect(response.status).toBe(400)
-        expect(await response.text()).toBe('invalid signature')
+        .trim()
+        .replace(/\n +/g, '\n')
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        key: invalidKey,
       })
 
-      test('succeeds when valid values are send', async () => {
-        const response = await fetchDoneWithJWT({ keyid: validKeyid })
-
-        expect(response.status).toBe(200)
-        expect(response.headers.get('content-type')).toBe(
-          'text/html; charset=utf-8'
-        )
-      })
+      expect(response.status).toBe(400)
+      expect(await response.text()).toBe('invalid signature')
     })
 
-    function fetchDoneWithJWT(args: {
-      keyid?: string | null
-      key?: string
-      payload?: jwt.JwtPayload
-    }) {
-      const { keyid, key, payload = validPayload } = args
-
-      const jwtValue = jwt.sign(payload, key ?? validKey, {
-        algorithm: 'RS256',
-        ...(keyid ? { keyid } : {}),
+    test('succeeds when valid values are send', async () => {
+      const response = await fetchDoneWithJWT({
+        keyid: validKeyid,
+        dataClaim,
       })
 
-      return fetchDoneWithJWTValue({
-        JWT: jwtValue,
-        deeplinkFlowId,
-      })
-    }
+      expect(response.status).toBe(200)
+      expect(response.headers.get('content-type')).toBe(
+        'text/html; charset=utf-8'
+      )
+    })
   })
 
-  function fetchDoneWithJWTValue(args: {
-    JWT?: string
-    deeplinkFlowId?: string
+  function fetchDoneWithJWT(args: {
+    keyid?: string | null
+    key?: string
+    payload?: jwt.JwtPayload
+    dataClaim?: string
   }) {
-    const { JWT, deeplinkFlowId } = args
+    const { keyid, key, payload = validPayloadWithDataClaim } = args
+    const { dataClaim } = args
+
+    const jwtPayload = {
+      ...payload,
+      ...(dataClaim
+        ? { 'https://purl.imsglobal.org/spec/lti-dl/claim/data': dataClaim }
+        : {}),
+    }
+
+    const jwtValue = jwt.sign(jwtPayload, key ?? validKey, {
+      algorithm: 'RS256',
+      ...(keyid ? { keyid } : {}),
+    })
+
+    return fetchDoneWithJWTValue({ JWT: jwtValue })
+  }
+
+  function fetchDoneWithJWTValue(args: { JWT?: string }) {
+    const { JWT } = args
     return fetchDone({
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        ...(deeplinkFlowId
-          ? { Cookie: `deeplinkFlowId=${deeplinkFlowId}` }
-          : {}),
       },
       ...(JWT ? { body: new URLSearchParams({ JWT }) } : {}),
     })
