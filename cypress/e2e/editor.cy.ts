@@ -120,6 +120,7 @@ function openSerloEditorWithLTI() {
 
 function expectEditorOpenedSuccessfully() {
   cy.contains('Benannte Version speichern')
+  cy.contains('Pluginübersicht')
 }
 
 export {}
