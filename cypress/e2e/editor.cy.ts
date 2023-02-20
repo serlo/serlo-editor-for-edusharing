@@ -81,6 +81,7 @@ describe('Editor saves a named version of the document', () => {
     changeContent()
 
     cy.visit('http://example.org/')
+    cy.contains('Example Domain') // Reload is finished
     expectSavedVersionWithComment(savedBySerloComment)
   })
 
@@ -89,6 +90,7 @@ describe('Editor saves a named version of the document', () => {
     changeContent()
 
     cy.reload()
+    cy.contains('Pluginübersicht') // Reload is finished
     expectSavedVersionWithComment(savedBySerloComment)
   })
 })
