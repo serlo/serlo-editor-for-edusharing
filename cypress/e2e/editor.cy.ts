@@ -39,6 +39,17 @@ describe('Opening the editor as tool', () => {
   })
 })
 
+it('Editor does not autosave content when there are no changes', () => {
+  openSerloEditorWithLTI()
+
+  // Wait 8 seconds -> Autosave is set to be done all 5 seconds
+  cy.wait(8000)
+
+  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+    expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
+  })
+})
+
 it('Button "Saved named version" saves a named version', () => {
   openSerloEditorWithLTI()
 
