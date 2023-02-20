@@ -39,17 +39,6 @@ describe('Opening the editor as tool', () => {
   })
 })
 
-it('Editor does not autosave content when there are no changes', () => {
-  openSerloEditorWithLTI()
-
-  // Wait 8 seconds -> Autosave is set to be done all 5 seconds
-  cy.wait(8000)
-
-  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-    expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
-  })
-})
-
 it('Button "Saved named version" saves a named version', () => {
   const comment = 'version-name'
 
@@ -67,46 +56,34 @@ it('Button "Saved named version" saves a named version', () => {
   })
 })
 
-describe('An automatic save is created when', () => {
-  it('the editor is open for long enough to trigger an automatic save and there are unsaved changes in the content.', () => {
+describe('Feature to automatically save the document', () => {
+  it('The editor saves automatically when it is open for long enough after there have been changes made.', () => {
     openSerloEditorWithLTI()
-
-    expectEditorOpenedSuccessfully()
 
     // Create a new plugin
     cy.get('div.add-trigger').eq(1).click()
-    cy.contains('Edusharing Inhalte').click()
+    cy.contains('Box').click()
+    cy.contains('Beispiel').click()
 
     cy.wait(6000)
 
-    expectAutomaticSavedVersion()
+    cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+      expect(savedVersions)
+        .to.be.an('array')
+        .that.deep.includes({ comment: null })
+    })
   })
 
-  function expectAutomaticSavedVersion() {
+  it('The editor does not save automatically when there are no changes', () => {
+    openSerloEditorWithLTI()
+
+    // Wait 8 seconds -> Autosave is set to be done all 5 seconds
+    cy.wait(8000)
+
     cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-      if (!isNonEmptySavedVersionsArray(savedVersions)) {
-        throw new Error(
-          'Expected savedVersions to be an non-empty Array<{ comment: string } but it was not.'
-        )
-      }
-
-      const mostRecentSavedVersion = savedVersions.pop()
-      expect(mostRecentSavedVersion.comment.includes('automatisch'))
+      expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
     })
-  }
-
-  function isNonEmptySavedVersionsArray(
-    obj: unknown
-  ): obj is Array<{ comment: string }> {
-    if (!Array.isArray(obj)) {
-      return false
-    }
-    if (obj.length === 0) {
-      return false
-    }
-    const element = obj[0]
-    return 'comment' in element && typeof element.comment === 'string'
-  }
+  })
 })
 
 it('Assets from edu-sharing can be included', () => {
