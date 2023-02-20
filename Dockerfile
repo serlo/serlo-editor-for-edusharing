@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY public public
 RUN yarn add mongoose && yarn cache clean --all
 
-FROM node:16-alpine as build
+FROM node:18-alpine as build
 LABEL stage=build
 WORKDIR /usr/src/app
 COPY src src
