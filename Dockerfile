@@ -1,16 +1,11 @@
 FROM node:18-alpine as build
 LABEL stage=build
 WORKDIR /usr/src/app
+COPY .eslintrc.json next.config.mjs next-env.d.ts postcss.config.json \
+     tailwind.config.cjs tsconfig.json yarn.lock package.json .yarnrc.yml .
 COPY src src
-COPY .eslintrc.json .
-COPY next.config.mjs .
-COPY next-env.d.ts .
-COPY postcss.config.json .
-COPY tailwind.config.cjs .
-COPY tsconfig.json .
 COPY scripts scripts
 COPY .yarn .yarn
-COPY yarn.lock package.json .yarnrc.yml .
 RUN yarn --immutable
 RUN yarn build
 RUN yarn node scripts/esbuild.js
