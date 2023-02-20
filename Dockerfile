@@ -1,9 +1,3 @@
-FROM node:18-alpine as dependencies
-LABEL stage=build
-WORKDIR /usr/src/app
-COPY public public
-RUN yarn add mongoose && yarn cache clean --all
-
 FROM node:18-alpine as build
 LABEL stage=build
 WORKDIR /usr/src/app
@@ -21,8 +15,11 @@ RUN yarn --immutable
 RUN yarn build
 RUN yarn node scripts/esbuild.js
 
-FROM dependencies as release
+FROM node:18-alpine as release
+WORKDIR /usr/src/app
 ENV NODE_ENV=production
+COPY public public
+RUN yarn add mongoose && yarn cache clean --all
 COPY package.json .
 COPY --from=build /usr/src/app/.next/*json /usr/src/app/.next/BUILD_ID .next/
 COPY --from=build /usr/src/app/.next/static .next/static
