@@ -24,6 +24,10 @@ import {
   JwtDeepflowResponseDecoder,
   LtiCustomType,
 } from '../shared/decoders'
+import {
+  StorageFormat,
+  StorageFormatRuntimeType,
+} from '../shared/storage-format'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -162,6 +166,16 @@ const server = (async () => {
       return
     }
 
+    const content: unknown = JSON.parse(req.body)
+    if (!StorageFormatRuntimeType.is(content)) {
+      res.status(400).json({
+        error:
+          'Content submitted to /lti/save-content was malformed. See StorageFormat.',
+        status: 401,
+      })
+      return
+    }
+
     const platform = await Provider.getPlatformById(res.locals.token.platformId)
     const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
     const payload = { appId, nodeId, user, dataToken }
@@ -189,7 +203,7 @@ const server = (async () => {
       url.searchParams.append('versionComment', comment)
     }
 
-    const blob = new File([req.body], 'test.json')
+    const blob = new File([JSON.stringify(content)], 'test.json')
 
     const data = new FormData()
     data.set('file', blob)
