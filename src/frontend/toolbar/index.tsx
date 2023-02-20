@@ -35,14 +35,6 @@ export function Toolbar({
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
 
   useEffect(() => {
-    window.onbeforeunload = () => {
-      if (hasPendingChanges) {
-        return 'Deine Änderungen wurden noch nicht gespeichert.'
-      }
-    }
-  }, [hasPendingChanges])
-
-  useEffect(() => {
     if (shouldClose && !hasPendingChanges) window.close()
   }, [hasPendingChanges, shouldClose])
 
