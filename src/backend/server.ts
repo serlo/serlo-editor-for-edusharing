@@ -41,7 +41,10 @@ const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
 
-const deeplinkFlowMaxAge = 20
+// Max time of the deeplink flow -> Since user interaction are included (the
+// user needs to select a file and might want to upload one as well), I selected
+// a rather high max time of the deeplink flow
+const deeplinkFlowMaxAge = 45 * 60
 
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
@@ -406,11 +409,6 @@ const server = (async () => {
       key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
     })
 
-    await deeplinkNonces.insertOne({
-      createdAt: new Date(),
-      nonce,
-    })
-
     createAutoFromResponse({
       res,
       method: 'POST',
@@ -464,16 +462,16 @@ const server = (async () => {
       return
     }
 
-    const { value: nonceData } = await deeplinkNonces.findOneAndDelete({
+    const { value: nonceValueFromDB } = await deeplinkNonces.findOneAndDelete({
       _id: nonceId,
     })
 
-    if (!DeeplinkNonce.is(nonceData)) {
+    if (!DeeplinkNonce.is(nonceValueFromDB)) {
       res.status(400).send('deeplink flow session expired').end()
       return
     }
 
-    if (decoded.nonce !== nonceData.nonce) {
+    if (decoded.nonce !== nonceValueFromDB.nonce) {
       res.status(400).send('nonce is invalid').end()
       return
     }
