@@ -1,5 +1,4 @@
 import express from 'express'
-import cookieParser from 'cookie-parser'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
 import Server from 'next/dist/server/next-server.js'
@@ -23,12 +22,15 @@ import {
   createErrorHtml,
 } from '../server-utils'
 import {
-  DeeplinkFlowDecoder,
+  DeeplinkNonce,
+  DeeplinkLoginData,
   JwtDeepflowResponseDecoder,
-  LtiMessageHintDecoder,
-  LtiMessageHint,
   LtiCustomType,
 } from '../shared/decoders'
+import {
+  StorageFormat,
+  StorageFormatRuntimeType,
+} from '../shared/storage-format'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -59,7 +61,10 @@ const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
 
-const deeplinkFlowMaxAge = 60
+// Max time of the deeplink flow -> Since user interaction are included (the
+// user needs to select a file and might want to upload one as well), I selected
+// a rather high max time of the deeplink flow
+const deeplinkFlowMaxAge = 45 * 60
 
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
@@ -107,12 +112,17 @@ Provider.onConnect((_token, _req, res) => {
 const server = (async () => {
   await mongoClient.connect()
 
-  const deeplinkFlows = mongoClient.db().collection('deeplink_flows')
-  // Make documents in the `deeplink_flow` expire after `deeplinkFlowMaxAge`
+  const deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
+  const deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
+  // Make documents in the mongodb collections expire after `deeplinkFlowMaxAge`
   // seconds.
   //
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
-  await deeplinkFlows.createIndex(
+  await deeplinkNonces.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: deeplinkFlowMaxAge }
+  )
+  await deeplinkLoginData.createIndex(
     { createdAt: 1 },
     { expireAfterSeconds: deeplinkFlowMaxAge }
   )
@@ -121,10 +131,7 @@ const server = (async () => {
   await Provider.deploy({ serverless: true })
 
   const server = express()
-
-  server.use('/platform', cookieParser())
   server.use(express.urlencoded({ extended: true }))
-
   // Use lti.js as a express.js middleware
   // All request to paths '/lti' and '/lti/...' are going through lti.js middleware.
   // See: https://cvmcosta.me/ltijs/#/provider?id=deploying-ltijs-as-part-of-another-server
@@ -175,6 +182,16 @@ const server = (async () => {
       return
     }
 
+    const content: unknown = JSON.parse(req.body)
+    if (!StorageFormatRuntimeType.is(content)) {
+      res.status(400).json({
+        error:
+          'Content submitted to /lti/save-content was malformed. See StorageFormat.',
+        status: 401,
+      })
+      return
+    }
+
     const platform = await Provider.getPlatformById(res.locals.token.platformId)
     const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
     const payload = { appId, nodeId, user, dataToken }
@@ -183,6 +200,11 @@ const server = (async () => {
       key: await platform.platformPrivateKey(),
       keyid: await platform.platformKid(),
     })
+
+    if (postContentApiUrl == null) {
+      res.status(400).json({ error: 'Editor was not opened in edit mode' })
+      return
+    }
 
     const url = new URL(postContentApiUrl)
     // TODO: Use a method here
@@ -197,7 +219,7 @@ const server = (async () => {
       url.searchParams.append('versionComment', comment)
     }
 
-    const blob = new File([req.body], 'test.json')
+    const blob = new File([JSON.stringify(content)], 'test.json')
 
     const data = new FormData()
     data.set('file', blob)
@@ -234,19 +256,12 @@ const server = (async () => {
       return
     }
 
-    const messageHint: LtiMessageHint = { user, dataToken, nodeId }
-    // TODO: edu-sharing seems to only forward this parameter without
-    // proper decoding. Thus we need to double encode this parameter.
-    // Delete this when edu-sharing has fixed the bug.
-    const lti_message_hint = encodeURIComponent(JSON.stringify(messageHint))
-
-    const flowId = (
-      await deeplinkFlows.insertOne({ createdAt: new Date() })
-    ).insertedId.toString()
-    res.setHeader(
-      'Set-Cookie',
-      `deeplinkFlowId=${flowId}; Max-Age=${deeplinkFlowMaxAge}; HttpOnly; Path=/platform; SameSite=None; Secure`
-    )
+    const loginData = await deeplinkLoginData.insertOne({
+      createdAt: new Date(),
+      user,
+      dataToken,
+      nodeId,
+    })
 
     // Create a Third-party Initiated Login request
     // See: https://www.imsglobal.org/spec/security/v1p0/#step-1-third-party-initiated-login
@@ -257,10 +272,9 @@ const server = (async () => {
       params: {
         iss: process.env.EDITOR_URL,
         target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-        login_hint: process.env.EDITOR_CLIENT_ID,
+        login_hint: loginData.insertedId.toString(),
         client_id: process.env.EDITOR_CLIENT_ID,
         lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
-        lti_message_hint,
       },
     })
   })
@@ -339,7 +353,7 @@ const server = (async () => {
   server.get('/platform/login', async (req, res) => {
     const nonce = req.query['nonce']
     const state = req.query['state']
-    const messageHint = req.query['lti_message_hint']
+    const loginHint = req.query['login_hint']
 
     if (typeof nonce !== 'string') {
       res.status(400).send('nonce is not valid').end()
@@ -355,38 +369,33 @@ const server = (async () => {
     } else if (req.query['client_id'] !== process.env.EDITOR_CLIENT_ID) {
       res.status(400).send('client_id is not valid').end()
       return
-    } else if (typeof messageHint !== 'string') {
-      res.status(400).send('lti_message_hint is not valid').end()
+    } else if (typeof loginHint !== 'string') {
+      res.status(400).send('login_hint is not valid').end()
       return
     }
 
-    let messageHintDecoded: unknown
-    try {
-      messageHintDecoded = JSON.parse(messageHint)
-    } catch {
-      res.status(400).send('lti_message_hint is invalid').end()
+    const loginDataId = parseObjectId(loginHint)
+
+    if (loginDataId == null) {
+      res.status(400).send('login_hint is not valid').end()
       return
     }
 
-    if (!LtiMessageHintDecoder.is(messageHintDecoded)) {
-      res.status(400).send('lti_message_hint is invalid').end()
+    const { value: loginData } = await deeplinkLoginData.findOneAndDelete({
+      _id: loginDataId,
+    })
+
+    if (!DeeplinkLoginData.is(loginData)) {
+      res.status(400).send('login_hint is invalid or session is expired').end()
       return
     }
 
-    const { user, nodeId, dataToken } = messageHintDecoded
+    const { user, nodeId, dataToken } = loginData
 
-    const flowId = parseDeepflowId({ req, res })
-    if (flowId == null) return
-
-    const flowUpdate = await deeplinkFlows.updateOne(
-      { _id: flowId },
-      { $set: { nonce } }
-    )
-
-    if (flowUpdate.modifiedCount === 0) {
-      res.status(400).send('cookie deeplinkFlowId is invalid').end()
-      return
-    }
+    const nonceId = await deeplinkNonces.insertOne({
+      createdAt: new Date(),
+      nonce,
+    })
 
     // Construct a Authentication Response
     // See: https://www.imsglobal.org/spec/security/v1p0/#step-3-authentication-response
@@ -420,6 +429,7 @@ const server = (async () => {
         deep_link_return_url: `${process.env.EDITOR_URL}platform/done`,
         title: '',
         text: '',
+        data: nonceId.insertedId.toString(),
       },
     }
 
@@ -455,44 +465,60 @@ const server = (async () => {
       return
     }
 
-    const flowId = parseDeepflowId({ req, res })
-    if (flowId == null) return
-
-    const { value: deeplinkSession } = await deeplinkFlows.findOneAndDelete({
-      _id: flowId,
-    })
-
-    if (!DeeplinkFlowDecoder.is(deeplinkSession)) {
-      res.status(400).send('deeplinkFlowSession is invalid').end()
-      return
-    }
-
-    const { nonce } = deeplinkSession
-
-    verifyJwt({
+    const verifyResult = await verifyJwt({
       res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
         issuer: process.env.EDITOR_CLIENT_ID,
         audience: process.env.EDITOR_URL,
-        nonce,
       },
-      callback(decoded) {
-        if (!JwtDeepflowResponseDecoder.is(decoded)) {
-          res.status(400).send('malformed custom claim in JWT send').end()
-          return
-        }
+    })
 
-        const { repositoryId, nodeId } =
-          decoded[
-            'https://purl.imsglobal.org/spec/lti-dl/claim/content_items'
-          ][0].custom
+    if (!verifyResult.success) return
 
-        res
-          .setHeader('Content-type', 'text/html')
-          .send(
-            `<!DOCTYPE html>
+    const { decoded } = verifyResult
+    const data = decoded['https://purl.imsglobal.org/spec/lti-dl/claim/data']
+
+    if (typeof data !== 'string') {
+      res.status(400).send('data claim in JWT is missing').end()
+      return
+    }
+
+    const nonceId = parseObjectId(data)
+
+    if (nonceId == null) {
+      res.status(400).send('data claim in JWT is invalid').end()
+      return
+    }
+
+    const { value: nonceValueFromDB } = await deeplinkNonces.findOneAndDelete({
+      _id: nonceId,
+    })
+
+    if (!DeeplinkNonce.is(nonceValueFromDB)) {
+      res.status(400).send('deeplink flow session expired').end()
+      return
+    }
+
+    if (decoded.nonce !== nonceValueFromDB.nonce) {
+      res.status(400).send('nonce is invalid').end()
+      return
+    }
+
+    if (!JwtDeepflowResponseDecoder.is(decoded)) {
+      res.status(400).send('malformed custom claim in JWT send').end()
+      return
+    }
+
+    const { repositoryId, nodeId } =
+      decoded['https://purl.imsglobal.org/spec/lti-dl/claim/content_items'][0]
+        .custom
+
+    res
+      .setHeader('Content-type', 'text/html')
+      .send(
+        `<!DOCTYPE html>
             <html>
               <body>
                 <script type="text/javascript">
@@ -504,10 +530,8 @@ const server = (async () => {
               </body>
             </html>
           `
-          )
-          .end()
-      },
-    })
+      )
+      .end()
   })
 
   // Forward all requests that did not get handled until here to the nextjs request handler.
@@ -532,22 +556,10 @@ const server = (async () => {
   })
 })()
 
-function parseDeepflowId({
-  req,
-  res,
-}: {
-  req: express.Request
-  res: express.Response
-}): ObjectId | null {
-  if (typeof req.cookies.deeplinkFlowId != 'string') {
-    res.status(400).send('cookie deeplinkFlowId is missing').end()
-    return null
-  }
-
+function parseObjectId(objectId: string): ObjectId | null {
   try {
-    return new ObjectId(req.cookies.deeplinkFlowId)
+    return new ObjectId(objectId)
   } catch {
-    res.status(400).send('cookie deeplinkFlowId is malformed').end()
     return null
   }
 }
