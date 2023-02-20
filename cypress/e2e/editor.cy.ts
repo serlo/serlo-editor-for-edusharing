@@ -40,20 +40,16 @@ describe('Opening the editor as tool', () => {
 })
 
 it('Button "Saved named version" saves a named version', () => {
-  const comment = 'version-name'
-
   openSerloEditorWithLTI()
 
   expectEditorOpenedSuccessfully()
 
   cy.contains('Benannte Version speichern').click()
-  cy.get('input[placeholder="Name der neuen Version"]').type(comment)
+  cy.get('input[placeholder="Name der neuen Version"]').type('version-name')
   cy.contains(/^Speichern$/).click()
   cy.contains(/^Speichern$/).should('not.exist')
 
-  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-    expect(savedVersions).to.be.an('array').that.deep.includes({ comment })
-  })
+  expectSavedVersionWithComment('version-name')
 })
 
 describe('Feature to automatically save the document', () => {
@@ -67,11 +63,7 @@ describe('Feature to automatically save the document', () => {
 
     cy.wait(6000)
 
-    cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-      expect(savedVersions)
-        .to.be.an('array')
-        .that.deep.includes({ comment: null })
-    })
+    expectSavedVersionWithComment(null)
   })
 
   it('The editor does not save automatically when there are no changes', () => {
@@ -109,6 +101,12 @@ function openSerloEditorWithLTI() {
 function expectEditorOpenedSuccessfully() {
   cy.contains('Benannte Version speichern')
   cy.contains('Pluginübersicht')
+}
+
+function expectSavedVersionWithComment(comment: string | null) {
+  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+    expect(savedVersions).to.be.an('array').that.deep.includes({ comment })
+  })
 }
 
 export {}
