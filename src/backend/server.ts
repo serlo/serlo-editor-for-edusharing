@@ -45,11 +45,6 @@ const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
 
-// Max time of the deeplink flow -> Since user interaction are included (the
-// user needs to select a file and might want to upload one as well), I selected
-// a rather high max time of the deeplink flow
-const deeplinkFlowMaxAge = 45 * 60
-
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
@@ -104,11 +99,15 @@ const server = (async () => {
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
   await deeplinkNonces.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since in the deeplink flow a user activity is integrated (choosing
+    // the asset to include) we need a longer wait time
+    { expireAfterSeconds: 60 * 60 }
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since edusharing should directly redirect the user to our page a small
+    // max age should be fine her
+    { expireAfterSeconds: 20 }
   )
 
   await app.prepare()
