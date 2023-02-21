@@ -45,11 +45,6 @@ const nextJsRequestHandler = app.getRequestHandler()
 
 if (isDevEnvironment) loadEnvConfig()
 
-// Max time of the deeplink flow -> Since user interaction are included (the
-// user needs to select a file and might want to upload one as well), I selected
-// a rather high max time of the deeplink flow
-const deeplinkFlowMaxAge = 45 * 60
-
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
@@ -104,11 +99,15 @@ const server = (async () => {
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
   await deeplinkNonces.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since in the deeplink flow a user activity is integrated (choosing
+    // the asset to include) we need a longer wait time
+    { expireAfterSeconds: 60 * 60 }
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since edusharing should directly redirect the user to our page a small
+    // max age should be fine her
+    { expireAfterSeconds: 20 }
   )
 
   await app.prepare()
@@ -450,7 +449,6 @@ const server = (async () => {
     }
 
     const verifyResult = await verifyJwt({
-      res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
@@ -459,7 +457,10 @@ const server = (async () => {
       },
     })
 
-    if (!verifyResult.success) return
+    if (verifyResult.success === false) {
+      res.status(verifyResult.status).send(verifyResult.error)
+      return
+    }
 
     const { decoded } = verifyResult
     const data = decoded['https://purl.imsglobal.org/spec/lti-dl/claim/data']
