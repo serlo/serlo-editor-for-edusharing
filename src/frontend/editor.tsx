@@ -106,7 +106,10 @@ function EditInner({
       try {
         const response = await fetch(getSaveUrl(comment), {
           method: 'POST',
-          headers: { Authorization: `Bearer ${ltik}` },
+          headers: {
+            Authorization: `Bearer ${ltik}`,
+            'content-type': 'application/json',
+          },
           keepalive: true,
           body: getBodyForSave(),
         })
@@ -183,6 +186,7 @@ function EditInner({
 
       request.open('POST', getSaveUrl(savedBySerloString), false)
       request.setRequestHeader('Authorization', `Bearer ${ltik}`)
+      request.setRequestHeader('content-type', 'application/json')
       request.send(getBodyForSave())
 
       return request.status
