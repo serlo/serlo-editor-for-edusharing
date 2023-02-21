@@ -58,11 +58,6 @@ if (process.env.NODE_ENV == 'production') {
 
 const nextJsRequestHandler = app.getRequestHandler()
 
-// Max time of the deeplink flow -> Since user interaction are included (the
-// user needs to select a file and might want to upload one as well), I selected
-// a rather high max time of the deeplink flow
-const deeplinkFlowMaxAge = 45 * 60
-
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
@@ -117,11 +112,15 @@ const server = (async () => {
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
   await deeplinkNonces.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since in the deeplink flow a user activity is integrated (choosing
+    // the asset to include) we need a longer wait time
+    { expireAfterSeconds: 60 * 60 }
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since edusharing should directly redirect the user to our page a small
+    // max age should be fine her
+    { expireAfterSeconds: 20 }
   )
 
   await app.prepare()
@@ -171,7 +170,7 @@ const server = (async () => {
     return res.status(response.status).send(await response.text())
   })
 
-  server.post('/lti/save-content', async (req, res) => {
+  server.post('/lti/save-content', express.json(), async (req, res) => {
     const custom: unknown = res.locals.context.custom
 
     if (!LtiCustomType.is(custom)) {
@@ -179,7 +178,7 @@ const server = (async () => {
       return
     }
 
-    const content: unknown = JSON.parse(req.body)
+    const content: unknown = req.body
     if (!StorageFormatRuntimeType.is(content)) {
       res.status(400).json({
         error:
@@ -463,7 +462,6 @@ const server = (async () => {
     }
 
     const verifyResult = await verifyJwt({
-      res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
@@ -472,7 +470,10 @@ const server = (async () => {
       },
     })
 
-    if (!verifyResult.success) return
+    if (verifyResult.success === false) {
+      res.status(verifyResult.status).send(verifyResult.error)
+      return
+    }
 
     const { decoded } = verifyResult
     const data = decoded['https://purl.imsglobal.org/spec/lti-dl/claim/data']

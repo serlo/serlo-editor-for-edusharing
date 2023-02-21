@@ -106,7 +106,10 @@ function EditInner({
       try {
         const response = await fetch(getSaveUrl(comment), {
           method: 'POST',
-          headers: { Authorization: `Bearer ${ltik}` },
+          headers: {
+            Authorization: `Bearer ${ltik}`,
+            'content-type': 'application/json',
+          },
           keepalive: true,
           body: getBodyForSave(),
         })
@@ -114,6 +117,12 @@ function EditInner({
           dispatch(persist())
 
           lastSaveWasWithComment.current = Boolean(comment)
+        } else {
+          window.alert(
+            `Aktuelle version konnte nicht gespeichert werden. Server gab ein Response mit dem Code ${
+              response.status
+            } und dem Body ${await response.text()} zurück.`
+          )
         }
       } catch (error) {
         window.alert(
@@ -177,6 +186,7 @@ function EditInner({
 
       request.open('POST', getSaveUrl(savedBySerloString), false)
       request.setRequestHeader('Authorization', `Bearer ${ltik}`)
+      request.setRequestHeader('content-type', 'application/json')
       request.send(getBodyForSave())
 
       return request.status
