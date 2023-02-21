@@ -1,11 +1,11 @@
 FROM node:18-alpine as build
 LABEL stage=build
 WORKDIR /app
-COPY yarn.lock package.json .yarnrc.yml .
+COPY yarn.lock package.json .yarnrc.yml /app/
 COPY .yarn .yarn
 RUN yarn --immutable
 COPY .eslintrc.json next.config.mjs next-env.d.ts postcss.config.json \
-     tailwind.config.cjs tsconfig.json .
+     tailwind.config.cjs tsconfig.json /app/
 COPY src src
 RUN yarn build
 COPY scripts scripts
@@ -16,7 +16,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY public public
 RUN yarn add mongoose && yarn cache clean --all
-COPY package.json .
+COPY package.json /app/
 COPY --from=build /app/.next/*json /app/.next/BUILD_ID .next/
 COPY --from=build /app/.next/static .next/static
 COPY --from=build /app/.next/server .next/server
