@@ -72,6 +72,19 @@ describe('Feature to automatically save the document', () => {
   })
 })
 
+it('Saved versions can be opened again', () => {
+  openSerloEditorWithLTI()
+
+  changeContent()
+
+  cy.visit('http://example.org/')
+  cy.contains('Example Domain') // Reload is finished
+
+  openSerloEditorWithLTI()
+
+  cy.contains('Vorgehen')
+})
+
 it('Editor saves a named version of the document when the user navigates to another side', () => {
   const savedBySerloComment =
     'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -82,7 +95,6 @@ it('Editor saves a named version of the document when the user navigates to anot
   cy.visit('http://example.org/')
   cy.contains('Example Domain') // Reload is finished
 
-  cy.wait(100)
   expectSavedVersionWithComment(savedBySerloComment)
 })
 
@@ -111,6 +123,7 @@ function changeContent() {
   ).click()
   cy.contains('Vorgehen').click()
   cy.contains('Pluginübersicht').click()
+  cy.wait(100)
 }
 
 function openSerloEditorWithLTI() {

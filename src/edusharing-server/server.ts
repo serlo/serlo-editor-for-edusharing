@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express'
+import multer from 'multer'
 import * as t from 'io-ts'
 import { kitchenSinkDocument } from '../shared/storage-format'
 import {
@@ -131,23 +132,31 @@ export class EdusharingServer {
       res.json(this.content).end()
     })
 
-    this.app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
-      const comment = req.query['versionComment'] ?? null
+    const storage = multer.memoryStorage()
+    const upload = multer({ storage })
 
-      if (VersionComment.is(comment)) {
-        this.savedVersions.push({ comment })
-        console.log(
-          `[${new Date().toISOString()}]: Save registered with comment ${
-            req.query['versionComment']
-          }`
-        )
-        res.sendStatus(200).end()
-      } else {
-        // Aparently `versionComment` was specified as an object (see
-        // https://www.npmjs.com/package/qs) which should never happen
-        res.sendStatus(400).end()
+    this.app.post(
+      '/edu-sharing/rest/ltiplatform/v13/content',
+      upload.single('file'),
+      (req, res) => {
+        const comment = req.query['versionComment'] ?? null
+
+        if (VersionComment.is(comment)) {
+          this.savedVersions.push({ comment })
+          this.content = JSON.parse(req.file.buffer.toString())
+          console.log(
+            `[${new Date().toISOString()}]: Save registered with comment ${
+              req.query['versionComment']
+            }`
+          )
+          res.sendStatus(200).end()
+        } else {
+          // Aparently `versionComment` was specified as an object (see
+          // https://www.npmjs.com/package/qs) which should never happen
+          res.sendStatus(400).end()
+        }
       }
-    })
+    )
 
     this.app.get(
       '/edu-sharing/rest/lti/v13/oidc/login_initiations',
