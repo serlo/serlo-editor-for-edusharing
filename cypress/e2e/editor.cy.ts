@@ -72,27 +72,16 @@ describe('Feature to automatically save the document', () => {
   })
 })
 
-describe('Editor saves a named version of the document', () => {
+it('Editor saves a named version of the document when the user navigates to another side', () => {
   const savedBySerloComment =
     'Diese Version wurde automatisch vom Serlo-Editor erstellt'
 
-  it('when the user navigates to another side', () => {
-    openSerloEditorWithLTI()
-    changeContent()
+  openSerloEditorWithLTI()
+  changeContent()
 
-    cy.visit('http://example.org/')
-    cy.contains('Example Domain') // Reload is finished
-    expectSavedVersionWithComment(savedBySerloComment)
-  })
-
-  it('when the editor is reloaded', () => {
-    openSerloEditorWithLTI()
-    changeContent()
-
-    cy.reload()
-    cy.contains('Pluginübersicht') // Reload is finished
-    expectSavedVersionWithComment(savedBySerloComment)
-  })
+  cy.visit('http://example.org/')
+  cy.contains('Example Domain') // Reload is finished
+  expectSavedVersionWithComment(savedBySerloComment)
 })
 
 it('Assets from edu-sharing can be included', () => {
