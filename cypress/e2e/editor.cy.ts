@@ -129,8 +129,11 @@ function embedEdusharingAsset() {
 function changeContent() {
   // Create a new plugin
   cy.get('div.add-trigger').eq(1).click()
-  cy.contains('Box').click()
-  cy.contains('Beispiel').click()
+  // Search for the description text of the box plugin to get correct button to click. Searching for string "Box" does sometimes lead to issues when the string "Box" can be found elsewhere on the page.
+  cy.contains(
+    'Rahmen für deine Beispiele, Zitate, Warnungen, Beweise, …'
+  ).click()
+  cy.contains('Vorgehen').click()
   cy.contains('Pluginübersicht').click()
 }
 
