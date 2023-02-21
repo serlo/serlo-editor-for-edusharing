@@ -72,6 +72,21 @@ describe('Feature to automatically save the document', () => {
   })
 })
 
+it('Saved versions can be opened again', () => {
+  openSerloEditorWithLTI()
+
+  cy.get('Beispiel').should('not.exist')
+
+  changeContent()
+
+  cy.visit('http://example.org/')
+  cy.contains('Example Domain') // Reload is finished
+
+  openSerloEditorWithLTI()
+
+  cy.contains('Beispiel')
+})
+
 describe('Editor saves a named version of the document', () => {
   const savedBySerloComment =
     'Diese Version wurde automatisch vom Serlo-Editor erstellt'
