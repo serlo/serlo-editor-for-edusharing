@@ -209,7 +209,6 @@ export class EdusharingServer {
       }
 
       const verifyResult = await verifyJwt({
-        res,
         keysetUrl: 'http://localhost:3000/platform/keys',
         token: req.body.id_token,
         verifyOptions: {
@@ -220,7 +219,10 @@ export class EdusharingServer {
         },
       })
 
-      if (!verifyResult.success) return
+      if (verifyResult.success === false) {
+        res.status(verifyResult.status).send(verifyResult.error)
+        return
+      }
 
       const payload = {
         iss: 'editor',

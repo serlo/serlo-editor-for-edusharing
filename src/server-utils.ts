@@ -84,11 +84,13 @@ export function signJwt({
 
 export function verifyJwt(args: {
   token: string
-  res: Response
   verifyOptions: VerifyOptions
   keysetUrl: string
-}): Promise<{ success: true; decoded: jwt.JwtPayload } | { success: false }> {
-  const { res, token, verifyOptions, keysetUrl } = args
+}): Promise<
+  | { success: true; decoded: jwt.JwtPayload }
+  | { success: false; status: number; error: string }
+> {
+  const { token, verifyOptions, keysetUrl } = args
 
   return new Promise((resolve) => {
     // We want to make ensure that the JWT is never older than 1min
@@ -96,8 +98,7 @@ export function verifyJwt(args: {
 
     jwt.verify(token, getKey, verifyOptions, (err, decoded) => {
       if (err != null) {
-        res.status(400).send(err.message).end()
-        resolve({ success: false })
+        resolve({ success: false, status: 400, error: err.message })
       } else {
         // TODO: Use no "as"
         resolve({ success: true, decoded: decoded as jwt.JwtPayload })
@@ -109,46 +110,47 @@ export function verifyJwt(args: {
       callback: (_: Error, key: string) => void
     ) {
       if (header.kid == null) {
-        res.status(400).send('No keyid was provided in the JWT').end()
-        resolve({ success: false })
+        resolve({
+          success: false,
+          status: 400,
+          error: 'No keyid was provided in the JWT',
+        })
       } else {
         fetchSigningKey(header.kid)
           .then((key) => {
             if (typeof key === 'string') {
               callback(null, key)
-            } else {
-              resolve({ success: false })
             }
           })
           .catch((err) => {
-            res.status(400).send(err.message)
-            resolve({ success: false })
+            resolve({ success: false, status: 400, error: err.message })
           })
       }
-    }
 
-    async function fetchSigningKey(keyid: string): Promise<string | null> {
-      const jwksClient =
-        jwksClients[keysetUrl] != null
-          ? jwksClients[keysetUrl]
-          : JWKSClient({
-              jwksUri: keysetUrl,
-              cache: process.env.NODE_ENV === 'production',
-            })
+      async function fetchSigningKey(keyid: string): Promise<string | null> {
+        const jwksClient =
+          jwksClients[keysetUrl] != null
+            ? jwksClients[keysetUrl]
+            : JWKSClient({
+                jwksUri: keysetUrl,
+                cache: process.env.NODE_ENV === 'production',
+              })
 
-      jwksClients[keysetUrl] = jwksClient
+        jwksClients[keysetUrl] = jwksClient
 
-      try {
-        const signingKey = await jwksClient.getSigningKey(keyid)
+        try {
+          const signingKey = await jwksClient.getSigningKey(keyid)
 
-        return signingKey.getPublicKey()
-      } catch (err) {
-        res
-          .status(502)
-          .send('An error occured while fetching key from the keyset URL')
-          .end()
+          return signingKey.getPublicKey()
+        } catch (err) {
+          resolve({
+            success: false,
+            status: 502,
+            error: 'An error occured while fetching key from the keyset URL',
+          })
 
-        return null
+          return null
+        }
       }
     }
   })

@@ -12,8 +12,8 @@
 /.next/
 /out/
 
-# production
-/build
+# distribution files
+/dist/
 
 # misc
 .DS_Store
