@@ -2,8 +2,7 @@ import express from 'express'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
 import Server from 'next/dist/server/next-server.js'
-import nextLoadConfig from 'next/dist/server/config.js'
-import { PHASE_PRODUCTION_SERVER } from 'next/dist/shared/lib/constants'
+import type { NextServer } from 'next/dist/server/next'
 import { defaultImport } from 'default-import'
 import { createServer } from 'net'
 import fetch from 'node-fetch'
@@ -43,23 +42,21 @@ if (isDevEnvironment && !(await isPortOpen(port))) {
   process.exit(0)
 }
 
-const NextServer = defaultImport(Server)
+let app: Server | NextServer
 
-if (process.env.NODE_ENV !== 'production') {
-  const loadConfig = defaultImport(nextLoadConfig)
-  global.NEXT_CONFIG = /* @__PURE__ */ await loadConfig(
-    PHASE_PRODUCTION_SERVER,
-    process.cwd()
-  )
+if (process.env.NODE_ENV == 'production') {
+  const NextServer = defaultImport(Server)
+  app = new NextServer({
+    dev: false,
+    conf: global.NEXT_CONFIG,
+  })
+} else {
+  loadEnvConfig()
+  const next = (await import('next')).default
+  app = next({ dev: true })
 }
 
-const app = new NextServer({
-  dev: isDevEnvironment,
-  conf: global.NEXT_CONFIG,
-})
 const nextJsRequestHandler = app.getRequestHandler()
-
-if (isDevEnvironment) loadEnvConfig()
 
 // Max time of the deeplink flow -> Since user interaction are included (the
 // user needs to select a file and might want to upload one as well), I selected

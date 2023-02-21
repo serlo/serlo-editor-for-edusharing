@@ -20,6 +20,8 @@ await esbuild.build({
     'process.env.NODE_ENV': '"production"',
     'global.NEXT_CONFIG': JSON.stringify(nextConfig),
   },
+  treeShaking: true,
+  minifySyntax: true,
   bundle: true,
   platform: 'node',
   format: 'esm',
