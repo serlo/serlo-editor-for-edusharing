@@ -449,7 +449,6 @@ const server = (async () => {
     }
 
     const verifyResult = await verifyJwt({
-      res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
@@ -458,7 +457,10 @@ const server = (async () => {
       },
     })
 
-    if (!verifyResult.success) return
+    if (verifyResult.success === false) {
+      res.status(verifyResult.status).send(verifyResult.error)
+      return
+    }
 
     const { decoded } = verifyResult
     const data = decoded['https://purl.imsglobal.org/spec/lti-dl/claim/data']
