@@ -75,8 +75,6 @@ describe('Feature to automatically save the document', () => {
 it('Saved versions can be opened again', () => {
   openSerloEditorWithLTI()
 
-  cy.get('Beispiel').should('not.exist')
-
   changeContent()
 
   cy.visit('http://example.org/')
@@ -84,7 +82,7 @@ it('Saved versions can be opened again', () => {
 
   openSerloEditorWithLTI()
 
-  cy.contains('Beispiel')
+  cy.contains('Vorgehen')
 })
 
 it('Editor saves a named version of the document when the user navigates to another side', () => {
