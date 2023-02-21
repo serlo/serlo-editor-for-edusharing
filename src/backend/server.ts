@@ -155,7 +155,7 @@ const server = (async () => {
     return res.status(response.status).send(await response.text())
   })
 
-  server.post('/lti/save-content', async (req, res) => {
+  server.post('/lti/save-content', express.json(), async (req, res) => {
     const custom: unknown = res.locals.context.custom
 
     if (!LtiCustomType.is(custom)) {
@@ -163,7 +163,7 @@ const server = (async () => {
       return
     }
 
-    const content: unknown = JSON.parse(req.body)
+    const content: unknown = req.body
     if (!StorageFormatRuntimeType.is(content)) {
       res.status(400).json({
         error:
