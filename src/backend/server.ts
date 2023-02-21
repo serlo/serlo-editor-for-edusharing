@@ -1,7 +1,9 @@
 import express from 'express'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
-import next from 'next'
+import Server from 'next/dist/server/next-server.js'
+import type { NextServer } from 'next/dist/server/next'
+import { defaultImport } from 'default-import'
 import { createServer } from 'net'
 import fetch from 'node-fetch'
 import { Request } from 'node-fetch'
@@ -40,10 +42,21 @@ if (isDevEnvironment && !(await isPortOpen(port))) {
   process.exit(0)
 }
 
-const app = next({ dev: isDevEnvironment })
-const nextJsRequestHandler = app.getRequestHandler()
+let app: Server | NextServer
 
-if (isDevEnvironment) loadEnvConfig()
+if (process.env.NODE_ENV == 'production') {
+  const NextServer = defaultImport(Server)
+  app = new NextServer({
+    dev: false,
+    conf: global.NEXT_CONFIG,
+  })
+} else {
+  loadEnvConfig()
+  const next = (await import('next')).default
+  app = next({ dev: true })
+}
+
+const nextJsRequestHandler = app.getRequestHandler()
 
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
