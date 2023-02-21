@@ -114,6 +114,12 @@ function EditInner({
           dispatch(persist())
 
           lastSaveWasWithComment.current = Boolean(comment)
+        } else {
+          window.alert(
+            `Aktuelle version konnte nicht gespeichert werden. Server gab ein Response mit dem Code ${
+              response.status
+            } und dem Body ${await response.text()} zurück.`
+          )
         }
       } catch (error) {
         window.alert(
