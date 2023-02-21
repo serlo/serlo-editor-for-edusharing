@@ -65,43 +65,55 @@ function EditInner({
   const redoable = useScopedSelector(hasRedoActions())
   const pendingChanges = useScopedSelector(getPendingChanges())
   const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
+  const lastSaveWasWithComment = useRef<boolean>(true)
   const formDiv = useRef<HTMLDivElement>(null)
 
+  const getSaveUrl = useCallback(
+    (comment?: string) => {
+      const saveUrl = new URL(`${providerUrl}lti/save-content`)
+
+      if (comment) {
+        saveUrl.searchParams.append('comment', comment)
+      }
+
+      return saveUrl.href
+    },
+    [providerUrl]
+  )
+  const getBodyForSave = useCallback(() => {
+    const document = serializeRootDocument()(store.getState())
+
+    if (document === null) {
+      throw new Error(
+        'Transforming the document content into a saveable format failed!'
+      )
+    }
+
+    const body: StorageFormat = {
+      type: documentType,
+      variant: variantType,
+      version: state.version,
+      document,
+    }
+
+    return JSON.stringify(body)
+  }, [state.version, store])
   const save = useCallback(
     async (comment?: string) => {
       if (isSaving) return
       setIsSaving(true)
 
       try {
-        const saveUrl = new URL(`${providerUrl}lti/save-content`)
-
-        if (comment) {
-          saveUrl.searchParams.append('comment', comment)
-        }
-
-        const document = serializeRootDocument()(store.getState())
-
-        if (document === null) {
-          throw new Error(
-            'Transforming the document content into a saveable format failed!'
-          )
-        }
-
-        const body: StorageFormat = {
-          type: documentType,
-          variant: variantType,
-          version: state.version,
-          document: document,
-        }
-
-        const response = await fetch(saveUrl.href, {
+        const response = await fetch(getSaveUrl(comment), {
           method: 'POST',
           headers: { Authorization: `Bearer ${ltik}` },
           keepalive: true,
-          body: JSON.stringify(body),
+          body: getBodyForSave(),
         })
         if (response.status === 200) {
           dispatch(persist())
+
+          lastSaveWasWithComment.current = Boolean(comment)
         }
       } catch (error) {
         window.alert(
@@ -111,7 +123,7 @@ function EditInner({
         setIsSaving(false)
       }
     },
-    [dispatch, ltik, providerUrl, state.version, store, isSaving]
+    [isSaving, getSaveUrl, ltik, getBodyForSave, dispatch]
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -120,10 +132,56 @@ function EditInner({
   }, [hasPendingChanges, debouncedSave, pendingChanges])
 
   useEffect(() => {
-    window.onbeforeunload = () => {
-      void save(savedBySerloString)
+    if (!isEditing) return
+
+    window.addEventListener('beforeunload', handleOnBeforeUnload)
+
+    return () =>
+      window.removeEventListener('beforeunload', handleOnBeforeUnload)
+
+    // TODO: Find a better implementation for saving the document when the tab
+    // is closed since the used method is deprecated (see comment of
+    // `saveSync()`)
+    function handleOnBeforeUnload(event: BeforeUnloadEvent) {
+      if (!hasPendingChanges && lastSaveWasWithComment.current) return
+
+      try {
+        const responseStatus = saveSync()
+
+        if (responseStatus === 200) return
+      } catch (error) {
+        console.log('Error while saving document', error)
+      }
+
+      // There was either an error thrown when retrieving the document or
+      // the document couldn't be saved (non 200 response) -> Show prompt
+      // that there are unsaved changes
+      event.preventDefault()
+
+      return (event.returnValue = 'Fehler beim speichern des Dokuments')
     }
-  }, [save])
+
+    // This is a synchronous reimplementation of the above save() method. Due
+    // to the synchronous nature we can wait in handleOnBeforeUnload() until
+    // the save requests completes.
+    //
+    // Note: Never use this function somewhere else since it would freeze the
+    // UI for the time the HTTP request is resolved. The `async` parameter
+    // is therefore also deprecated in Firefox.
+    //
+    // Thanks to the old XMLHttpRequest API a request is synchronous when the
+    // `async` argument of `open()` is false -> see
+    // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/open
+    function saveSync() {
+      const request = new XMLHttpRequest()
+
+      request.open('POST', getSaveUrl(savedBySerloString), false)
+      request.setRequestHeader('Authorization', `Bearer ${ltik}`)
+      request.send(getBodyForSave())
+
+      return request.status
+    }
+  }, [getBodyForSave, getSaveUrl, hasPendingChanges, isEditing, ltik, save])
 
   if (!isEditing) {
     return (
