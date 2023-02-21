@@ -5,8 +5,7 @@ beforeEach(() => {
 it('The editor can be called via the LTI Workflow', () => {
   openSerloEditorWithLTI()
 
-  cy.contains('Benannte Version speichern')
-  cy.contains('Pluginübersicht')
+  expectEditorOpenedSuccessfully()
 })
 
 describe('Opening the editor as tool', () => {
@@ -40,29 +39,59 @@ describe('Opening the editor as tool', () => {
   })
 })
 
-it('Editor does not autosave content when there are no changes', () => {
-  openSerloEditorWithLTI()
-
-  // Wait 8 seconds -> Autosave is set to be done all 5 seconds
-  cy.wait(8000)
-
-  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-    expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
-  })
-})
-
 it('Button "Saved named version" saves a named version', () => {
   openSerloEditorWithLTI()
+
+  expectEditorOpenedSuccessfully()
 
   cy.contains('Benannte Version speichern').click()
   cy.get('input[placeholder="Name der neuen Version"]').type('version-name')
   cy.contains(/^Speichern$/).click()
   cy.contains(/^Speichern$/).should('not.exist')
 
-  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-    expect(savedVersions)
-      .to.be.an('array')
-      .that.deep.includes({ comment: 'version-name' })
+  expectSavedVersionWithComment('version-name')
+})
+
+describe('Feature to automatically save the document', () => {
+  it('The editor saves automatically when it is open for long enough after there have been changes made.', () => {
+    openSerloEditorWithLTI()
+    changeContent()
+
+    cy.wait(6000)
+    expectSavedVersionWithComment(null)
+  })
+
+  it('The editor does not save automatically when there are no changes', () => {
+    openSerloEditorWithLTI()
+
+    // Wait 8 seconds -> Autosave is set to be done all 5 seconds
+    cy.wait(8000)
+    cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+      expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
+    })
+  })
+})
+
+describe('Editor saves a named version of the document', () => {
+  const savedBySerloComment =
+    'Diese Version wurde automatisch vom Serlo-Editor erstellt'
+
+  it('when the user navigates to another side', () => {
+    openSerloEditorWithLTI()
+    changeContent()
+
+    cy.visit('http://example.org/')
+    cy.contains('Example Domain') // Reload is finished
+    expectSavedVersionWithComment(savedBySerloComment)
+  })
+
+  it('when the editor is reloaded', () => {
+    openSerloEditorWithLTI()
+    changeContent()
+
+    cy.reload()
+    cy.contains('Pluginübersicht') // Reload is finished
+    expectSavedVersionWithComment(savedBySerloComment)
   })
 })
 
@@ -82,8 +111,30 @@ function embedEdusharingAsset() {
   cy.wait(6000)
 }
 
+function changeContent() {
+  // Create a new plugin
+  cy.get('div.add-trigger').eq(1).click()
+  // Search for the description text of the box plugin to get correct button to click. Searching for string "Box" does sometimes lead to issues when the string "Box" can be found elsewhere on the page.
+  cy.contains(
+    'Rahmen für deine Beispiele, Zitate, Warnungen, Beweise, …'
+  ).click()
+  cy.contains('Vorgehen').click()
+  cy.contains('Pluginübersicht').click()
+}
+
 function openSerloEditorWithLTI() {
   cy.visit('http://localhost:8100')
+}
+
+function expectEditorOpenedSuccessfully() {
+  cy.contains('Benannte Version speichern')
+  cy.contains('Pluginübersicht')
+}
+
+function expectSavedVersionWithComment(comment: string | null) {
+  cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+    expect(savedVersions).to.be.an('array').that.deep.includes({ comment })
+  })
 }
 
 export {}
