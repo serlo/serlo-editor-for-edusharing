@@ -4,10 +4,10 @@ WORKDIR /app
 COPY .eslintrc.json next.config.mjs next-env.d.ts postcss.config.json \
      tailwind.config.cjs tsconfig.json yarn.lock package.json .yarnrc.yml .
 COPY src src
-COPY scripts scripts
 COPY .yarn .yarn
 RUN yarn --immutable
 RUN yarn build
+COPY scripts scripts
 RUN yarn node scripts/esbuild.js
 
 FROM node:18-alpine as release
