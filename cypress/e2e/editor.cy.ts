@@ -92,7 +92,9 @@ it('Editor saves a named version of the document when the user navigates to anot
   openSerloEditorWithLTI()
 
   expectEditorOpenedSuccessfully()
-  
+
+  cy.wait(2000)
+
   changeContent()
 
   cy.wait(2000)
