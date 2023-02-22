@@ -1,4 +1,6 @@
 import express, { Request, Response } from 'express'
+import multer from 'multer'
+import * as t from 'io-ts'
 import { kitchenSinkDocument } from '../shared/storage-format'
 import {
   createAutoFromResponse,
@@ -6,6 +8,11 @@ import {
   signJwtWithBase64Key,
   verifyJwt,
 } from '../server-utils'
+
+// We define the absence of `versionComment` with `null` so that we can
+// tranfer it inside the cypress environment (only proper JSON can be
+// transfered)
+const VersionComment = t.union([t.null, t.string, t.array(t.string)])
 
 export class EdusharingServer {
   private keyid = 'key'
@@ -30,7 +37,7 @@ export class EdusharingServer {
   private custom = this.defaultCustom
   private app = express()
   private content: unknown = kitchenSinkDocument
-  public savedVersions: Array<{ comment: string }> = []
+  public savedVersions: Array<{ comment: t.TypeOf<typeof VersionComment> }> = []
 
   constructor() {
     // In the cypress tests the env variables are read after this file is
@@ -125,15 +132,31 @@ export class EdusharingServer {
       res.json(this.content).end()
     })
 
-    this.app.post('/edu-sharing/rest/ltiplatform/v13/content', (req, res) => {
-      this.savedVersions.push({ comment: `${req.query['versionComment']}` })
-      console.log(
-        `[${new Date().toISOString()}]: Save registered with comment ${
-          req.query['versionComment']
-        }`
-      )
-      res.sendStatus(200).end()
-    })
+    const storage = multer.memoryStorage()
+    const upload = multer({ storage })
+
+    this.app.post(
+      '/edu-sharing/rest/ltiplatform/v13/content',
+      upload.single('file'),
+      (req, res) => {
+        const comment = req.query['versionComment'] ?? null
+
+        if (VersionComment.is(comment)) {
+          this.savedVersions.push({ comment })
+          this.content = JSON.parse(req.file.buffer.toString())
+          console.log(
+            `[${new Date().toISOString()}]: Save registered with comment ${
+              req.query['versionComment']
+            }`
+          )
+          res.sendStatus(200).end()
+        } else {
+          // Aparently `versionComment` was specified as an object (see
+          // https://www.npmjs.com/package/qs) which should never happen
+          res.sendStatus(400).end()
+        }
+      }
+    )
 
     this.app.get(
       '/edu-sharing/rest/lti/v13/oidc/login_initiations',
@@ -186,7 +209,6 @@ export class EdusharingServer {
       }
 
       const verifyResult = await verifyJwt({
-        res,
         keysetUrl: 'http://localhost:3000/platform/keys',
         token: req.body.id_token,
         verifyOptions: {
@@ -197,7 +219,10 @@ export class EdusharingServer {
         },
       })
 
-      if (!verifyResult.success) return
+      if (verifyResult.success === false) {
+        res.status(verifyResult.status).send(verifyResult.error)
+        return
+      }
 
       const payload = {
         iss: 'editor',

@@ -1,7 +1,9 @@
 import express from 'express'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
-import next from 'next'
+import Server from 'next/dist/server/next-server.js'
+import type { NextServer } from 'next/dist/server/next'
+import { defaultImport } from 'default-import'
 import { createServer } from 'net'
 import fetch from 'node-fetch'
 import { Request } from 'node-fetch'
@@ -24,10 +26,7 @@ import {
   JwtDeepflowResponseDecoder,
   LtiCustomType,
 } from '../shared/decoders'
-import {
-  StorageFormat,
-  StorageFormatRuntimeType,
-} from '../shared/storage-format'
+import { StorageFormatRuntimeType } from '../shared/storage-format'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -40,15 +39,21 @@ if (isDevEnvironment && !(await isPortOpen(port))) {
   process.exit(0)
 }
 
-const app = next({ dev: isDevEnvironment })
+let app: Server | NextServer
+
+if (process.env.NODE_ENV == 'production') {
+  const NextServer = defaultImport(Server)
+  app = new NextServer({
+    dev: false,
+    conf: global.NEXT_CONFIG,
+  })
+} else {
+  loadEnvConfig()
+  const next = (await import('next')).default
+  app = next({ dev: true })
+}
+
 const nextJsRequestHandler = app.getRequestHandler()
-
-if (isDevEnvironment) loadEnvConfig()
-
-// Max time of the deeplink flow -> Since user interaction are included (the
-// user needs to select a file and might want to upload one as well), I selected
-// a rather high max time of the deeplink flow
-const deeplinkFlowMaxAge = 45 * 60
 
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
@@ -104,11 +109,15 @@ const server = (async () => {
   // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
   await deeplinkNonces.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since in the deeplink flow a user activity is integrated (choosing
+    // the asset to include) we need a longer wait time
+    { expireAfterSeconds: 60 * 60 }
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
-    { expireAfterSeconds: deeplinkFlowMaxAge }
+    // Since edusharing should directly redirect the user to our page a small
+    // max age should be fine her
+    { expireAfterSeconds: 20 }
   )
 
   await app.prepare()
@@ -158,7 +167,7 @@ const server = (async () => {
     return res.status(response.status).send(await response.text())
   })
 
-  server.post('/lti/save-content', async (req, res) => {
+  server.post('/lti/save-content', express.json(), async (req, res) => {
     const custom: unknown = res.locals.context.custom
 
     if (!LtiCustomType.is(custom)) {
@@ -166,7 +175,7 @@ const server = (async () => {
       return
     }
 
-    const content: unknown = JSON.parse(req.body)
+    const content: unknown = req.body
     if (!StorageFormatRuntimeType.is(content)) {
       res.status(400).json({
         error:
@@ -450,7 +459,6 @@ const server = (async () => {
     }
 
     const verifyResult = await verifyJwt({
-      res,
       token: req.body.JWT,
       keysetUrl: process.env.PLATFORM_JWK_SET,
       verifyOptions: {
@@ -459,7 +467,10 @@ const server = (async () => {
       },
     })
 
-    if (!verifyResult.success) return
+    if (verifyResult.success === false) {
+      res.status(verifyResult.status).send(verifyResult.error)
+      return
+    }
 
     const { decoded } = verifyResult
     const data = decoded['https://purl.imsglobal.org/spec/lti-dl/claim/data']
