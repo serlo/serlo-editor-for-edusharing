@@ -59,9 +59,9 @@ describe('endpoint "/lti/login"', () => {
 describe('endpoint "/lti"', () => {
   let validCookieValue: string
   let validState: string
+  let nonceReceivedInLoginRequest: string
   const validKeyid = 'keyid'
-  const validPayloadInIdToken = {
-    nonce: 'nonce-value',
+  const defaultValuesForIdTokenPayload = {
     iss: process.env.PLATFORM_URL,
     aud: process.env.PLATFORM_CLIENT_ID,
     sub: 'admin',
@@ -154,6 +154,9 @@ describe('endpoint "/lti"', () => {
     validState = new URL(response.headers.get('location')).searchParams.get(
       'state'
     )
+    nonceReceivedInLoginRequest = new URL(
+      response.headers.get('location')
+    ).searchParams.get('nonce')
   })
 
   afterAll((done) => {
@@ -301,7 +304,11 @@ describe('endpoint "/lti"', () => {
   async function sendRequestToLtiEndpoint(params: {
     overwriteParameters: RequestParametersToOverwrite
   }) {
-    let payloadInIdToken = { ...validPayloadInIdToken }
+    let payloadInIdToken = {
+      ...defaultValuesForIdTokenPayload,
+      nonce: nonceReceivedInLoginRequest,
+    }
+
     if ('issuer' in params.overwriteParameters) {
       payloadInIdToken.iss = params.overwriteParameters.issuer
     }

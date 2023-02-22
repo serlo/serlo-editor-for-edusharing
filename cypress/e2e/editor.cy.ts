@@ -90,10 +90,19 @@ it('Editor saves a named version of the document when the user navigates to anot
     'Diese Version wurde automatisch vom Serlo-Editor erstellt'
 
   openSerloEditorWithLTI()
+
+  expectEditorOpenedSuccessfully()
+
+  cy.wait(2000)
+
   changeContent()
+
+  cy.wait(2000)
 
   cy.visit('http://example.org/')
   cy.contains('Example Domain') // Reload is finished
+
+  cy.wait(2000)
 
   expectSavedVersionWithComment(savedBySerloComment)
 })
@@ -123,7 +132,7 @@ function changeContent() {
   ).click()
   cy.contains('Vorgehen').click()
   cy.contains('Pluginübersicht').click()
-  cy.wait(100)
+  cy.wait(500)
 }
 
 function openSerloEditorWithLTI() {
