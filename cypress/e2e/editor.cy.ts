@@ -93,15 +93,12 @@ it('Editor saves a named version of the document when the user navigates to anot
 
   expectEditorOpenedSuccessfully()
 
-  cy.wait(2000)
-
   changeContent()
-
-  cy.wait(2000)
 
   cy.visit('http://example.org/')
   cy.contains('Example Domain') // Reload is finished
 
+  // Wait so that there is enough time for the automatic save to happen when unloading the editor page.
   cy.wait(2000)
 
   expectSavedVersionWithComment(savedBySerloComment)
