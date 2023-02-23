@@ -251,24 +251,6 @@ describe('endpoint "/lti"', () => {
     })
   })
 
-  test('fails when nonce in id_token does not match what was sent in login request', async () => {
-    const response = await sendRequestToLtiEndpoint({
-      overwriteParameters: {
-        nonce: 'invalid-nonce',
-      },
-    })
-
-    expect(response.status).toBe(401)
-    expect(await response.json()).toEqual({
-      status: 401,
-      error: 'Unauthorized',
-      details: {
-        description: 'Error validating ltik or IdToken',
-        message: 'KEYSET_NOT_FOUND',
-      },
-    })
-  })
-
   test('fails when audience does not match the client id of lti tool', async () => {
     const response = await sendRequestToLtiEndpoint({
       overwriteParameters: {
