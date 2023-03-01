@@ -61,7 +61,7 @@ mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
 const mongoClient = new MongoClient(mongoUrl.href)
 
 Provider.setup(
-  process.env.PLATFORM_SECRET, //
+  process.env.EDITOR_KEY_FOR_SIGNING_COOKIES_AND_ENCRYPTING_DATABASE_ENTRIES, //
   {
     url: process.env.MONGODB_URL,
     connection: {
@@ -261,13 +261,14 @@ const server = (async () => {
     createAutoFromResponse({
       res,
       method: 'GET',
-      targetUrl: process.env.EDITOR_LOGIN_INITIATION_URL,
+      targetUrl: process.env.EDUSHARING_LOGIN_INITIATION_URL_FOR_EMBEDDING,
       params: {
         iss: process.env.EDITOR_URL,
-        target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+        target_link_uri:
+          process.env.EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING,
         login_hint: loginData.insertedId.toString(),
-        client_id: process.env.EDITOR_CLIENT_ID,
-        lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+        client_id: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
+        lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID_FOR_EMBEDDING,
       },
     })
   })
@@ -286,24 +287,25 @@ const server = (async () => {
     const repositoryId = req.query['repositoryId']
 
     const payload = {
-      aud: process.env.EDITOR_CLIENT_ID,
+      aud: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
-        process.env.EDITOR_DEPLOYMENT_ID,
+        process.env.EDITOR_DEPLOYMENT_ID_FOR_EMBEDDING,
       expiresIn: 60,
       dataToken: custom.dataToken,
       'https://purl.imsglobal.org/spec/lti/claim/context': {
-        id: process.env.EDITOR_CLIENT_ID,
+        id: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
       },
     }
 
     const message = signJwtWithBase64Key({
       payload,
-      keyid: process.env.EDITOR_KEY_ID,
-      key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      keyid: process.env.EDITOR_KEY_ID_FOR_EMBEDDING,
+      key: process.env.EDITOR_PRIVATE_KEY_FOR_EMBEDDING,
     })
 
     const url = new URL(
-      process.env.EDITOR_EDUSHARING_DETAILS_URL + `/${repositoryId}/${nodeId}`
+      process.env.EDUSHARING_DETAILS_URL_FOR_EMBEDDING +
+        `/${repositoryId}/${nodeId}`
     )
 
     url.searchParams.append('displayMode', 'inline')
@@ -336,8 +338,8 @@ const server = (async () => {
   server.use('/platform/keys', async (_req, res) => {
     createJWKSResponse({
       res,
-      keyid: process.env.EDITOR_KEY_ID,
-      key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+      keyid: process.env.EDITOR_KEY_ID_FOR_EMBEDDING,
+      key: process.env.EDITOR_PUBLIC_KEY_FOR_EMBEDDING,
     })
   })
 
@@ -355,11 +357,14 @@ const server = (async () => {
       res.status(400).send('state is not valid').end()
       return
     } else if (
-      req.query['redirect_uri'] !== process.env.EDITOR_TARGET_DEEP_LINK_URL
+      req.query['redirect_uri'] !==
+      process.env.EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING
     ) {
       res.status(400).send('redirect_uri is not valid').end()
       return
-    } else if (req.query['client_id'] !== process.env.EDITOR_CLIENT_ID) {
+    } else if (
+      req.query['client_id'] !== process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING
+    ) {
       res.status(400).send('client_id is not valid').end()
       return
     } else if (typeof loginHint !== 'string') {
@@ -401,14 +406,14 @@ const server = (async () => {
 
       // TODO: This should be a list. Fix this when edusharing has fixed the
       // parsing of the JWT.
-      aud: process.env.EDITOR_CLIENT_ID,
+      aud: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
       sub: user,
 
       nonce,
       dataToken,
 
       'https://purl.imsglobal.org/spec/lti/claim/deployment_id':
-        process.env.EDITOR_DEPLOYMENT_ID,
+        process.env.EDITOR_DEPLOYMENT_ID_FOR_EMBEDDING,
       'https://purl.imsglobal.org/spec/lti/claim/message_type':
         'LtiDeepLinkingRequest',
       'https://purl.imsglobal.org/spec/lti/claim/version': '1.3.0',
@@ -428,14 +433,15 @@ const server = (async () => {
 
     const token = signJwtWithBase64Key({
       payload,
-      keyid: process.env.EDITOR_KEY_ID,
-      key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+      keyid: process.env.EDITOR_KEY_ID_FOR_EMBEDDING,
+      key: process.env.EDITOR_PRIVATE_KEY_FOR_EMBEDDING,
     })
 
     createAutoFromResponse({
       res,
       method: 'POST',
-      targetUrl: process.env.EDITOR_TARGET_DEEP_LINK_URL,
+      targetUrl:
+        process.env.EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING,
       params: { id_token: token, state },
     })
   })
@@ -460,9 +466,9 @@ const server = (async () => {
 
     const verifyResult = await verifyJwt({
       token: req.body.JWT,
-      keysetUrl: process.env.PLATFORM_JWK_SET,
+      keysetUrl: process.env.EDUSHARING_KEYSET_URL,
       verifyOptions: {
-        issuer: process.env.EDITOR_CLIENT_ID,
+        issuer: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
         audience: process.env.EDITOR_URL,
       },
     })
@@ -539,14 +545,15 @@ const server = (async () => {
   })
 
   await Provider.registerPlatform({
-    url: process.env.PLATFORM_URL,
+    url: process.env.EDUSHARING_URL,
     name: 'Platform',
-    clientId: process.env.PLATFORM_CLIENT_ID,
-    authenticationEndpoint: process.env.PLATFORM_AUTHENTICATION_ENDPOINT,
-    accesstokenEndpoint: process.env.PLATFORM_ACCESSTOKEN_ENDPOINT,
+    clientId: process.env.EDITOR_CLIENT_ID_FOR_LAUNCH,
+    authenticationEndpoint:
+      process.env.EDUSHARING_AUTHENTICATION_URL_FOR_LAUNCH,
+    accesstokenEndpoint: process.env.EDUSHARING_ACCESSTOKEN_URL,
     authConfig: {
       method: 'JWK_SET',
-      key: process.env.PLATFORM_JWK_SET,
+      key: process.env.EDUSHARING_KEYSET_URL,
     },
   })
 })()
