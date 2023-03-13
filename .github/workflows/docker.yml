@@ -1,5 +1,3 @@
-
-
 name: Build and publish docker image
 
 # Trigger: Pushing a semver git tag to any branch. 
