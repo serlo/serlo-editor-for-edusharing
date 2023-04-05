@@ -2944,7 +2944,7 @@ __metadata:
     json-web-key: ^0.4.0
     jsonwebtoken: ^9.0.0
     jwks-rsa: ^3.0.1
-    ltijs: "https://github.com/LarsTheGlidingSquirrel/ltijs#55bd8d294c61ce4c5a8a3f4ef86e14769b2582ae"
+    ltijs: ^5.9.2
     mongodb: ^5.1.0
     mongoose: ^6.10.0
     multer: ^1.4.5-lts.1
@@ -8370,9 +8370,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ltijs@https://github.com/LarsTheGlidingSquirrel/ltijs#55bd8d294c61ce4c5a8a3f4ef86e14769b2582ae":
-  version: 5.9.1
-  resolution: "ltijs@https://github.com/LarsTheGlidingSquirrel/ltijs.git#commit=55bd8d294c61ce4c5a8a3f4ef86e14769b2582ae"
+"ltijs@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "ltijs@npm:5.9.2"
   dependencies:
     "@babel/runtime": ^7.21.0
     body-parser: ^1.20.2
@@ -8387,7 +8387,7 @@ __metadata:
     mongoose: ^7.0.1
     parse-link-header: ^2.0.0
     rasha: ^1.2.5
-  checksum: 91b7873a7ef9cd0d231ff8c07b2cba291690ab23fe42ddab1321f3b406e6ed3c9c8edcdb840b2f984c7caf9825bd7f03a12e398d702662f50162261ce238ec96
+  checksum: 043c06c0acee949605e3619383d93794396c907f0109af99c172c3c1b9b58c3a7535385d5da596159dd4ca1254bd9f4e9fa85cdb63804dc29cb88c370af26bee
   languageName: node
   linkType: hard
 

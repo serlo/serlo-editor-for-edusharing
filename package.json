@@ -77,7 +77,7 @@
     "json-web-key": "^0.4.0",
     "jsonwebtoken": "^9.0.0",
     "jwks-rsa": "^3.0.1",
-    "ltijs": "https://github.com/LarsTheGlidingSquirrel/ltijs#55bd8d294c61ce4c5a8a3f4ef86e14769b2582ae",
+    "ltijs": "^5.9.2",
     "mongodb": "^5.1.0",
     "mongoose": "^6.10.0",
     "next": "^13.2.3",
