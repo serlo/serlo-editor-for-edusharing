@@ -3,9 +3,10 @@
 ## Usage
 
 You can use the Serlo Editor via docker. You can pull the container from
-[the GitHub Packages](https://github.com/serlo/serlo-editor-for-edusharing/pkgs/container/serlo-editor-for-edusharing). Please specify a specific version when pulling the docker image and update manually, do not use `latest`. 
-The container is configured by environment variables. Which you can use are
-defined in the file [`.env`](./.env).
+[the GitHub Packages](https://github.com/serlo/serlo-editor-for-edusharing/pkgs/container/serlo-editor-for-edusharing).
+Please specify a specific version when pulling the docker image and update
+manually, do not use `latest`. The container is configured by environment
+variables. Which you can use are defined in the file [`.env`](./.env).
 
 ## Setup
 

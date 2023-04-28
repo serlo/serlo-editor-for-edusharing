@@ -1,8 +1,9 @@
 import { kitchenSink } from './kitchen-sink'
 import * as t from 'io-ts'
 
-// TODO What is the difference between the two. Can be make one obsolete? 
-export const documentType = 'https://github.com/serlo/serlo-editor-for-edusharing'
+// TODO What is the difference between the two. Can be make one obsolete?
+export const documentType =
+  'https://github.com/serlo/serlo-editor-for-edusharing'
 export const variantType =
   'https://github.com/serlo/serlo-editor-for-edusharing'
 const migrations: Migration[] = []
