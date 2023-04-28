@@ -1,6 +1,6 @@
 name: Build and publish docker image
 
-# Triggered when either main branch changes or when version tag is pushed on any branch. First scenario will release (and overwrite) under the label 'main', this should only be used for development. Second scenario will release under the version label, these are versioned releases. Bugfixes & features for older major versions can be released by pushing a tag on a release branch instead of the main branch. 
+# Triggered when either main branch changes or when version tag is pushed on any branch. First scenario will release (and overwrite) under the label 'main', this should only be used for development. Second scenario will release under the version label, these are versioned releases. Bugfixes & features for older major versions can be released by pushing a tag on a release branch instead of the main branch.
 on:
   push:
     branches: [main]
