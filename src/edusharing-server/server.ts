@@ -42,7 +42,7 @@ export class EdusharingServer {
   constructor() {
     // In the cypress tests the env variables are read after this file is
     // included. Thus this variable must be set in the constructor.
-    this.key = process.env.EDITOR_PLATFORM_PRIVATE_KEY
+    this.key = process.env.EDITOR_PRIVATE_KEY_FOR_EMBEDDING
 
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
@@ -53,13 +53,13 @@ export class EdusharingServer {
         targetUrl: process.env.EDITOR_URL + 'lti/login',
         params: {
           target_link_uri: 'http://localhost:3000/lti',
-          iss: process.env.PLATFORM_URL,
+          iss: process.env.EDUSHARING_URL,
 
           // Test whether this is optional
           login_hint: this.user,
           lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
           lti_deployment_id: '1',
-          client_id: process.env.PLATFORM_CLIENT_ID,
+          client_id: process.env.EDITOR_CLIENT_ID_FOR_LAUNCH,
         },
       })
     })
@@ -69,7 +69,7 @@ export class EdusharingServer {
       const payload = {
         nonce: req.query['nonce'],
         iss: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing',
-        aud: process.env.PLATFORM_CLIENT_ID,
+        aud: process.env.EDITOR_CLIENT_ID_FOR_LAUNCH,
         sub: this.user,
         'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '1',
         'https://purl.imsglobal.org/spec/lti/claim/context': {
@@ -124,7 +124,7 @@ export class EdusharingServer {
       createJWKSResponse({
         res,
         keyid: this.keyid,
-        key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+        key: process.env.EDITOR_PUBLIC_KEY_FOR_EMBEDDING,
       })
     })
 
@@ -163,9 +163,10 @@ export class EdusharingServer {
       (req, res) => {
         const targetParameters = {
           iss: process.env.EDITOR_URL,
-          target_link_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-          client_id: process.env.EDITOR_CLIENT_ID,
-          lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID,
+          target_link_uri:
+            process.env.EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING,
+          client_id: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
+          lti_deployment_id: process.env.EDITOR_DEPLOYMENT_ID_FOR_EMBEDDING,
         }
 
         for (const [name, targetValue] of Object.entries(targetParameters)) {
@@ -184,8 +185,9 @@ export class EdusharingServer {
             nonce: this.nonce,
             state: this.state,
             login_hint: req.query['login_hint'].toString(),
-            redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL,
-            client_id: process.env.EDITOR_CLIENT_ID,
+            redirect_uri:
+              process.env.EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING,
+            client_id: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
           },
         })
       }
@@ -212,7 +214,7 @@ export class EdusharingServer {
         keysetUrl: 'http://localhost:3000/platform/keys',
         token: req.body.id_token,
         verifyOptions: {
-          audience: process.env.EDITOR_CLIENT_ID,
+          audience: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
           issuer: process.env.EDITOR_URL,
           subject: this.user,
           nonce: this.nonce,
