@@ -2,3 +2,4 @@
 /.yarn/
 /dist/
 /coverage/
+/dep/
