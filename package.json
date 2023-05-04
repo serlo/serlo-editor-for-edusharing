@@ -1,11 +1,11 @@
 {
-  "name": "@serlo/ece-as-a-service",
-  "version": "0.0.0",
+  "name": "@serlo/serlo-editor-for-edusharing",
+  "version": "1.0.0",
   "private": true,
   "bugs": {
-    "url": "https://github.com/serlo/ece-as-a-service/issues"
+    "url": "https://github.com/serlo/serlo-editor-for-edusharing/issues"
   },
-  "repository": "serlo/ece-as-a-service",
+  "repository": "serlo/serlo-editor-for-edusharing",
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
   "type": "module",
