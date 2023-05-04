@@ -2896,9 +2896,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/ece-as-a-service@workspace:.":
+"@serlo/serlo-editor-for-edusharing@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@serlo/ece-as-a-service@workspace:."
+  resolution: "@serlo/serlo-editor-for-edusharing@workspace:."
   dependencies:
     "@edtr-io/core": ^2.8.2
     "@edtr-io/plugin": ^2.8.2

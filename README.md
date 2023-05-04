@@ -39,7 +39,7 @@ This should only be used for development.
 
 Pushing a git tag like `v1.2.3` (need to be in this form) to any branch triggers
 a new release under the specified version tag. These releases can then be
-consumed by edu-sharing.
+consumed by edu-sharing. Remember to update the version in package.json as well.
 
 Version numbering should follow
 [Semantic Versioning](https://semver.org/lang/de/spec/v2.0.0.html).
