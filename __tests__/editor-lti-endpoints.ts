@@ -41,7 +41,7 @@ describe('endpoint "/lti/login"', () => {
         login_hint: 'admin',
         lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
         lti_deployment_id: '1',
-        client_id: process.env.PLATFORM_CLIENT_ID,
+        client_id: process.env.EDITOR_CLIENT_ID_FOR_LAUNCH,
       }),
       redirect: 'manual',
     })
@@ -62,8 +62,8 @@ describe('endpoint "/lti"', () => {
   let nonceReceivedInLoginRequest: string
   const validKeyid = 'keyid'
   const defaultValuesForIdTokenPayload = {
-    iss: process.env.PLATFORM_URL,
-    aud: process.env.PLATFORM_CLIENT_ID,
+    iss: process.env.EDUSHARING_URL,
+    aud: process.env.EDITOR_CLIENT_ID_FOR_LAUNCH,
     sub: 'admin',
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '1',
     'https://purl.imsglobal.org/spec/lti/claim/context': {
@@ -115,7 +115,7 @@ describe('endpoint "/lti"', () => {
     createJWKSResponse({
       res,
       keyid: validKeyid,
-      key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+      key: process.env.EDITOR_PUBLIC_KEY_FOR_EMBEDDING,
     })
   }
   let keysetRequestHandler = defaultKeysetRequestHandler
@@ -138,11 +138,11 @@ describe('endpoint "/lti"', () => {
       method: 'POST',
       body: new URLSearchParams({
         target_link_uri: 'http://localhost:3000/lti',
-        iss: process.env.PLATFORM_URL,
+        iss: process.env.EDUSHARING_URL,
         login_hint: 'admin',
         lti_message_hint: 'd882efaa-1f84-4a0f-9bc9-4f74f19f7576',
         lti_deployment_id: '1',
-        client_id: process.env.PLATFORM_CLIENT_ID,
+        client_id: process.env.EDITOR_CLIENT_ID_FOR_LAUNCH,
       }),
       redirect: 'manual',
     })
@@ -212,7 +212,7 @@ describe('endpoint "/lti"', () => {
       createJWKSResponse({
         res,
         keyid: 'invalid-key-id',
-        key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+        key: process.env.EDITOR_PUBLIC_KEY_FOR_EMBEDDING,
       })
     }
 
@@ -300,7 +300,7 @@ describe('endpoint "/lti"', () => {
         id_token: signJwtWithBase64Key({
           payload: payloadInIdToken,
           keyid: validKeyid,
-          key: process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+          key: process.env.EDITOR_PRIVATE_KEY_FOR_EMBEDDING,
           expireAfterSeconds:
             params.overwriteParameters.idTokenExpireAfterSeconds,
         }),

@@ -53,8 +53,9 @@ describe('endpoint "/platform/login"', () => {
       nonce: 'bar',
       state: 'foo',
       login_hint: validLoginHint,
-      client_id: process.env.EDITOR_CLIENT_ID as string,
-      redirect_uri: process.env.EDITOR_TARGET_DEEP_LINK_URL as string,
+      client_id: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING as string, // TODO This should be the client_id of edu-sharing, not the editor.
+      redirect_uri: process.env
+        .EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING as string,
     }
   })
 
@@ -114,7 +115,7 @@ describe('endpoint "/platform/login"', () => {
 describe('endpoint "/platform/done"', () => {
   const validKeyid = 'keyid'
   const validKey = Buffer.from(
-    process.env.EDITOR_PLATFORM_PRIVATE_KEY,
+    process.env.EDITOR_PRIVATE_KEY_FOR_EMBEDDING,
     'base64'
   ).toString('utf-8')
   const iat = Math.floor(Date.now() / 1000)
@@ -207,7 +208,7 @@ describe('endpoint "/platform/done"', () => {
         createJWKSResponse({
           res,
           keyid: validKeyid,
-          key: process.env.EDITOR_PLATFORM_PUBLIC_KEY,
+          key: process.env.EDITOR_PUBLIC_KEY_FOR_EMBEDDING,
         })
       }
       const nonceData = await deeplinkNonces.insertOne({

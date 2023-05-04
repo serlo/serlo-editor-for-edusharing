@@ -25,12 +25,12 @@ export const DeeplinkLoginData = t.type({
 export const LtiCustomType = t.intersection([
   t.type({
     getContentApiUrl: t.string,
-    getDetailsSnippetUrl: t.string,
     appId: t.string,
   }),
   DeeplinkLoginData,
   t.partial({
     fileName: t.string,
+    /** Is set when editor was opened in edit mode */
     postContentApiUrl: t.string,
     version: t.string,
   }),
