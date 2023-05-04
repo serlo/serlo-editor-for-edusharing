@@ -1,6 +1,6 @@
 name: Build and publish docker image
 
-# Triggered when either main branch changes or when version tag is pushed on any branch. First scenario will release (and overwrite) under the label 'main', this should only be used for development. Second scenario will release under the version label, these are versioned releases. Bugfixes & features for older major versions can be released by pushing a tag on a release branch instead of the main branch.
+# Triggered when either main branch changes or when version tag is pushed on any branch. First scenario will release (and overwrite) under the tag 'main', this should only be used for development. Second scenario will release under the specified version tag, these are versioned releases. 
 on:
   push:
     branches: [main]
@@ -19,17 +19,19 @@ jobs:
 
     steps:
       # Fetches the commit that triggered this workflow
+      # https://github.com/actions/checkout
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.5.2
 
-      # Workaround: https://github.com/docker/build-push-action/issues/461
+      # Create and boot a builder. Used in build-push-action.
+      # https://github.com/docker/setup-buildx-action
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+        uses: docker/setup-buildx-action@v2.5.0
 
       # Login against a Docker registry
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        uses: docker/login-action@v2.1.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -39,7 +41,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4.4.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
@@ -47,7 +49,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v4.0.0
         with:
           context: .
           push: true
