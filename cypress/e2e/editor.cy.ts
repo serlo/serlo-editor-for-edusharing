@@ -59,7 +59,7 @@ describe('Feature to automatically save the document', () => {
     openSerloEditorWithLTI()
 
     expectEditorOpenedSuccessfully()
-    
+
     changeContent()
 
     cy.wait(6000)
