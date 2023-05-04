@@ -106,6 +106,8 @@ it('Editor saves a named version of the document when the user navigates to anot
 
   changeContent()
 
+  cy.wait(1000)
+
   cy.visit('http://example.org/')
   cy.contains('Example Domain') // Reload is finished
 
