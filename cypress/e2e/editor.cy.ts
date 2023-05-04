@@ -29,15 +29,16 @@ describe('Opening the editor as tool', () => {
     cy.contains('Benannte Version speichern').should('not.exist')
   })
 
-  // TODO Reactivate this test. Commented out because it sometimes failed in the CI pipeline
-  // it('succeeds when the editor is opened in view mode (postContentApiUrl is missing)', () => {
-  //   cy.task('removePropertyInCustom', 'postContentApiUrl')
+  it('succeeds when the editor is opened in view mode (postContentApiUrl is missing)', () => {
+    cy.task('removePropertyInCustom', 'postContentApiUrl')
 
-  //   openSerloEditorWithLTI()
+    openSerloEditorWithLTI()
 
-  //   cy.contains('Benannte Version speichern').should('not.exist')
-  //   cy.contains('Pluginübersicht')
-  // })
+    expectEditorOpenedSuccessfully()
+
+    cy.contains('Benannte Version speichern').should('not.exist')
+    cy.contains('Pluginübersicht')
+  })
 })
 
 it('Button "Saved named version" saves a named version', () => {
@@ -56,6 +57,9 @@ it('Button "Saved named version" saves a named version', () => {
 describe('Feature to automatically save the document', () => {
   it('The editor saves automatically when it is open for long enough after there have been changes made.', () => {
     openSerloEditorWithLTI()
+
+    expectEditorOpenedSuccessfully()
+    
     changeContent()
 
     cy.wait(6000)
@@ -64,6 +68,8 @@ describe('Feature to automatically save the document', () => {
 
   it('The editor does not save automatically when there are no changes', () => {
     openSerloEditorWithLTI()
+
+    expectEditorOpenedSuccessfully()
 
     // Wait 8 seconds -> Autosave is set to be done all 5 seconds
     cy.wait(8000)
@@ -76,12 +82,16 @@ describe('Feature to automatically save the document', () => {
 it('Saved versions can be opened again', () => {
   openSerloEditorWithLTI()
 
+  expectEditorOpenedSuccessfully()
+
   changeContent()
 
   cy.visit('http://example.org/')
   cy.contains('Example Domain') // Reload is finished
 
   openSerloEditorWithLTI()
+
+  expectEditorOpenedSuccessfully()
 
   cy.contains('Vorgehen')
 })
@@ -107,6 +117,8 @@ it('Editor saves a named version of the document when the user navigates to anot
 
 it('Assets from edu-sharing can be included', () => {
   openSerloEditorWithLTI()
+
+  expectEditorOpenedSuccessfully()
 
   embedEdusharingAsset()
 
@@ -138,8 +150,9 @@ function openSerloEditorWithLTI() {
 }
 
 function expectEditorOpenedSuccessfully() {
-  cy.contains('Benannte Version speichern')
   cy.contains('Pluginübersicht')
+
+  cy.wait(1000)
 }
 
 function expectSavedVersionWithComment(comment: string | null) {
