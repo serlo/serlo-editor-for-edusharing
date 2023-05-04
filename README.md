@@ -31,3 +31,23 @@ development. The most important ones are:
 - `yarn e2e`: Run all e2e tests with cypress.
 - `yarn lint`: Run all lints (eslint, prettier, ...).
 - `yarn format`: Format all source code.
+
+# Releasing a new version
+
+Merging changes into branch `main` triggers a new release under the tag `main`.
+This should only be used for development.
+
+Pushing a git tag like `v1.2.3` (need to be in this form) to any branch triggers
+a new release under the specified version tag. These releases can then be
+consumed by edu-sharing.
+
+Version numbering should follow
+[Semantic Versioning](https://semver.org/lang/de/spec/v2.0.0.html).
+
+Changes are tracked in the [changelog](./CHANGELOG.md).
+
+Releasing bugfixes for older major/minor versions can be done by pushing a tag
+on a separate branch. Example: Version 2.0.0 is already released with a tag on
+branch main. However, we want to fix a bug in major version 1. We can do so by
+creating a branch that branches off at version 1.0.0 and push a commit and tag
+on that branch.
