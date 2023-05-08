@@ -1,9 +1,9 @@
 import { kitchenSink } from './kitchen-sink'
 import * as t from 'io-ts'
 
-// TODO What is the difference between the two. Can be make one obsolete?
-export const documentType =
-  'https://github.com/serlo/serlo-editor-for-edusharing'
+/** The creator of the saved data -> Serlo editor */
+export const documentType = 'https://serlo.org/editor'
+/** The variant of the Serlo editor that created this saved data */
 export const variantType =
   'https://github.com/serlo/serlo-editor-for-edusharing'
 const migrations: Migration[] = []
@@ -44,6 +44,7 @@ export function migrate(state: StorageFormat): StorageFormat {
 
 type Migration = (state: StorageFormat['document']) => StorageFormat['document']
 
+// TODO Add datetime of creation to storage format. This would allow us to handle saved content differently depending on the time of creation if that becomes necessary in the future.
 export const StorageFormatRuntimeType = t.type({
   type: t.string,
   variant: t.string,
