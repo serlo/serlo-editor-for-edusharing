@@ -17,8 +17,8 @@ import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './edusharing-asset'
-import { equationsPlugin } from './equations' // TODO use version from frontend instead
-import { serloTablePlugin } from './serlo-table' // TODO use version from frontend instead
+import { equationsPlugin } from '@frontend/src/edtr-io/plugins/equations'
+import { serloTablePlugin } from '@frontend/src/edtr-io/plugins/serlo-table'
 import { registry, getPluginRegistry } from './registry'
 import {
   loggedInData,
