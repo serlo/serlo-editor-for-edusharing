@@ -1,10 +1,11 @@
 module.exports = {
-  presets: [
-    require('./dep/frontend/shared/tailwind-base.cjs')
-  ],
+  presets: [require('./dep/frontend/shared/tailwind-base.cjs')],
   mode: 'jit',
-  content: ['src/**/*.{js,ts,jsx,tsx}', 'dep/frontend/src/**/*.{js,ts,jsx,tsx}'],
-  // Note: Commented out because it leads to error during webpack somehow. Maybe we do not need this anyway? 
+  content: [
+    'src/**/*.{js,ts,jsx,tsx}',
+    'dep/frontend/src/**/*.{js,ts,jsx,tsx}',
+  ],
+  // Note: Commented out because it leads to error during webpack somehow. Maybe we do not need this anyway?
   // plugins: [require('@tailwindcss/typography')],
   // theme: {
   //   extend: {

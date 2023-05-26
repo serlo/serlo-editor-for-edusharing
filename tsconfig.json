@@ -16,15 +16,9 @@
     "jsx": "preserve",
     "allowJs": true,
     "paths": {
-      "@/*": [
-        "./dep/frontend/src/*"
-      ],
-      "@frontend/*": [
-        "./dep/frontend/*"
-      ],
-      "@edtr-io/*": [
-        "./dep/frontend/src/serlo-editor-repo/*"
-      ]
+      "@/*": ["./dep/frontend/src/*"],
+      "@frontend/*": ["./dep/frontend/*"],
+      "@edtr-io/*": ["./dep/frontend/src/serlo-editor-repo/*"]
     }
   },
   "ts-node": {

@@ -18,11 +18,9 @@ import {
   createEdusharingAssetPlugin,
 } from './edusharing-asset'
 import { equationsPlugin } from '@frontend/src/edtr-io/plugins/equations'
-import { serloTablePlugin } from '@frontend/src/edtr-io/plugins/serlo-table'
+import { createSerloTablePlugin } from '@frontend/src/edtr-io/plugins/serlo-table'
 import { registry, getPluginRegistry } from './registry'
-import {
-  loggedInData,
-} from '@frontend/src/data/de'
+import { loggedInData } from '@frontend/src/data/de'
 
 export function createPlugins(config: EdusharingConfig) {
   return {
@@ -126,7 +124,7 @@ export function createPlugins(config: EdusharingConfig) {
         isSingleChoice: { label: 'Wähle den Aufgabentyp aus' },
       },
     }),
-    serloTable: serloTablePlugin,
+    serloTable: createSerloTablePlugin({ allowImageInTableCells: false }),
     serloInjection: createSerloInjectionPlugin(),
     spoiler: createSpoilerPlugin({
       content: { plugin: 'rows' },

@@ -27,7 +27,7 @@ export const registry = [
     name: 'edusharingAsset',
     title: 'Edusharing Inhalte',
     description: 'Inhalte von edu-sharing einbinden',
-    icon: IconImage, // Used image icon here because it is not used elsewhere 
+    icon: IconImage, // Used image icon here because it is not used elsewhere
   },
   {
     name: 'equations',
