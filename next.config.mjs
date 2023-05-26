@@ -12,6 +12,18 @@ const nextConfig = {
     config.resolve.alias['react/jsx-runtime.js'] = 'react/jsx-runtime'
     config.resolve.alias['react/jsx-dev-runtime.js'] = 'react/jsx-dev-runtime'
 
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: [
+        {
+          loader: '@svgr/webpack',
+          options: {
+            svgo: false,
+          },
+        },
+      ],
+    })
+
     return config
   },
 }
