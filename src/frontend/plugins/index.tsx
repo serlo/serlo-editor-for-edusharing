@@ -11,22 +11,25 @@ import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
 import { createSerloInjectionPlugin } from '@edtr-io/plugin-serlo-injection'
 import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
 import { createTextPlugin } from '@edtr-io/plugin-text'
-import { createBoxPlugin } from './box'
+import { createBoxPlugin } from '@frontend/src/edtr-io/plugins/box'
 
 import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './edusharing-asset'
-import { equationsPlugin } from './equations'
-import { serloTablePlugin } from './serlo-table'
+import { equationsPlugin } from './equations' // TODO use version from frontend instead
+import { serloTablePlugin } from './serlo-table' // TODO use version from frontend instead
 import { registry, getPluginRegistry } from './registry'
+import {
+  loggedInData,
+} from '@frontend/src/data/de'
 
 export function createPlugins(config: EdusharingConfig) {
   return {
     anchor: createAnchorPlugin({
       i18n: { label: 'ID des Ankers', placeholder: 'aufgabe' },
     }),
-    box: createBoxPlugin(),
+    box: createBoxPlugin(loggedInData.strings.editor),
     edusharingAsset: createEdusharingAssetPlugin(config),
     equations: equationsPlugin,
     geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
@@ -130,12 +133,8 @@ export function createPlugins(config: EdusharingConfig) {
       i18n: { title: { placeholder: 'Spoiler-Titel eingeben…' } },
     }),
     text: createTextPlugin({
-      registry,
       placeholder: 'Gebe Text ein oder füge neue Inhalte mit \u2295 hinzu.',
       i18n: {
-        blockquote: {
-          toggleTitle: 'Zitat',
-        },
         code: {
           toggleTitle: 'Code',
         },

@@ -1,6 +1,6 @@
 import { HotKeys, useScopedSelector, useScopedStore } from '@edtr-io/core'
 // eslint-disable-next-line import/no-internal-modules
-import { PreferenceContext, setDefaultPreference } from '@edtr-io/core/beta'
+import { PreferenceContext, setDefaultPreference } from '@edtr-io/core'
 // eslint-disable-next-line import/no-internal-modules
 import { MathEditor } from '@edtr-io/math'
 import { StateTypeReturnType, StringStateType } from '@edtr-io/plugin'
