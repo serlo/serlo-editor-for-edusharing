@@ -27,7 +27,10 @@ export function createPlugins(config: EdusharingConfig) {
     anchor: createAnchorPlugin({
       i18n: { label: 'ID des Ankers', placeholder: 'aufgabe' },
     }),
-    box: createBoxPlugin(loggedInData.strings.editor),
+    box: createBoxPlugin({
+      editorStrings: loggedInData.strings.editor,
+      allowPluginsWithin: ['text', 'equations', 'highlight', 'serloTable'],
+    }),
     edusharingAsset: createEdusharingAssetPlugin(config),
     equations: equationsPlugin,
     geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
