@@ -32,18 +32,18 @@ export function SerloEditor(props: SerloEditorProps) {
         <LoggedInDataProvider
           value={getLoggedInData(Instance.De) as LoggedInData}
         >
-          {props.mayEdit ? (
-            <div className="serlo-editor-hacks">
-              <Editor {...props} />
-            </div>
-          ) : (
-            <Layout>
-              <Renderer
-                plugins={createPlugins({ ltik: props.ltik })}
-                state={props.state.document}
-              />
-            </Layout>
-          )}
+          <div className="serlo-editor-hacks">
+            {props.mayEdit ? (
+                <Editor {...props} />
+            ) : (
+              <Layout>
+                <Renderer
+                  plugins={createPlugins({ ltik: props.ltik })}
+                  state={props.state.document}
+                />
+              </Layout>
+            )}
+          </div>
         </LoggedInDataProvider>
       </InstanceDataProvider>
     </>
