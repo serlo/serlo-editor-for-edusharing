@@ -54,9 +54,27 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       const response = await fetch(embedHtmlUrl.href, {
         headers: { Authorization: `Bearer ${config.ltik}` },
       })
-      const result = await response.json()
 
-      setEmbedHtml(result['detailsSnippet'])
+      if (!response.ok) {
+        setEmbedHtml(
+          `Request to /lit/get-embed-html failed. Status code ${response.status}.`
+        )
+        return
+      }
+
+      const result: object = await response.json()
+
+      if (
+        !('detailsSnippet' in result) ||
+        typeof result.detailsSnippet !== 'string'
+      ) {
+        setEmbedHtml(
+          'Request to /lit/get-embed-html failed. "detailsSnipped" is missing or not type string.'
+        )
+        return
+      }
+
+      setEmbedHtml(result.detailsSnippet)
     }
 
     void fetchEmbedHtml()
