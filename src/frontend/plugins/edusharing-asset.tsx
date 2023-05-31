@@ -60,6 +60,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
     }
 
     void fetchEmbedHtml()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edusharingAsset.defined])
 
   useEffect(() => {

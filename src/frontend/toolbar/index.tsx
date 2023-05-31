@@ -3,9 +3,9 @@ import { faCheck, faRedoAlt, faSpinner } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useScopedDispatch, useScopedSelector } from '@edtr-io/core'
+import { useAppDispatch, useAppSelector } from '@edtr-io/store'
 import { ToolbarButton } from './button'
-import { hasPendingChanges as hasPendingChangesSelector } from '@edtr-io/store'
+import { selectHasPendingChanges } from '@edtr-io/store'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -30,9 +30,9 @@ export function Toolbar({
   isSaving,
 }: ToolbarProps) {
   const [shouldClose, setShouldClose] = useState(false)
-  const dispatch = useScopedDispatch()
+  const dispatch = useAppDispatch()
   const canBeClosed = window.opener != null || window.history.length == 1
-  const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
+  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
 
   useEffect(() => {
     if (shouldClose && !hasPendingChanges) window.close()
