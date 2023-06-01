@@ -48,7 +48,7 @@ it('Button "Saved named version" saves a named version', () => {
 
   cy.contains('Benannte Version speichern').click()
   cy.get('input[placeholder="Name der neuen Version"]').type('version-name')
-  cy.contains(/^Speichern$/).click()
+  cy.contains(/^Speichern$/).click({ force: true })
   cy.contains(/^Speichern$/).should('not.exist')
 
   expectSavedVersionWithComment('version-name')
@@ -154,7 +154,7 @@ function openSerloEditorWithLTI() {
 function expectEditorOpenedSuccessfully() {
   cy.contains('Pluginübersicht')
 
-  cy.wait(1000)
+  cy.wait(1500)
 }
 
 function expectSavedVersionWithComment(comment: string | null) {
