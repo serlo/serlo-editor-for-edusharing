@@ -10,11 +10,12 @@ variables. Which you can use are defined in the file [`.env`](./.env).
 
 ## Setup
 
-1. Clone this repository
+1. Clone this repository using `git clone --recurse-submodules [repo url]`
 2. Install tools from [`.tool-versions`](./.tool-versions) (for example via
    [`asdf`](https://asdf-vm.com/))
 3. Install `docker` and `docker-compose`
-4. Run `yarn`
+4. Run `yarn` in `dep/frontend`
+5. Run `yarn` in root directory
 
 ## Local development
 
