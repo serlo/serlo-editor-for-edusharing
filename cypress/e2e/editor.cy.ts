@@ -96,7 +96,7 @@ it('Saved versions can be opened again', () => {
   cy.contains('Vorgehen')
 })
 
-// TODO: Reenable this. 
+// TODO: Reenable this.
 // it('Editor saves a named version of the document when the user navigates to another side', () => {
 //   const savedBySerloComment =
 //     'Diese Version wurde automatisch vom Serlo-Editor erstellt'

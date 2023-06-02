@@ -4,7 +4,7 @@ WORKDIR /app
 COPY yarn.lock package.json .yarnrc.yml /app/
 COPY .yarn .yarn
 RUN yarn --immutable
-COPY .eslintrc.json next.config.mjs next-env.d.ts postcss.config.json \
+COPY .eslintrc.json next.config.mjs next-env.d.ts postcss.config.cjs \
      tailwind.config.cjs tsconfig.json /app/
 COPY src src
 RUN yarn build
