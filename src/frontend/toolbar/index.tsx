@@ -39,8 +39,8 @@ export function Toolbar({
   }, [hasPendingChanges, shouldClose])
 
   return (
-    <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
-      <div className="max-w-5xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex justify-between">
+    <nav className="fixed left-0 right-0 z-10 bg-sky-700/95">
+      <div className="mx-auto flex max-w-5xl justify-between py-2 px-4 sm:px-6 lg:px-8">
         {mode === 'render' ? renderRenderButtons() : renderEditButtons()}
       </div>
     </nav>
@@ -106,7 +106,7 @@ export function Toolbar({
 
   function renderSaveInfo() {
     return (
-      <div className="text-white text-xs font-bold opacity-50 m-auto">
+      <div className="m-auto text-xs font-bold text-white opacity-50">
         {isSaving ? (
           <>
             Autom. Speichern <FontAwesomeIcon icon={faSpinner} spin />

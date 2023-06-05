@@ -95,8 +95,8 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   return (
     <figure
       className={clsx(
-        'flex justify-center items-center',
-        !edusharingAsset.defined && 'w-full h-40',
+        'flex items-center justify-center',
+        !edusharingAsset.defined && 'h-40 w-full',
         (focused || !edusharingAsset.defined) && 'border border-gray-400 p-1'
       )}
     >
@@ -114,7 +114,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       )}
       {editable && (!edusharingAsset.defined || focused) ? (
         <button
-          className="ece-button-blue text-sm absolute right-2 bottom-2"
+          className="ece-button-blue absolute right-2 bottom-2 text-sm"
           onClick={() => setModalIsOpen(true)}
         >
           Datei von edu-sharing einbinden
@@ -169,7 +169,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
           },
         }}
       >
-        <iframe src={url.href} className="w-full h-full" ref={iframeRef} />
+        <iframe src={url.href} className="h-full w-full" ref={iframeRef} />
       </Modal>
     )
   }

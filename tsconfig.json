@@ -30,8 +30,7 @@
   "exclude": ["node_modules", "dep/frontend/node_modules"],
   "include": [
     "next-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
+    "src/**/*.{ts,tsx}",
     "dep/frontend/src/**/*.{ts,tsx}"
   ],
   "ts-node": {
