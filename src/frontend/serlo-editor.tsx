@@ -11,7 +11,7 @@ import {
 } from '@frontend/src/helper/feature-i18n'
 import { Instance } from '@frontend/src/fetcher/graphql-types/operations'
 import { LoggedInDataProvider } from '@frontend/src/contexts/logged-in-data-context'
-import { LoggedInData } from '@frontend/src/data-types'
+import { InstanceData, LoggedInData } from '@frontend/src/data-types'
 import { Renderer } from '@frontend/src/serlo-editor-repo/renderer'
 import { StorageFormat } from '../shared/storage-format'
 
@@ -40,7 +40,7 @@ export function SerloEditor({
       <Head>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
       </Head>
-      <InstanceDataProvider value={getInstanceDataByLang(Instance.De)}>
+      <InstanceDataProvider value={getInstanceDataByLang(Instance.De) as InstanceData | null}>
         <LoggedInDataProvider
           value={getLoggedInData(Instance.De) as LoggedInData}
         >
