@@ -7,6 +7,7 @@ RUN yarn --immutable
 COPY .eslintrc.json next.config.mjs next-env.d.ts postcss.config.cjs \
      tailwind.config.cjs tsconfig.json /app/
 COPY src src
+COPY dep dep
 RUN yarn build
 COPY scripts scripts
 RUN yarn node scripts/esbuild.js
