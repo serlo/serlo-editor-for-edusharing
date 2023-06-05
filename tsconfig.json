@@ -6,25 +6,15 @@
     "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "noErrorTruncation": true,
     "paths": {
-      "@/*": [
-        "./dep/frontend/src/*"
-      ],
-      "@edtr-io/*": [
-        "./dep/frontend/src/serlo-editor-repo/*"
-      ],
-      "@frontend/*": [
-        "./dep/frontend/*"
-      ]
+      "@/*": ["./dep/frontend/src/*"],
+      "@edtr-io/*": ["./dep/frontend/src/serlo-editor-repo/*"],
+      "@frontend/*": ["./dep/frontend/*"]
     },
     "plugins": [
       {
@@ -37,10 +27,7 @@
     "target": "esnext",
     "tsBuildInfoFile": ".next/tsconfig.tsbuildinfo"
   },
-  "exclude": [
-    "node_modules",
-    "dep/frontend/node_modules"
-  ],
+  "exclude": ["node_modules", "dep/frontend/node_modules"],
   "include": [
     "next-env.d.ts",
     "src/**/*.ts",

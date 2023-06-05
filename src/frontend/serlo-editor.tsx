@@ -40,7 +40,9 @@ export function SerloEditor({
       <Head>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
       </Head>
-      <InstanceDataProvider value={getInstanceDataByLang(Instance.De) as InstanceData | null}>
+      <InstanceDataProvider
+        value={getInstanceDataByLang(Instance.De) as InstanceData | null}
+      >
         <LoggedInDataProvider
           value={getLoggedInData(Instance.De) as LoggedInData}
         >
