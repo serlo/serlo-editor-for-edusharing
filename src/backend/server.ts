@@ -10,6 +10,7 @@ import { Request } from 'node-fetch'
 import { FormData, File } from 'formdata-node'
 import { Readable } from 'stream'
 import { FormDataEncoder } from 'form-data-encoder'
+import * as t from 'io-ts'
 import {
   createAutoFromResponse,
   loadEnvConfig,
@@ -55,6 +56,32 @@ if (process.env.NODE_ENV == 'production') {
 
 const nextJsRequestHandler = app.getRequestHandler()
 
+const envType = t.type({
+    EDITOR_URL: t.string,
+    MONGODB_URL: t.string,
+    MONGODB_USERNAME: t.string,
+    MONGODB_PASSWORD: t.string,
+    EDITOR_CLIENT_ID_FOR_LAUNCH: t.string,
+    EDUSHARING_URL: t.string,
+    EDUSHARING_AUTHENTICATION_URL_FOR_LAUNCH: t.string,
+    EDUSHARING_ACCESSTOKEN_URL: t.string,
+    EDUSHARING_KEYSET_URL: t.string,
+    EDITOR_KEY_FOR_SIGNING_COOKIES_AND_ENCRYPTING_DATABASE_ENTRIES: t.string,
+    EDITOR_CLIENT_ID_FOR_EMBEDDING: t.string,
+    EDITOR_DEPLOYMENT_ID_FOR_EMBEDDING: t.string,
+    EDITOR_KEY_ID_FOR_EMBEDDING: t.string,
+    EDUSHARING_AUTHENTICATION_RESPONSE_URL_FOR_EMBEDDING: t.string,
+    EDUSHARING_LOGIN_INITIATION_URL_FOR_EMBEDDING: t.string,
+    EDUSHARING_DETAILS_URL_FOR_EMBEDDING: t.string,
+    EDITOR_PRIVATE_KEY_FOR_EMBEDDING: t.string,
+    EDITOR_PUBLIC_KEY_FOR_EMBEDDING: t.string,
+    EDUSHARING_NETWORK_HOST: t.string
+  });
+
+if(!envType.is(process.env)) {
+  console.error(`Missing env variable! Got ${JSON.stringify(process.env)}`);
+} 
+
 const mongoUrl = new URL(process.env.MONGODB_URL)
 mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
 mongoUrl.password = encodeURI(process.env.MONGODB_PASSWORD)
@@ -95,7 +122,7 @@ Provider.onConnect((_token, _req, res) => {
   url.searchParams.append('mayEdit', mayEdit.toString())
 
   res.redirect(302, url.href)
-})
+}, null)
 
 // Create an async function assigned to server and call it directly afterwards.
 const server = (async () => {
