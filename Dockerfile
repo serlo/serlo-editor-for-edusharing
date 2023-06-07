@@ -15,6 +15,7 @@ RUN yarn node scripts/esbuild.js
 FROM node:18-alpine as release
 WORKDIR /app
 ENV NODE_ENV=production
+RUN apk add git
 COPY public public
 RUN yarn add mongoose && yarn cache clean --all
 COPY package.json /app/
@@ -24,6 +25,7 @@ COPY --from=build /app/.next/server .next/server
 COPY --from=build /app/.next/standalone/node_modules node_modules
 COPY --from=build /app/.next/standalone/src src
 COPY --from=build /app/dist/ dist/
+RUN yarn
 
 ENTRYPOINT ["node", "--experimental-modules", \
             "--experimental-specifier-resolution=node", \
