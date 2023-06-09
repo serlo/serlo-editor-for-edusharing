@@ -14,11 +14,25 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "allowJs": true
+    "allowJs": true,
+    "paths": {
+      "@/*": ["./dep/frontend/src/*"],
+      "@edtr-io/*": ["./dep/frontend/src/serlo-editor-repo/*"],
+      "@frontend/*": ["./dep/frontend/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "ts-node": {
     "esm": true
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.{ts,tsx}",
+    "dep/frontend/src/**/*.{ts,tsx}"
+  ],
+  "exclude": ["node_modules", "dep/frontend/node_modules"]
 }

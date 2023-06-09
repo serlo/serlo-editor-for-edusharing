@@ -11,22 +11,26 @@ import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
 import { createSerloInjectionPlugin } from '@edtr-io/plugin-serlo-injection'
 import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
 import { createTextPlugin } from '@edtr-io/plugin-text'
-import { createBoxPlugin } from './box'
+import { createBoxPlugin } from '@frontend/src/edtr-io/plugins/box'
 
 import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './edusharing-asset'
-import { equationsPlugin } from './equations'
-import { serloTablePlugin } from './serlo-table'
+import { equationsPlugin } from '@frontend/src/edtr-io/plugins/equations'
+import { createSerloTablePlugin } from '@frontend/src/edtr-io/plugins/serlo-table'
 import { registry, getPluginRegistry } from './registry'
+import { loggedInData } from '@frontend/src/data/de'
 
 export function createPlugins(config: EdusharingConfig) {
   return {
     anchor: createAnchorPlugin({
       i18n: { label: 'ID des Ankers', placeholder: 'aufgabe' },
     }),
-    box: createBoxPlugin(),
+    box: createBoxPlugin({
+      editorStrings: loggedInData.strings.editor,
+      allowPluginsWithin: ['text', 'equations', 'highlight', 'serloTable'],
+    }),
     edusharingAsset: createEdusharingAssetPlugin(config),
     equations: equationsPlugin,
     geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
@@ -123,19 +127,15 @@ export function createPlugins(config: EdusharingConfig) {
         isSingleChoice: { label: 'Wähle den Aufgabentyp aus' },
       },
     }),
-    serloTable: serloTablePlugin,
+    serloTable: createSerloTablePlugin({ allowImageInTableCells: false }),
     serloInjection: createSerloInjectionPlugin(),
     spoiler: createSpoilerPlugin({
       content: { plugin: 'rows' },
       i18n: { title: { placeholder: 'Spoiler-Titel eingeben…' } },
     }),
     text: createTextPlugin({
-      registry,
       placeholder: 'Gebe Text ein oder füge neue Inhalte mit \u2295 hinzu.',
       i18n: {
-        blockquote: {
-          toggleTitle: 'Zitat',
-        },
         code: {
           toggleTitle: 'Code',
         },

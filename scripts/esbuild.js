@@ -27,5 +27,5 @@ await esbuild.build({
   format: 'esm',
   target: 'node18',
   external: ['next', '@next/env', 'mongoose'],
-  outfile: 'dist/server.js',
+  outfile: 'dist/custom-server.mjs',
 })

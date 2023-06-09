@@ -3,9 +3,9 @@ import { faCheck, faRedoAlt, faSpinner } from '@edtr-io/ui'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useScopedDispatch, useScopedSelector } from '@edtr-io/core'
+import { useAppDispatch, useAppSelector } from '@edtr-io/store'
 import { ToolbarButton } from './button'
-import { hasPendingChanges as hasPendingChangesSelector } from '@edtr-io/store'
+import { selectHasPendingChanges } from '@edtr-io/store'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -30,17 +30,17 @@ export function Toolbar({
   isSaving,
 }: ToolbarProps) {
   const [shouldClose, setShouldClose] = useState(false)
-  const dispatch = useScopedDispatch()
+  const dispatch = useAppDispatch()
   const canBeClosed = window.opener != null || window.history.length == 1
-  const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
+  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
 
   useEffect(() => {
     if (shouldClose && !hasPendingChanges) window.close()
   }, [hasPendingChanges, shouldClose])
 
   return (
-    <nav className="fixed z-10 left-0 right-0 bg-sky-700/95">
-      <div className="max-w-5xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex justify-between">
+    <nav className="fixed left-0 right-0 z-10 bg-sky-700/95">
+      <div className="mx-auto flex max-w-5xl justify-between py-2 px-4 sm:px-6 lg:px-8">
         {mode === 'render' ? renderRenderButtons() : renderEditButtons()}
       </div>
     </nav>
@@ -106,7 +106,7 @@ export function Toolbar({
 
   function renderSaveInfo() {
     return (
-      <div className="text-white text-xs font-bold opacity-50 m-auto">
+      <div className="m-auto text-xs font-bold text-white opacity-50">
         {isSaving ? (
           <>
             Autom. Speichern <FontAwesomeIcon icon={faSpinner} spin />

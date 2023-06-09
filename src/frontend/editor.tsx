@@ -1,23 +1,20 @@
+import { Editor as Edtr } from '@edtr-io/core'
 import {
-  Editor as Edtr,
-  useScopedDispatch,
-  useScopedSelector,
-  useScopedStore,
-} from '@edtr-io/core'
-import { Renderer } from '@edtr-io/renderer'
-import {
-  getPendingChanges,
-  hasPendingChanges as hasPendingChangesSelector,
-  hasRedoActions,
-  hasUndoActions,
-  persist,
-  serializeRootDocument,
+  selectHasPendingChanges,
+  useAppDispatch,
+  useAppSelector,
+  store,
+  selectPendingChanges,
+  selectHasUndoActions,
+  selectHasRedoActions,
+  selectSerializedRootDocument,
+  persistHistory,
+  selectDocuments,
 } from '@edtr-io/store'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
 import { Layout } from './layout'
-import { createPlugins } from './plugins'
 import {
   StorageFormat,
   documentType,
@@ -25,22 +22,27 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
+import { Renderer } from '@frontend/src/serlo-editor-repo/renderer'
+import { EditorPlugin } from '@/serlo-editor-repo/internal__plugin'
 
 export interface EditorProps {
+  plugins: Record<string, EditorPlugin>
   state: StorageFormat
-  ltik: string
   providerUrl: string
+  ltik: string
 }
 
-export function Editor(props: EditorProps) {
+export function Editor({ plugins, state, providerUrl, ltik }: EditorProps) {
   return (
-    <Edtr
-      plugins={createPlugins({ ltik: props.ltik })}
-      initialState={props.state.document}
-    >
+    <Edtr plugins={plugins} initialState={state.document}>
       {(document) => {
         return (
-          <EditInner {...props} version={props.state.version}>
+          <EditInner
+            plugins={plugins}
+            ltik={ltik}
+            state={state}
+            providerUrl={providerUrl}
+          >
             {document}
           </EditInner>
         )
@@ -51,20 +53,20 @@ export function Editor(props: EditorProps) {
 
 function EditInner({
   children,
+  plugins,
   ltik,
   state,
   providerUrl,
-}: { children: ReactNode; version: number } & EditorProps) {
+}: { children: ReactNode } & EditorProps) {
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
 
-  const dispatch = useScopedDispatch()
-  const store = useScopedStore()
-  const undoable = useScopedSelector(hasUndoActions())
-  const redoable = useScopedSelector(hasRedoActions())
-  const pendingChanges = useScopedSelector(getPendingChanges())
-  const hasPendingChanges = useScopedSelector(hasPendingChangesSelector())
+  const dispatch = useAppDispatch()
+  const undoable = useAppSelector(selectHasUndoActions)
+  const redoable = useAppSelector(selectHasRedoActions)
+  const pendingChanges = useAppSelector(selectPendingChanges)
+  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
   const lastSaveWasWithComment = useRef<boolean>(true)
   const formDiv = useRef<HTMLDivElement>(null)
 
@@ -81,7 +83,7 @@ function EditInner({
     [providerUrl]
   )
   const getBodyForSave = useCallback(() => {
-    const document = serializeRootDocument()(store.getState())
+    const document = selectSerializedRootDocument(store.getState())
 
     if (document === null) {
       throw new Error(
@@ -97,7 +99,7 @@ function EditInner({
     }
 
     return JSON.stringify(body)
-  }, [state.version, store])
+  }, [state.version])
   const save = useCallback(
     async (comment?: string) => {
       if (isSaving) return
@@ -114,7 +116,8 @@ function EditInner({
           body: getBodyForSave(),
         })
         if (response.status === 200) {
-          dispatch(persist())
+          const documents = selectDocuments(store.getState())
+          dispatch(persistHistory(documents))
 
           lastSaveWasWithComment.current = Boolean(comment)
         } else {
@@ -198,7 +201,7 @@ function EditInner({
       <>
         <Toolbar mode="render" setIsEditing={setIsEditing} />
         <Layout>
-          <Renderer plugins={createPlugins({ ltik })} state={state.document} />
+          <Renderer plugins={plugins} documentState={state.document} />
         </Layout>
       </>
     )
