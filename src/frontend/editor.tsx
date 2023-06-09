@@ -116,7 +116,6 @@ function EditInner({
           body: getBodyForSave(),
         })
         if (response.status === 200) {
-          // @@@ I think this is correct. Test it!
           const documents = selectDocuments(store.getState())
           dispatch(persistHistory(documents))
 
