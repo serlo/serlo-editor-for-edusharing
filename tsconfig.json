@@ -17,7 +17,6 @@
     "allowJs": true,
     "paths": {
       "@/*": ["./dep/frontend/src/*"],
-      "@edtr-io/*": ["./dep/frontend/src/serlo-editor-repo/*"],
       "@frontend/*": ["./dep/frontend/*"]
     },
     "plugins": [
@@ -31,8 +30,10 @@
   },
   "include": [
     "next-env.d.ts",
-    "src/**/*.{ts,tsx}",
-    "dep/frontend/src/**/*.{ts,tsx}"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "dep/frontend/src/**/*.ts",
+    "dep/frontend/src/**/*.tsx"
   ],
   "exclude": ["node_modules", "dep/frontend/node_modules"]
 }

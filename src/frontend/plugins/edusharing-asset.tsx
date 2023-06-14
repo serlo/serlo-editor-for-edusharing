@@ -1,15 +1,16 @@
+import clsx from 'clsx'
+import Modal from 'react-modal'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+import { EdusharingAssetDecoder } from '../../shared/decoders'
+
 import {
   object,
   string,
   optional,
   EditorPluginProps,
   EditorPlugin,
-} from '@edtr-io/plugin'
-import clsx from 'clsx'
-import Modal from 'react-modal'
-import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
-import { EdusharingAssetDecoder } from '../../shared/decoders'
+} from '@frontend/src/serlo-editor/plugin'
 
 const state = object({
   edusharingAsset: optional(

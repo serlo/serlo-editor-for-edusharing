@@ -1,4 +1,7 @@
-import { Editor as Edtr } from '@edtr-io/core'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { useDebounce } from 'rooks'
+
+import { Editor as Edtr } from '@frontend/src/serlo-editor/core'
 import {
   selectHasPendingChanges,
   useAppDispatch,
@@ -10,9 +13,9 @@ import {
   selectSerializedRootDocument,
   persistHistory,
   selectDocuments,
-} from '@edtr-io/store'
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { useDebounce } from 'rooks'
+} from '@frontend/src/serlo-editor/store'
+import { Renderer } from '@frontend/src/serlo-editor/renderer'
+import { EditorPlugin } from '@frontend/src/serlo-editor/internal__plugin'
 
 import { Layout } from './layout'
 import {
@@ -22,8 +25,6 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { Renderer } from '@frontend/src/serlo-editor-repo/renderer'
-import { EditorPlugin } from '@/serlo-editor-repo/internal__plugin'
 
 export interface EditorProps {
   plugins: Record<string, EditorPlugin>

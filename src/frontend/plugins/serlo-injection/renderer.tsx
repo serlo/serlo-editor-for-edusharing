@@ -1,6 +1,6 @@
 import IframeResizer from 'iframe-resizer-react'
 
-import { styled } from '@edtr-io/ui'
+import { styled } from '@frontend/src/serlo-editor/ui'
 
 const Iframe = styled(IframeResizer)({
   width: '1px',

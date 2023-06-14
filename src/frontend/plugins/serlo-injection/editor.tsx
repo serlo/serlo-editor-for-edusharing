@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 
-import { SerloInjectionProps } from '.'
-import { OverlayInput } from '@edtr-io/core'
+import { OverlayInput } from '@frontend/src/serlo-editor/core'
 import {
   EditorInlineSettings,
   EditorInput,
   PreviewOverlay,
   styled,
-} from '@edtr-io/editor-ui'
-import { Icon, faNewspaper } from '@edtr-io/ui'
+} from '@frontend/src/serlo-editor/editor-ui'
+import { Icon, faNewspaper } from '@frontend/src/serlo-editor/ui'
+
+import { SerloInjectionProps } from '.'
 import { useSerloInjectionConfig } from './config'
 import { SerloInjectionRenderer } from './renderer'
 

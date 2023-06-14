@@ -1,9 +1,6 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 
-import type { EditorProps } from './editor'
-import { createPlugins } from './plugins'
-import { Layout } from './layout'
 import { InstanceDataProvider } from '@frontend/src/contexts/instance-context'
 import {
   getInstanceDataByLang,
@@ -12,7 +9,11 @@ import {
 import { Instance } from '@frontend/src/fetcher/graphql-types/operations'
 import { LoggedInDataProvider } from '@frontend/src/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@frontend/src/data-types'
-import { Renderer } from '@frontend/src/serlo-editor-repo/renderer'
+import { Renderer } from '@frontend/src/serlo-editor/renderer'
+
+import type { EditorProps } from './editor'
+import { createPlugins } from './plugins'
+import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
 
 const Editor = dynamic<EditorProps>(() =>

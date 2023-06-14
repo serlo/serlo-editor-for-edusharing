@@ -1,11 +1,16 @@
-import { redo, undo } from '@edtr-io/store'
-import { faCheck, faRedoAlt, faSpinner } from '@edtr-io/ui'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '@edtr-io/store'
+
+import { redo, undo } from '@frontend/src/serlo-editor/store'
+import { faCheck, faRedoAlt, faSpinner } from '@frontend/src/serlo-editor/ui'
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '@frontend/src/serlo-editor/store'
+import { selectHasPendingChanges } from '@frontend/src/serlo-editor/store'
+
 import { ToolbarButton } from './button'
-import { selectHasPendingChanges } from '@edtr-io/store'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
