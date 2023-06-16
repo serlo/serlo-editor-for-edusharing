@@ -97,7 +97,7 @@ it('Saved versions can be opened again', () => {
   cy.contains('Vorgehen')
 })
 
-// TODO: Reenable this.
+// TODO Reactivate test
 // it('Editor saves a named version of the document when the user navigates to another side', () => {
 //   const savedBySerloComment =
 //     'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -156,7 +156,7 @@ function openSerloEditorWithLTI() {
 function expectEditorOpenedSuccessfully() {
   cy.contains('Pluginübersicht')
 
-  cy.wait(1000)
+  cy.wait(1500)
 }
 
 function expectSavedVersionWithComment(comment: string | null) {
