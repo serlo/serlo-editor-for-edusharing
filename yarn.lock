@@ -2927,6 +2927,7 @@ __metadata:
     "@types/node-fetch": ^2.6.2
     "@types/react": ^18.0.28
     "@types/react-dom": ^18.0.11
+    "@types/styled-components": ^5.1.26
     autoprefixer: ^10.4.13
     clsx: ^1.2.1
     cypress: ^12.7.0
@@ -3486,7 +3487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/styled-components@npm:^5.1.24":
+"@types/styled-components@npm:^5.1.24, @types/styled-components@npm:^5.1.26":
   version: 5.1.26
   resolution: "@types/styled-components@npm:5.1.26"
   dependencies:
