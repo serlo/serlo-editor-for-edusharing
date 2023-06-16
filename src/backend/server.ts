@@ -311,6 +311,7 @@ const server = (async () => {
     url.searchParams.append('displayMode', 'inline')
     url.searchParams.append('jwt', encodeURIComponent(message))
 
+    // HACK: Replace host when in docker, see .env
     if (process.env.EDUSHARING_NETWORK_HOST) {
       url.host = process.env.EDUSHARING_NETWORK_HOST
     }

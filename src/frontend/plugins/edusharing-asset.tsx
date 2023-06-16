@@ -9,6 +9,7 @@ import clsx from 'clsx'
 import Modal from 'react-modal'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
+import * as t from 'io-ts'
 import { EdusharingAssetDecoder } from '../../shared/decoders'
 
 const state = object({
@@ -54,9 +55,24 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
       const response = await fetch(embedHtmlUrl.href, {
         headers: { Authorization: `Bearer ${config.ltik}` },
       })
-      const result = await response.json()
 
-      setEmbedHtml(result['detailsSnippet'])
+      if (!response.ok) {
+        setEmbedHtml(
+          `Request to /lit/get-embed-html failed. Status code ${response.status}.`
+        )
+        return
+      }
+
+      const result: object = await response.json()
+
+      if (!t.type({ detailsSnippet: t.string }).is(result)) {
+        setEmbedHtml(
+          'Request to /lit/get-embed-html failed. "detailsSnipped" is missing or not of type string.'
+        )
+        return
+      }
+
+      setEmbedHtml(result.detailsSnippet)
     }
 
     void fetchEmbedHtml()
