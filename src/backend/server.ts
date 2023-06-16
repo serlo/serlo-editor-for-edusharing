@@ -95,7 +95,7 @@ Provider.onConnect((_token, _req, res) => {
   url.searchParams.append('mayEdit', mayEdit.toString())
 
   res.redirect(302, url.href)
-})
+}, null)
 
 // Create an async function assigned to server and call it directly afterwards.
 const server = (async () => {

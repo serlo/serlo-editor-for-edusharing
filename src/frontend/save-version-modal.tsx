@@ -40,12 +40,12 @@ export function SaveVersionModal({
       <p>Erstelle und speichere eine neue Version:</p>
       <input
         type="text"
-        className="mt-3 border-gray-300 focus-visible:outline-sky-800 rounded-md p-2 block w-full border"
+        className="mt-3 block w-full rounded-md border border-gray-300 p-2 focus-visible:outline-sky-800"
         ref={commentInput}
         size={50}
         placeholder="Name der neuen Version"
       />
-      <div className="text-right mt-3">
+      <div className="mt-3 text-right">
         <button
           className="ece-button-blue-transparent mr-3 text-base"
           onClick={() => setOpen(false)}

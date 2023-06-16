@@ -1,5 +1,6 @@
-import { kitchenSink } from './kitchen-sink'
 import * as t from 'io-ts'
+
+import { kitchenSink } from './kitchen-sink'
 
 /** The creator of the saved data -> Serlo editor */
 export const documentType = 'https://serlo.org/editor'

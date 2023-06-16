@@ -1,24 +1,25 @@
-import { createAnchorPlugin } from '@edtr-io/plugin-anchor'
-import { createGeogebraPlugin } from '@edtr-io/plugin-geogebra'
-import { createHighlightPlugin } from '@edtr-io/plugin-highlight'
+import { createAnchorPlugin } from '@frontend/src/serlo-editor/plugins/anchor'
+import { createGeogebraPlugin } from '@frontend/src/serlo-editor/plugins/geogebra'
+import { createHighlightPlugin } from '@frontend/src/serlo-editor/plugins/highlight'
 import {
   createInputExercisePlugin,
   InputExerciseType,
-} from '@edtr-io/plugin-input-exercise'
-import { createMultimediaExplanationPlugin } from '@edtr-io/plugin-multimedia-explanation'
-import { createRowsPlugin } from '@edtr-io/plugin-rows'
-import { createScMcExercisePlugin } from '@edtr-io/plugin-sc-mc-exercise'
-import { createSerloInjectionPlugin } from '@edtr-io/plugin-serlo-injection'
-import { createSpoilerPlugin } from '@edtr-io/plugin-spoiler'
-import { createTextPlugin } from '@edtr-io/plugin-text'
-import { createBoxPlugin } from './box'
+} from '@frontend/src/serlo-editor/plugins/input-exercise'
+import { createMultimediaExplanationPlugin } from '@frontend/src/serlo-editor/plugins/multimedia-explanation'
+import { createRowsPlugin } from '@frontend/src/serlo-editor/plugins/rows'
+import { createScMcExercisePlugin } from '@frontend/src/serlo-editor/plugins/sc-mc-exercise'
+import { createSerloInjectionPlugin } from './serlo-injection'
+import { createSpoilerPlugin } from '@frontend/src/serlo-editor/plugins/spoiler'
+import { createTextPlugin } from '@frontend/src/serlo-editor/plugins/text'
+import { createBoxPlugin } from '@frontend/src/serlo-editor/plugins/box'
+import { equationsPlugin } from '@frontend/src/serlo-editor/plugins/equations'
+import { createSerloTablePlugin } from '@frontend/src/serlo-editor/plugins/serlo-table'
+import { loggedInData } from '@frontend/src/data/de'
 
 import {
   EdusharingConfig,
   createEdusharingAssetPlugin,
 } from './edusharing-asset'
-import { equationsPlugin } from './equations'
-import { serloTablePlugin } from './serlo-table'
 import { registry, getPluginRegistry } from './registry'
 
 export function createPlugins(config: EdusharingConfig) {
@@ -26,7 +27,10 @@ export function createPlugins(config: EdusharingConfig) {
     anchor: createAnchorPlugin({
       i18n: { label: 'ID des Ankers', placeholder: 'aufgabe' },
     }),
-    box: createBoxPlugin(),
+    box: createBoxPlugin({
+      editorStrings: loggedInData.strings.editor,
+      allowPluginsWithin: ['text', 'equations', 'highlight', 'serloTable'],
+    }),
     edusharingAsset: createEdusharingAssetPlugin(config),
     equations: equationsPlugin,
     geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
@@ -123,19 +127,15 @@ export function createPlugins(config: EdusharingConfig) {
         isSingleChoice: { label: 'Wähle den Aufgabentyp aus' },
       },
     }),
-    serloTable: serloTablePlugin,
+    serloTable: createSerloTablePlugin({ allowImageInTableCells: false }),
     serloInjection: createSerloInjectionPlugin(),
     spoiler: createSpoilerPlugin({
       content: { plugin: 'rows' },
       i18n: { title: { placeholder: 'Spoiler-Titel eingeben…' } },
     }),
     text: createTextPlugin({
-      registry,
       placeholder: 'Gebe Text ein oder füge neue Inhalte mit \u2295 hinzu.',
       i18n: {
-        blockquote: {
-          toggleTitle: 'Zitat',
-        },
         code: {
           toggleTitle: 'Code',
         },

@@ -2,7 +2,7 @@ import type { Config } from '@jest/types'
 
 const jestConfig: Config.InitialOptions = {
   clearMocks: true,
-  testPathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dep/'],
   preset: 'ts-jest/presets/default-esm',
   setupFiles: ['<rootDir>/jest.setupFiles.ts'],
 }

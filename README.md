@@ -10,11 +10,11 @@ variables. Which you can use are defined in the file [`.env`](./.env).
 
 ## Setup
 
-1. Clone this repository
+1. Clone this repository using `git clone --recurse-submodules [repo url]`
 2. Install tools from [`.tool-versions`](./.tool-versions) (for example via
    [`asdf`](https://asdf-vm.com/))
 3. Install `docker` and `docker-compose`
-4. Run `yarn`
+4. Run `yarn` in root directory
 
 ## Local development
 
@@ -31,6 +31,12 @@ development. The most important ones are:
 - `yarn e2e`: Run all e2e tests with cypress.
 - `yarn lint`: Run all lints (eslint, prettier, ...).
 - `yarn format`: Format all source code.
+
+Also there are:
+
+- `yarn docker:run-sh`: Starts the docker container but will skip the entrypoint
+  command and open a shell instead. Useful for checking files within the
+  container and running commands within manually.
 
 # Releasing a new version
 

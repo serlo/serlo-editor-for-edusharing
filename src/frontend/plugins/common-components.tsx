@@ -17,7 +17,7 @@ export function FaIcon({ icon, className, style }: FaIconProps) {
       aria-hidden
       focusable={false}
       className={clsx(
-        'inline-block overflow-visible h-[1em] align-[-0.125em]',
+        'inline-block h-[1em] overflow-visible align-[-0.125em]',
         className
       )}
       style={style}

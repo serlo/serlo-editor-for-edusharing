@@ -1,0 +1,7 @@
+# These files will be ignored when you copy files using `COPY . .` in the Dockerfile. This speeds up the docker build. 
+
+node_modules
+dist
+.next
+.github
+.git
