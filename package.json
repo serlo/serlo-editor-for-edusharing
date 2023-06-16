@@ -119,6 +119,7 @@
     "@types/react-resizable": "^3.0.0",
     "@types/react-syntax-highlighter": "^13.5.2",
     "@types/shortid": "^0.0.29",
+    "@types/styled-components": "^5.1.26",
     "autoprefixer": "^10.4.13",
     "cypress": "^12.7.0",
     "esbuild": "^0.17.10",
