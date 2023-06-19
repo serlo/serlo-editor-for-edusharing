@@ -7,10 +7,6 @@ import {
 
 import { SerloInjectionEditor } from './editor'
 
-/**
- * @param config - {@link SerloInjectionConfig | Plugin configuration}
- */
-
 export function createSerloInjectionPlugin(
   config: SerloInjectionConfig = {}
 ): EditorPlugin<SerloInjectionPluginState, SerloInjectionConfig> {
