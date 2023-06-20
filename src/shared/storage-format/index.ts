@@ -14,6 +14,7 @@ export const emptyDocument: StorageFormat = {
   type: documentType,
   variant: variantType,
   version: 0,
+  dateModified: getCurrentDatetime(),
   document: { plugin: 'rows' },
 }
 
@@ -21,6 +22,7 @@ export const kitchenSinkDocument: StorageFormat = {
   type: documentType,
   variant: variantType,
   version: 0,
+  dateModified: getCurrentDatetime(),
   document: kitchenSink,
 }
 
@@ -39,17 +41,18 @@ export function migrate(state: StorageFormat): StorageFormat {
     type: documentType,
     variant: variantType,
     version: currentVersion,
+    dateModified: getCurrentDatetime(),
     document,
   }
 }
 
 type Migration = (state: StorageFormat['document']) => StorageFormat['document']
 
-// TODO Add datetime of creation to storage format. This would allow us to handle saved content differently depending on the time of creation if that becomes necessary in the future.
 export const StorageFormatRuntimeType = t.type({
   type: t.string,
   variant: t.string,
   version: t.number,
+  dateModified: t.string,
   document: t.intersection([
     t.type({
       plugin: t.string,
@@ -59,5 +62,9 @@ export const StorageFormatRuntimeType = t.type({
     }),
   ]),
 })
+
+export function getCurrentDatetime() {
+  return new Date().toISOString()
+}
 
 export type StorageFormat = t.TypeOf<typeof StorageFormatRuntimeType>
