@@ -1,4 +1,3 @@
-import { createAnchorPlugin } from '@frontend/src/serlo-editor/plugins/anchor'
 import { createGeogebraPlugin } from '@frontend/src/serlo-editor/plugins/geogebra'
 import { createHighlightPlugin } from '@frontend/src/serlo-editor/plugins/highlight'
 import {
@@ -24,9 +23,6 @@ import { registry, getPluginRegistry } from './registry'
 
 export function createPlugins(config: EdusharingConfig) {
   return {
-    anchor: createAnchorPlugin({
-      i18n: { label: 'ID des Ankers', placeholder: 'aufgabe' },
-    }),
     box: createBoxPlugin({
       editorStrings: loggedInData.strings.editor,
       allowPluginsWithin: ['text', 'equations', 'highlight', 'serloTable'],

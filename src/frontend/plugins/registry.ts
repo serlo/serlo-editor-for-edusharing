@@ -84,12 +84,6 @@ export const registry = [
       'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
     icon: IconFallback, // Use fallback because could not find icon for exercises on serlo.org
   },
-  {
-    name: 'anchor',
-    title: 'Sprungmarke',
-    description: 'Sprungmarke als Ziel für Anker-Links.',
-    icon: IconFallback, // Use fallback because serlo.org also used fallback
-  },
 ]
 
 export function getPluginRegistry(include: string[]) {
