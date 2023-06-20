@@ -21,7 +21,9 @@ jobs:
       # Fetches the commit that triggered this workflow
       # https://github.com/actions/checkout
       - name: Checkout repository
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       # Create and boot a builder. Used in build-push-action.
       # https://github.com/docker/setup-buildx-action
