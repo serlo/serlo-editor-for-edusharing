@@ -54,7 +54,7 @@ export const registry = [
     icon: IconInjection,
   },
   {
-    name: 'multimediaExplanation',
+    name: 'multimedia',
     title: 'Erklärung mit Multimedia-Inhalt',
     description: 'Multimedia-Inhalt mit zugehöriger Erklärung',
     icon: IconMultimedia,
