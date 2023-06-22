@@ -67,7 +67,7 @@ export function createPlugins(config: EdusharingConfig) {
         fallbackFeedback: { correct: 'Korrekt!', wrong: 'Leider falsch' },
       },
     }),
-    multimediaExplanation: createMultimediaExplanationPlugin({
+    multimedia: createMultimediaExplanationPlugin({
       explanation: { plugin: 'rows' },
       plugins: getPluginRegistry(['geogebra', 'edusharingAsset']),
       i18n: {
