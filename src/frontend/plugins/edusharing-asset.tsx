@@ -24,7 +24,13 @@ const state = object({
 export function createEdusharingAssetPlugin(
   config: EdusharingConfig
 ): EditorPlugin<State, EdusharingConfig> {
-  return { Component: EdusharingAsset, state, config }
+  return {
+    Component: EdusharingAsset,
+    state,
+    config,
+    defaultTitle: 'Edu-sharing Inhalt',
+    defaultDescription: 'Inhalte von edu-sharing einbinden',
+  }
 }
 
 export interface EdusharingConfig {

@@ -18,6 +18,8 @@ export function createSerloInjectionPlugin(
     Component: SerloInjectionEditor,
     config,
     state: string(),
+    defaultTitle: 'serlo.org Inhalt',
+    defaultDescription: 'Inhalte von serlo.org einbinden',
   }
 }
 

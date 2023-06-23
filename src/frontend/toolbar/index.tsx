@@ -1,9 +1,15 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faComment, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
+import {
+  faCheck,
+  faComment,
+  faEdit,
+  faRedoAlt,
+  faSave,
+  faSpinner,
+} from '@fortawesome/free-solid-svg-icons'
 
 import { redo, undo } from '@frontend/src/serlo-editor/store'
-import { faCheck, faRedoAlt, faSpinner } from '@frontend/src/serlo-editor/ui'
 import {
   useAppDispatch,
   useAppSelector,
