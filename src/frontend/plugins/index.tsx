@@ -24,8 +24,6 @@ import { createTextPlugin } from '@/serlo-editor/plugins/text'
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
 
-// export type PluginType = 'text' | 'box'
-
 export function createPlugins({
   ltik,
 }: {

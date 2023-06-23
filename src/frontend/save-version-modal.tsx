@@ -27,6 +27,9 @@ export function SaveVersionModal({
       isOpen={open}
       onRequestClose={() => setOpen(false)}
       style={{
+        overlay: {
+          zIndex: '999',
+        },
         content: {
           marginTop: '4rem',
           left: '50%',

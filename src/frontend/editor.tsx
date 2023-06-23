@@ -21,6 +21,7 @@ import { Layout } from './layout'
 import {
   StorageFormat,
   documentType,
+  getCurrentDatetime,
   variantType,
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
@@ -110,6 +111,7 @@ function EditInner({
       type: documentType,
       variant: variantType,
       version: state.version,
+      dateModified: getCurrentDatetime(),
       document,
     }
 
