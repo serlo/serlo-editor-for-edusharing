@@ -10,6 +10,7 @@ import { Instance } from '@frontend/src/fetcher/graphql-types/operations'
 import { LoggedInDataProvider } from '@frontend/src/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@frontend/src/data-types'
 import { Renderer } from '@frontend/src/serlo-editor/renderer'
+import { PluginsContext } from '@frontend/src/serlo-editor/core/contexts/plugins-context'
 
 import type { EditorProps } from './editor'
 import { createPlugins } from './plugins'
@@ -57,10 +58,12 @@ export function SerloEditor({
               />
             ) : (
               <Layout>
-                <Renderer
-                  plugins={plugins}
-                  documentState={initialDocumentState}
-                />
+                <PluginsContext.Provider value={plugins}>
+                  <Renderer
+                    plugins={plugins}
+                    documentState={initialDocumentState}
+                  />
+                </PluginsContext.Provider>
               </Layout>
             )}
           </div>

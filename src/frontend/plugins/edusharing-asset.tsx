@@ -140,6 +140,7 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
         <button
           className="ece-button-blue absolute right-2 bottom-2 text-sm"
           onClick={() => setModalIsOpen(true)}
+          data-testid="edusharing-plugin-button"
         >
           Datei von edu-sharing einbinden
         </button>
