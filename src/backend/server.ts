@@ -220,7 +220,7 @@ const server = (async () => {
     const request = new Request(url.href, {
       method: 'POST',
       headers: encoder.headers,
-      body: JSON.stringify(encoder.encode()),
+      body: String(encoder.encode()),
     })
 
     const response = await fetch(request)
