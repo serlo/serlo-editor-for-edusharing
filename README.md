@@ -15,6 +15,7 @@ file [`.env`](./.env).
    [`asdf`](https://asdf-vm.com/))
 3. Install `docker` and `docker-compose`
 4. Run `yarn` in root directory
+5. Add `127.0.0.1 repository.127.0.0.1.nip.io` to your `/etc/hosts`
 
 You can use `yarn run` to see which scripts you can use in the local
 development. The most important ones are:
