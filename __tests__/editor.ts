@@ -1,4 +1,3 @@
-import fetch, { RequestInit } from 'node-fetch'
 import jwt from 'jsonwebtoken'
 import { Server } from 'node:http'
 import { expect, test, describe } from '@jest/globals'
