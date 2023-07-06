@@ -5,9 +5,6 @@ import Server from 'next/dist/server/next-server.js'
 import type { NextServer } from 'next/dist/server/next'
 import { defaultImport } from 'default-import'
 import { createServer } from 'net'
-import { FormData, File } from 'formdata-node'
-import { Readable } from 'stream'
-import { FormDataEncoder } from 'form-data-encoder'
 import {
   createAutoFromResponse,
   loadEnvConfig,
@@ -210,20 +207,19 @@ const server = (async () => {
       url.searchParams.append('versionComment', comment)
     }
 
-    const blob = new File([JSON.stringify(content)], 'test.json')
+    // https://stackoverflow.com/a/50774380
+    const blob = new Blob([JSON.stringify(content)], {
+      type: 'application/json',
+    })
 
     const data = new FormData()
     data.set('file', blob)
 
-    const encoder = new FormDataEncoder(data)
-
-    const request = new Request(url.href, {
+    // https://medium.com/deno-the-complete-reference/sending-form-data-using-fetch-in-node-js-8cedd0b2af85
+    const response = await fetch(url.href, {
       method: 'POST',
-      headers: encoder.headers,
-      body: String(encoder.encode()),
+      body: data,
     })
-
-    const response = await fetch(request)
 
     return res.status(response.status).send(await response.text())
   })
