@@ -40,7 +40,8 @@ mock.
 
 ## Initialize and update frontend git submodule
 
-This is useful when you used the normal git clone, without the recurse-submodules flag, or when you want to update the frontend dependency.
+This is useful when you used the normal git clone, without the
+recurse-submodules flag, or when you want to update the frontend dependency.
 
 1. `git submodule init`
 
