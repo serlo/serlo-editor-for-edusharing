@@ -16,6 +16,12 @@ file [`.env`](./.env).
 3. Install `docker` and `docker-compose`
 4. Run `yarn` in root directory
 
+### Used normal git clone and want to install submodules?
+
+1. `git submodule init`
+
+2. `git submodule update`
+
 ## Local development
 
 You can use `yarn run` to see which scripts you can use in the local
