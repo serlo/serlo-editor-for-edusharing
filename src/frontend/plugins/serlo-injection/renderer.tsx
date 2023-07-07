@@ -11,8 +11,12 @@ const Iframe = styled(IframeResizer)({
 
 export const SerloInjectionRenderer = (props: { src: string }) => {
   return (
-    <div>
-      <Iframe key={props.src} src={props.src} checkOrigin={false} />
-    </div>
+    <Iframe
+      key={props.src}
+      src={props.src}
+      checkOrigin={false}
+      heightCalculationMethod="lowestElement"
+      sizeHeight
+    />
   )
 }

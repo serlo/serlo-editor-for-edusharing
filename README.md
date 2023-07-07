@@ -38,6 +38,15 @@ Use repo
 to test the integration with a full instance of edu-sharing instead of just a
 mock.
 
+## Initialize and update frontend git submodule
+
+This is useful when you used the normal git clone, without the
+recurse-submodules flag, or when you want to update the frontend dependency.
+
+1. `git submodule init`
+
+2. `git submodule update`
+
 ## Usage perspective
 
 The following user story describes how the editor is integrated within
