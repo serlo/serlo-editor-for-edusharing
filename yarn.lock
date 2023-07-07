@@ -3314,6 +3314,7 @@ __metadata:
     "@types/algebra.js": ^0.2.2
     "@types/express": ^4.17.17
     "@types/jest": ^29.4.0
+    "@types/js-cookie": ^3.0.2
     "@types/jsonwebtoken": ^9.0.1
     "@types/katex": ^0.14.0
     "@types/multer": ^1.4.7
@@ -3343,7 +3344,7 @@ __metadata:
     io-ts: ^2.2.20
     isomorphic-unfetch: ^3.1.0
     jest: ^29.4.3
-    js-cookie: ^3.0.1
+    js-cookie: ^3.0.5
     json-web-key: ^0.4.0
     jsonwebtoken: ^9.0.0
     jwks-rsa: ^3.0.1
@@ -3848,6 +3849,13 @@ __metadata:
     expect: ^29.0.0
     pretty-format: ^29.0.0
   checksum: 23760282362a252e6690314584d83a47512d4cd61663e957ed3398ecf98195fe931c45606ee2f9def12f8ed7d8aa102d492ec42d26facdaf8b78094a31e6568e
+  languageName: node
+  linkType: hard
+
+"@types/js-cookie@npm:^3.0.2":
+  version: 3.0.3
+  resolution: "@types/js-cookie@npm:3.0.3"
+  checksum: 927254ec37ce4fbe4d9d54f53a446b4351259799d9933db5808ddb7c430396aa2496bdd0a4e47e1b56048ffbec98645cbd4daa9e3ed9a6fff55e25eb640fcb15
   languageName: node
   linkType: hard
 
@@ -8525,7 +8533,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-cookie@npm:^3.0.1":
+"js-cookie@npm:^3.0.5":
   version: 3.0.5
   resolution: "js-cookie@npm:3.0.5"
   checksum: 2dbd2809c6180fbcf060c6957cb82dbb47edae0ead6bd71cbeedf448aa6b6923115003b995f7d3e3077bfe2cb76295ea6b584eb7196cca8ba0a09f389f64967a
