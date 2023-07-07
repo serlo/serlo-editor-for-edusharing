@@ -1,4 +1,3 @@
-import fetch from 'node-fetch'
 import { expect, describe } from '@jest/globals'
 
 describe('Calls for LTI request tests', () => {

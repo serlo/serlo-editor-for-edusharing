@@ -1,4 +1,3 @@
-import fetch from 'node-fetch'
 import { createJWKSResponse, signJwtWithBase64Key } from '../src/server-utils'
 import express from 'express'
 import { Server } from 'node:http'
