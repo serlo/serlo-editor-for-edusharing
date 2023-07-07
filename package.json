@@ -59,7 +59,7 @@
     "default-import": "^1.1.5",
     "express": "^4.18.2",
     "form-data-encoder": "^2.1.4",
-    "fp-ts": "^2.13.1",
+    "fp-ts": "^2.16.0",
     "iframe-resizer-react": "^1.1.0",
     "immutable": "^4.2.4",
     "io-ts": "^2.2.20",
