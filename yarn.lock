@@ -3555,8 +3555,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/serlo-editor-for-edusharing@workspace:."
   dependencies:
-    "@fortawesome/fontawesome-svg-core": ^6.2.0
-    "@fortawesome/free-solid-svg-icons": ^6.2.0
+    "@fortawesome/fontawesome-svg-core": ^6.4.0
+    "@fortawesome/free-solid-svg-icons": ^6.4.0
     "@fortawesome/react-fontawesome": ^0.2.0
     "@next/env": ^13.2.3
     "@prezly/slate-lists": ^0.79.5
