@@ -15,7 +15,6 @@ import { equationsPlugin } from '@/serlo-editor/plugins/equations'
 import { geoGebraPlugin } from '@/serlo-editor/plugins/geogebra'
 import { createHighlightPlugin } from '@/serlo-editor/plugins/highlight'
 import { createInputExercisePlugin } from '@/serlo-editor/plugins/input-exercise'
-import { createMultimediaExplanationPlugin } from '@/serlo-editor/plugins/multimedia-explanation'
 import { createRowsPlugin } from '@/serlo-editor/plugins/rows'
 import { createScMcExercisePlugin } from '@/serlo-editor/plugins/sc-mc-exercise'
 import { createSerloTablePlugin } from '@/serlo-editor/plugins/serlo-table'
@@ -23,6 +22,9 @@ import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
 import { createTextPlugin } from '@/serlo-editor/plugins/text'
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
+import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
+import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
+import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
 
 export function createPlugins({
   ltik,
@@ -41,13 +43,13 @@ export function createPlugins({
 
   return [
     {
-      type: 'text',
+      type: EditorPluginType.Text,
       plugin: createTextPlugin({ serloLinkSearch: false }),
       visible: true,
       icon: <IconText />,
     },
     {
-      type: 'box',
+      type: EditorPluginType.Box,
       plugin: createBoxPlugin({
         allowedPlugins: pluginsThatCannotContainOtherPlugins,
       }),
@@ -55,64 +57,59 @@ export function createPlugins({
       icon: <IconBox />,
     },
     {
-      type: 'edusharingAsset',
-      plugin: createEdusharingAssetPlugin({ ltik: ltik }),
+      type: 'edusharingAsset', // TODO This could be EditorPluginType.EdusharingAsset in the future, but we need to figure out how to extend the type.
+      plugin: createEdusharingAssetPlugin({ ltik }),
       visible: true,
       icon: <IconImage />,
     },
     {
-      type: 'equations',
+      type: EditorPluginType.Equations,
       plugin: equationsPlugin,
       visible: true,
       icon: <IconEquation />,
     },
     {
-      type: 'geogebra',
+      type: EditorPluginType.Geogebra,
       plugin: geoGebraPlugin,
       visible: true,
       icon: <IconGeogebra />,
     },
     {
-      type: 'highlight',
+      type: EditorPluginType.Highlight,
       plugin: createHighlightPlugin(),
       visible: true,
       icon: <IconHighlight />,
     },
     {
-      type: 'serloInjection',
+      type: 'serloInjection', // TODO This could be EditorPluginType.SerloInjection in the future, but we need to figure out how to extend the type.
       plugin: createSerloInjectionPlugin(),
       visible: true,
       icon: <IconInjection />,
     },
     {
-      type: 'multimedia',
-      plugin: createMultimediaExplanationPlugin({
+      type: EditorPluginType.Multimedia,
+      plugin: createMultimediaPlugin({
         explanation: {
           plugin: 'rows',
           config: {
             allowedPlugins: pluginsThatCannotContainOtherPlugins,
           },
         },
-        plugins: ['edusharingAsset', 'geogebra'],
+        allowedPlugins: ['edusharingAsset', 'geogebra'],
       }),
       visible: true,
       icon: <IconMultimedia />,
     },
     {
-      type: 'spoiler',
+      type: EditorPluginType.Spoiler,
       plugin: createSpoilerPlugin({
-        content: {
-          plugin: 'rows',
-          config: {
-            allowedPlugins: pluginsThatCannotContainOtherPlugins,
-          },
-        },
+        allowedPlugins: pluginsThatCannotContainOtherPlugins,
       }),
       visible: true,
       icon: <IconSpoiler />,
     },
     {
-      type: 'serloTable',
+      type: EditorPluginType.SerloTable,
       plugin: createSerloTablePlugin({
         allowImageInTableCells: false,
       }),
@@ -120,7 +117,7 @@ export function createPlugins({
       icon: <IconTable />,
     },
     {
-      type: 'inputExercise',
+      type: EditorPluginType.InputExercise,
       plugin: {
         ...createInputExercisePlugin({}),
         defaultTitle: 'Aufgabe mit Eingabefeld',
@@ -131,7 +128,7 @@ export function createPlugins({
       icon: <IconFallback />,
     },
     {
-      type: 'scMcExercise',
+      type: EditorPluginType.ScMcExercise,
       plugin: {
         ...createScMcExercisePlugin(),
         defaultTitle: 'Multiple-Choice-Aufgabe',
@@ -141,9 +138,15 @@ export function createPlugins({
       visible: true,
       icon: <IconFallback />,
     },
+
+    // Cannot be created by user directly
     {
-      type: 'rows',
+      type: EditorPluginType.Rows,
       plugin: createRowsPlugin(),
+    },
+    {
+      type: EditorPluginType.Unsupported,
+      plugin: unsupportedPlugin,
     },
   ]
 }
