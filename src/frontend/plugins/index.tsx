@@ -32,13 +32,13 @@ export function createPlugins({
   ltik: string
 }): PluginsContextPlugins {
   const pluginsThatCannotContainOtherPlugins = [
-    'text',
-    'edusharingAsset',
-    'equations',
-    'geogebra',
-    'highlight',
-    'inputExercise',
-    'scMcExercise',
+    EditorPluginType.Text,
+    EditorPluginType.Equations,
+    EditorPluginType.Geogebra,
+    EditorPluginType.Highlight,
+    EditorPluginType.InputExercise,
+    EditorPluginType.ScMcExercise,
+    'edusharing-asset',
   ]
 
   return [
@@ -90,12 +90,12 @@ export function createPlugins({
       type: EditorPluginType.Multimedia,
       plugin: createMultimediaPlugin({
         explanation: {
-          plugin: 'rows',
+          plugin: EditorPluginType.Rows,
           config: {
             allowedPlugins: pluginsThatCannotContainOtherPlugins,
           },
         },
-        allowedPlugins: ['edusharingAsset', 'geogebra'],
+        allowedPlugins: ['edusharingAsset', EditorPluginType.Geogebra],
       }),
       visible: true,
       icon: <IconMultimedia />,
