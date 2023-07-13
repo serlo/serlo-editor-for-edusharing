@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import { default as ToastNotice } from 'react-notify-toast'
 
 import { InstanceDataProvider } from '@frontend/src/contexts/instance-context'
 import {
@@ -67,6 +68,7 @@ export function SerloEditor({
               </Layout>
             )}
           </div>
+          <ToastNotice />
         </LoggedInDataProvider>
       </InstanceDataProvider>
     </>
