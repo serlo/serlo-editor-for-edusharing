@@ -60,7 +60,9 @@ export default function Page(props: PageProps) {
       if (!StorageFormatRuntimeType.is(contentJson)) {
         setState({
           type: 'error',
-          message: 'Content json received from edu-sharing was malformed.',
+          message: `Content json received from edu-sharing was malformed. Contained: ${JSON.stringify(
+            contentJson
+          )}`,
         })
         return
       }

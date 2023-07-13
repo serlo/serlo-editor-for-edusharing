@@ -1,220 +1,153 @@
-import { createGeogebraPlugin } from '@frontend/src/serlo-editor/plugins/geogebra'
-import { createHighlightPlugin } from '@frontend/src/serlo-editor/plugins/highlight'
-import {
-  createInputExercisePlugin,
-  InputExerciseType,
-} from '@frontend/src/serlo-editor/plugins/input-exercise'
-import { createMultimediaExplanationPlugin } from '@frontend/src/serlo-editor/plugins/multimedia-explanation'
-import { createRowsPlugin } from '@frontend/src/serlo-editor/plugins/rows'
-import { createScMcExercisePlugin } from '@frontend/src/serlo-editor/plugins/sc-mc-exercise'
+import IconBox from '@/assets-webkit/img/editor/icon-box.svg'
+import IconEquation from '@/assets-webkit/img/editor/icon-equation.svg'
+import IconGeogebra from '@/assets-webkit/img/editor/icon-geogebra.svg'
+import IconHighlight from '@/assets-webkit/img/editor/icon-highlight.svg'
+import IconImage from '@/assets-webkit/img/editor/icon-image.svg'
+import IconInjection from '@/assets-webkit/img/editor/icon-injection.svg'
+import IconMultimedia from '@/assets-webkit/img/editor/icon-multimedia.svg'
+import IconSpoiler from '@/assets-webkit/img/editor/icon-spoiler.svg'
+import IconTable from '@/assets-webkit/img/editor/icon-table.svg'
+import IconText from '@/assets-webkit/img/editor/icon-text.svg'
+import IconFallback from '@/assets-webkit/img/editor/icon-fallback.svg'
+import { PluginsContextPlugins } from '@/serlo-editor/core/contexts/plugins-context'
+import { createBoxPlugin } from '@/serlo-editor/plugins/box'
+import { equationsPlugin } from '@/serlo-editor/plugins/equations'
+import { geoGebraPlugin } from '@/serlo-editor/plugins/geogebra'
+import { createHighlightPlugin } from '@/serlo-editor/plugins/highlight'
+import { createInputExercisePlugin } from '@/serlo-editor/plugins/input-exercise'
+import { createRowsPlugin } from '@/serlo-editor/plugins/rows'
+import { createScMcExercisePlugin } from '@/serlo-editor/plugins/sc-mc-exercise'
+import { createSerloTablePlugin } from '@/serlo-editor/plugins/serlo-table'
+import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
+import { createTextPlugin } from '@/serlo-editor/plugins/text'
+import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
-import { createSpoilerPlugin } from '@frontend/src/serlo-editor/plugins/spoiler'
-import { createTextPlugin } from '@frontend/src/serlo-editor/plugins/text'
-import { createBoxPlugin } from '@frontend/src/serlo-editor/plugins/box'
-import { equationsPlugin } from '@frontend/src/serlo-editor/plugins/equations'
-import { createSerloTablePlugin } from '@frontend/src/serlo-editor/plugins/serlo-table'
-import { loggedInData } from '@frontend/src/data/de'
+import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
+import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
+import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
 
-import {
-  EdusharingConfig,
-  createEdusharingAssetPlugin,
-} from './edusharing-asset'
-import { registry, getPluginRegistry } from './registry'
+export function createPlugins({
+  ltik,
+}: {
+  ltik: string
+}): PluginsContextPlugins {
+  const pluginsThatCannotContainOtherPlugins = [
+    EditorPluginType.Text,
+    EditorPluginType.Equations,
+    EditorPluginType.Geogebra,
+    EditorPluginType.Highlight,
+    EditorPluginType.InputExercise,
+    EditorPluginType.ScMcExercise,
+    'edusharingAsset',
+  ]
 
-export function createPlugins(config: EdusharingConfig) {
-  return {
-    box: createBoxPlugin({
-      editorStrings: loggedInData.strings.editor,
-      allowPluginsWithin: ['text', 'equations', 'highlight', 'serloTable'],
-    }),
-    edusharingAsset: createEdusharingAssetPlugin(config),
-    equations: equationsPlugin,
-    geogebra: createGeogebraPlugin({ i18n: { label: 'Geogebra URL oder ID' } }),
-    highlight: createHighlightPlugin({
-      i18n: {
-        code: {
-          label: 'Hier klicken und Quelltext eingeben…',
-          placeholder:
-            'Füge hier deinen Quellcode ein. Verlasse den Bereich, um eine Vorschau zu sehen.',
-        },
-        language: {
-          label: 'Programmiersprache',
-          placeholder: 'java',
-        },
-        showLineNumbers: {
-          label: 'Zeilennummern anzeigen',
-        },
-      },
-    }),
-    inputExercise: createInputExercisePlugin({
-      feedback: { plugin: 'text', config: { registry: [] } },
-      i18n: {
-        types: {
-          [InputExerciseType.InputStringNormalizedMatchChallenge]: 'Text',
-          [InputExerciseType.InputNumberExactMatchChallenge]: 'Zahl',
-          [InputExerciseType.InputExpressionEqualMatchChallenge]:
-            'Mathematischer Ausdruck',
-        },
-        type: { label: 'Wähle einen Aufgabentyp' },
-        unit: { label: 'Einheit' },
-        answer: {
-          label: 'Antwort',
-          addLabel: 'Antwort hinzufügen',
-          value: { placeholder: 'Trage einen Wert ein' },
-        },
-        feedback: { label: 'Feedback' },
-        inputPlaceholder: 'Deine Lösung',
-        fallbackFeedback: { correct: 'Korrekt!', wrong: 'Leider falsch' },
-      },
-    }),
-    multimedia: createMultimediaExplanationPlugin({
-      explanation: { plugin: 'rows' },
-      plugins: getPluginRegistry(['geogebra', 'edusharingAsset']),
-      i18n: {
-        reset: 'Multimedia Inhalt zurücksetzen',
-        changeMultimediaType: 'Art des Multimedia Inhalts ändern',
-        illustrating: {
-          label: 'Wie wichtig ist der Multimedia Inhalt?',
-          values: {
-            illustrating: 'Es ist eine Illustration',
-            explaining: 'Es ist essentiell',
+  return [
+    {
+      type: EditorPluginType.Text,
+      plugin: createTextPlugin({ serloLinkSearch: false }),
+      visible: true,
+      icon: <IconText />,
+    },
+    {
+      type: EditorPluginType.Box,
+      plugin: createBoxPlugin({
+        allowedPlugins: pluginsThatCannotContainOtherPlugins,
+      }),
+      visible: true,
+      icon: <IconBox />,
+    },
+    {
+      type: 'edusharingAsset', // TODO This could be EditorPluginType.EdusharingAsset in the future, but we need to figure out how to extend the type.
+      plugin: createEdusharingAssetPlugin({ ltik }),
+      visible: true,
+      icon: <IconImage />,
+    },
+    {
+      type: EditorPluginType.Equations,
+      plugin: equationsPlugin,
+      visible: true,
+      icon: <IconEquation />,
+    },
+    {
+      type: EditorPluginType.Geogebra,
+      plugin: geoGebraPlugin,
+      visible: true,
+      icon: <IconGeogebra />,
+    },
+    {
+      type: EditorPluginType.Highlight,
+      plugin: createHighlightPlugin(),
+      visible: true,
+      icon: <IconHighlight />,
+    },
+    {
+      type: 'serloInjection', // TODO This could be EditorPluginType.SerloInjection in the future, but we need to figure out how to extend the type.
+      plugin: createSerloInjectionPlugin(),
+      visible: true,
+      icon: <IconInjection />,
+    },
+    {
+      type: EditorPluginType.Multimedia,
+      plugin: createMultimediaPlugin({
+        explanation: {
+          plugin: EditorPluginType.Rows,
+          config: {
+            allowedPlugins: [EditorPluginType.Text],
           },
         },
+        allowedPlugins: ['edusharingAsset', EditorPluginType.Geogebra],
+      }),
+      visible: true,
+      icon: <IconMultimedia />,
+    },
+    // TODO: Reactivate when fixed in `frontend`
+    // {
+    //   type: EditorPluginType.Spoiler,
+    //   plugin: createSpoilerPlugin({
+    //     allowedPlugins: pluginsThatCannotContainOtherPlugins,
+    //   }),
+    //   visible: true,
+    //   icon: <IconSpoiler />,
+    // },
+    {
+      type: EditorPluginType.SerloTable,
+      plugin: createSerloTablePlugin({
+        allowImageInTableCells: false,
+      }),
+      visible: true,
+      icon: <IconTable />,
+    },
+    {
+      type: EditorPluginType.InputExercise,
+      plugin: {
+        ...createInputExercisePlugin({}),
+        defaultTitle: 'Aufgabe mit Eingabefeld',
+        defaultDescription:
+          'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
       },
-    }),
-    rows: createRowsPlugin({
-      content: { plugin: 'text' },
-      plugins: registry,
-      i18n: {
-        menu: {
-          searchPlaceholder: 'Inhaltstyp suchen…',
-        },
-        settings: {
-          duplicateLabel: 'Duplizieren',
-          removeLabel: 'Löschen',
-          closeLabel: 'Schließen',
-        },
-        toolbar: {
-          dragLabel: 'Inhalt an andere Position verschieben',
-        },
-        addLabel: 'Neuen Inhalt hinzufügen',
+      visible: true,
+      icon: <IconFallback />,
+    },
+    {
+      type: EditorPluginType.ScMcExercise,
+      plugin: {
+        ...createScMcExercisePlugin(),
+        defaultTitle: 'Multiple-Choice-Aufgabe',
+        defaultDescription:
+          'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
       },
-    }),
-    scMcExercise: createScMcExercisePlugin({
-      content: { plugin: 'text', config: { registry: [] } },
-      feedback: { plugin: 'text', config: { registry: [] } },
-      i18n: {
-        types: {
-          singleChoice: 'Single Choice',
-          multipleChoice: 'Multiple Choice',
-        },
-        answer: {
-          label: 'Antwort',
-          addLabel: 'Antwort hinzufügen',
-          fallbackFeedback: { wrong: 'Falsch' },
-        },
-        feedback: { label: 'Feedback' },
-        globalFeedback: {
-          missingCorrectAnswers:
-            'Fast! Dir fehlt mindestens eine richtige Antwort',
-          correct: 'Korrekt!',
-          wrong: 'Leider falsch',
-        },
-        isSingleChoice: { label: 'Wähle den Aufgabentyp aus' },
-      },
-    }),
-    serloTable: createSerloTablePlugin({ allowImageInTableCells: false }),
-    serloInjection: createSerloInjectionPlugin(),
-    spoiler: createSpoilerPlugin({
-      content: { plugin: 'rows' },
-      i18n: { title: { placeholder: 'Spoiler-Titel eingeben…' } },
-    }),
-    text: createTextPlugin({
-      placeholder: 'Gebe Text ein oder füge neue Inhalte mit \u2295 hinzu.',
-      i18n: {
-        code: {
-          toggleTitle: 'Code',
-        },
-        colors: {
-          setColorTitle: 'Farbe ändern',
-          resetColorTitle: 'Farbe zurücksetzen',
-          openMenuTitle: 'Farben',
-          closeMenuTitle: 'Untermenü schließen',
-        },
-        headings: {
-          setHeadingTitle(level: number) {
-            return `Überschrift der Ebene ${level}`
-          },
-          openMenuTitle: 'Überschriften',
-          closeMenuTitle: 'Untermenü schließen',
-        },
-        link: {
-          toggleTitle: 'Link (Strg + K)',
-          placeholder: 'URL eingeben…',
-          openInNewTabTitle: 'In neuem Tab öffnen',
-        },
-        list: {
-          toggleOrderedList: 'Geordnete Liste',
-          toggleUnorderedList: 'Ungeordnete Liste',
-          openMenuTitle: 'Listen',
-          closeMenuTitle: 'Untermenü schließen',
-        },
-        math: {
-          toggleTitle: 'Matheformel (Strg + M)',
-          displayBlockLabel: 'Im Blockmodus darstellen',
-          placeholder: '[Formel]',
-          editors: {
-            visual: 'visueller Modus',
-            latex: 'LaTeX',
-            noVisualEditorAvailableMessage: 'Nur im LaTeX-Modus verfügbar',
-          },
-          helpText(
-            KeySpan: React.ComponentType<{ children: React.ReactNode }>
-          ) {
-            return (
-              <>
-                Tastaturkürzel:
-                <br />
-                <br />
-                <p>
-                  Brüche: <KeySpan>/</KeySpan>
-                </p>
-                <p>
-                  Superscript: <KeySpan>↑</KeySpan> or <KeySpan>^</KeySpan>
-                </p>
-                <p>
-                  Subscript: <KeySpan>↓</KeySpan> oder <KeySpan>_</KeySpan>
-                </p>
-                <p>
-                  π, α, β, γ: <KeySpan>pi</KeySpan>, <KeySpan>alpha</KeySpan>,{' '}
-                  <KeySpan>beta</KeySpan>,<KeySpan>gamma</KeySpan>
-                </p>
-                <p>
-                  ≤, ≥: <KeySpan>{'<='}</KeySpan>, <KeySpan>{'>='}</KeySpan>
-                </p>
-                <p>
-                  Wurzel: <KeySpan>\sqrt</KeySpan>, <KeySpan>\nthroot</KeySpan>
-                </p>
-                <p>
-                  Symbole: <KeySpan>{'\\<NAME>'}</KeySpan>, e.g.{' '}
-                  <KeySpan>\neq</KeySpan> (≠), <KeySpan>\pm</KeySpan> (±), ...
-                </p>
-                <p>
-                  Funktionen: <KeySpan>sin</KeySpan>, <KeySpan>cos</KeySpan>,{' '}
-                  <KeySpan>ln</KeySpan>, ...
-                </p>
-              </>
-            )
-          },
-        },
-        richText: {
-          toggleStrongTitle: 'Fett (Strg + B)',
-          toggleEmphasizeTitle: 'Kursiv (Strg + I)',
-        },
-        suggestions: {
-          noResultsMessage: 'Keine Ergebnisse gefunden',
-        },
-      },
-    }),
-  }
+      visible: true,
+      icon: <IconFallback />,
+    },
+
+    // Cannot be created by user directly
+    {
+      type: EditorPluginType.Rows,
+      plugin: createRowsPlugin(),
+    },
+    {
+      type: EditorPluginType.Unsupported,
+      plugin: unsupportedPlugin,
+    },
+  ]
 }

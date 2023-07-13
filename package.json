@@ -10,7 +10,7 @@
   "author": "Serlo Education e.V.",
   "type": "module",
   "scripts": {
-    "_eslint": "eslint \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
+    "_eslint": "eslint --config ./.eslintrc.json \"{src/**/*,*}.{js,jsx,ts,tsx}\"",
     "_prettier": "prettier .",
     "build": "next build",
     "dev": "yarn start:server-with-edusharing",
@@ -29,7 +29,7 @@
     "lint": "run-p \"lint:*\"",
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
-    "lint:tsc": "tsc --noEmit",
+    "lint:tsc": "tsc --noEmit --project tsconfig.json",
     "start:edusharing": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch src/server-utils.ts --watch src/edusharing-server --watch src/shared src/edusharing-server/start-server.ts",
     "start:mongodb": "yarn scripts:is-server-running --reverse-mode 27017 && docker-compose up -d || node -e 'process.exit(0)'",
     "start:server": "yarn start:mongodb && TS_NODE_PROJECT='tsconfig.server.json' NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch src --watch .env --ignore src/edusharing-server src/backend/server.ts",
@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@next/env": "^13.2.3",
