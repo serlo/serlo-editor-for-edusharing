@@ -1,10 +1,8 @@
-import { EditorPluginType } from '@frontend/src/serlo-editor-integration/types/editor-plugin-type'
-
 export const kitchenSink = {
-  plugin: EditorPluginType.Rows,
+  plugin: 'rows',
   state: [
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -14,7 +12,7 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -24,7 +22,7 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'p',
@@ -43,7 +41,7 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -53,13 +51,13 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Multimedia,
+      plugin: 'multimedia',
       state: {
         explanation: {
-          plugin: EditorPluginType.Rows,
+          plugin: 'rows',
           state: [
             {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   type: 'p',
@@ -78,7 +76,7 @@ export const kitchenSink = {
       },
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -88,14 +86,14 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Highlight,
+      plugin: 'highlight',
       state: {
         code: "console.log('Hallo Welt!')",
         language: 'javascript',
       },
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -105,11 +103,11 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Box,
+      plugin: 'box',
       state: {
         type: 'quote',
         title: {
-          plugin: EditorPluginType.Text,
+          plugin: 'text',
           state: [
             {
               type: 'p',
@@ -123,10 +121,10 @@ export const kitchenSink = {
         },
         anchorId: 'box82025',
         content: {
-          plugin: EditorPluginType.Rows,
+          plugin: 'rows',
           state: [
             {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   type: 'p',
@@ -143,7 +141,7 @@ export const kitchenSink = {
       },
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -157,7 +155,7 @@ export const kitchenSink = {
       state: '54210',
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -167,14 +165,14 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Spoiler,
+      plugin: 'spoiler',
       state: {
         title: 'Spoilertitel',
         content: {
-          plugin: EditorPluginType.Rows,
+          plugin: 'rows',
           state: [
             {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
             },
           ],
@@ -182,7 +180,7 @@ export const kitchenSink = {
       },
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'h',
@@ -192,7 +190,7 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           type: 'p',
@@ -205,12 +203,12 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.InputExercise,
+      plugin: 'inputExercise',
       state: {
         answers: [
           {
             feedback: {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   children: [
@@ -231,7 +229,7 @@ export const kitchenSink = {
       },
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           children: [
@@ -245,7 +243,7 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.Text,
+      plugin: 'text',
       state: [
         {
           children: [
@@ -258,12 +256,12 @@ export const kitchenSink = {
       ],
     },
     {
-      plugin: EditorPluginType.ScMcExercise,
+      plugin: 'scMcExercise',
       state: {
         answers: [
           {
             content: {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   children: [
@@ -276,7 +274,7 @@ export const kitchenSink = {
               ],
             },
             feedback: {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   children: [
@@ -292,7 +290,7 @@ export const kitchenSink = {
           },
           {
             content: {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   children: [
@@ -305,7 +303,7 @@ export const kitchenSink = {
               ],
             },
             feedback: {
-              plugin: EditorPluginType.Text,
+              plugin: 'text',
               state: [
                 {
                   children: [
