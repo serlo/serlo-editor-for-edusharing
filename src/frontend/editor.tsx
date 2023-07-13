@@ -15,7 +15,6 @@ import {
   selectDocuments,
 } from '@frontend/src/serlo-editor/store'
 import { Renderer } from '@frontend/src/serlo-editor/renderer'
-import { EditorPlugin } from '@frontend/src/serlo-editor/internal__plugin'
 
 import { Layout } from './layout'
 import {
@@ -26,31 +25,18 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { useLoggedInData } from '@/contexts/logged-in-data-context'
-import IconImage from '@frontend/src/assets-webkit/img/editor/icon-image.svg'
-import IconInjection from '@frontend/src/assets-webkit/img/editor/icon-injection.svg'
-import { createPlugins } from './plugins'
-import { useInstanceData } from '@frontend/src/contexts/instance-context'
 import { PluginsContextPlugins } from '@/serlo-editor/core/contexts/plugins-context'
-import { createEdusharingAssetPlugin } from './plugins/edusharing-asset'
-import { createSerloInjectionPlugin } from './plugins/serlo-injection'
 
 export interface EditorProps {
-  plugins: Record<string, EditorPlugin>
+  plugins: PluginsContextPlugins
   state: StorageFormat
   providerUrl: string
   ltik: string
 }
 
 export function Editor({ plugins, state, providerUrl, ltik }: EditorProps) {
-  const { lang } = useInstanceData()
-  const editorPlugins = createPlugins({
-    instance: lang,
-    ltik: ltik,
-  })
-
   return (
-    <Edtr plugins={editorPlugins} initialState={state.document} editable>
+    <Edtr plugins={plugins} initialState={state.document} editable>
       {(document) => {
         return (
           <EditInner
