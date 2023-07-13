@@ -154,31 +154,32 @@ export const kitchenSink = {
       plugin: 'serloInjection',
       state: '54210',
     },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Spoiler' }],
-        },
-      ],
-    },
-    {
-      plugin: 'spoiler',
-      state: {
-        title: 'Spoilertitel',
-        content: {
-          plugin: 'rows',
-          state: [
-            {
-              plugin: 'text',
-              state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
-            },
-          ],
-        },
-      },
-    },
+    // TODO: Reactivate when fixed in `frontend`
+    // {
+    //   plugin: 'text',
+    //   state: [
+    //     {
+    //       type: 'h',
+    //       level: 2,
+    //       children: [{ text: 'Spoiler' }],
+    //     },
+    //   ],
+    // },
+    // {
+    //   plugin: 'spoiler',
+    //   state: {
+    //     title: 'Spoilertitel',
+    //     content: {
+    //       plugin: 'rows',
+    //       state: [
+    //         {
+    //           plugin: 'text',
+    //           state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
+    //         },
+    //       ],
+    //     },
+    //   },
+    // },
     {
       plugin: 'text',
       state: [

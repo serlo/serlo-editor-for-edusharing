@@ -92,7 +92,7 @@ export function createPlugins({
         explanation: {
           plugin: EditorPluginType.Rows,
           config: {
-            allowedPlugins: pluginsThatCannotContainOtherPlugins,
+            allowedPlugins: [EditorPluginType.Text],
           },
         },
         allowedPlugins: ['edusharingAsset', EditorPluginType.Geogebra],
@@ -100,14 +100,15 @@ export function createPlugins({
       visible: true,
       icon: <IconMultimedia />,
     },
-    {
-      type: EditorPluginType.Spoiler,
-      plugin: createSpoilerPlugin({
-        allowedPlugins: pluginsThatCannotContainOtherPlugins,
-      }),
-      visible: true,
-      icon: <IconSpoiler />,
-    },
+    // TODO: Reactivate when fixed in `frontend`
+    // {
+    //   type: EditorPluginType.Spoiler,
+    //   plugin: createSpoilerPlugin({
+    //     allowedPlugins: pluginsThatCannotContainOtherPlugins,
+    //   }),
+    //   visible: true,
+    //   icon: <IconSpoiler />,
+    // },
     {
       type: EditorPluginType.SerloTable,
       plugin: createSerloTablePlugin({
