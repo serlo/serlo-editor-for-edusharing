@@ -130,16 +130,16 @@ it('Assets from edu-sharing can be included', () => {
 })
 
 function embedEdusharingAsset() {
-  cy.get('div.add-trigger').eq(1).click()
+  cy.get('.add-trigger').eq(1).click()
   cy.contains('Edu-sharing Inhalt').click()
-  cy.get('[data-testid="edusharing-plugin-button"]').click()
+  cy.get('[data-testid="edusharing-plugin-button"]:first').click()
   // TODO: Find a way around this wait
   cy.wait(6000)
 }
 
 function changeContent() {
   // Create a new plugin
-  cy.get('div.add-trigger').eq(1).click()
+  cy.get('.add-trigger').eq(1).click()
   // Search for the description text of the box plugin to get correct button to click. Searching for string "Box" does sometimes lead to issues when the string "Box" can be found elsewhere on the page.
   cy.contains('Rahmen für Beispiele').click()
   cy.contains('Vorgehen').click()
