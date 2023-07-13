@@ -38,7 +38,7 @@ export function createPlugins({
     EditorPluginType.Highlight,
     EditorPluginType.InputExercise,
     EditorPluginType.ScMcExercise,
-    'edusharing-asset',
+    'edusharingAsset',
   ]
 
   return [
