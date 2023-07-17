@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
+import { faNewspaper } from '@fortawesome/free-solid-svg-icons'
 
-import { OverlayInput } from '@frontend/src/serlo-editor/core'
 import {
-  EditorInlineSettings,
   EditorInput,
   PreviewOverlay,
-  styled,
 } from '@frontend/src/serlo-editor/editor-ui'
-import { Icon, faNewspaper } from '@frontend/src/serlo-editor/ui'
+import { FaIcon } from '@frontend/src/components/fa-icon'
+import styled from 'styled-components'
 
 import { SerloInjectionProps } from '.'
 import { useSerloInjectionConfig } from './config'
 import { SerloInjectionRenderer } from './renderer'
+import { OverlayInput } from '@/serlo-editor/plugin/plugin-toolbar'
 
 const createURL = (id: string) => {
   const pureId =
@@ -59,11 +59,14 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
         </PreviewOverlay>
       ) : (
         <PlaceholderWrapper>
-          <Icon icon={faNewspaper} size="5x" />
+          <FaIcon
+            icon={faNewspaper}
+            className="relative w-full text-center text-[5rem] text-gray-400"
+          />
         </PlaceholderWrapper>
       )}
       {props.focused && !preview ? (
-        <EditorInlineSettings>
+        <div className="mt-4">
           <EditorInput
             label={config.i18n.label}
             placeholder={config.i18n.placeholder}
@@ -75,7 +78,7 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
             inputWidth="100%"
             ref={props.autofocusRef}
           />
-        </EditorInlineSettings>
+        </div>
       ) : null}
       {props.renderIntoSettings(
         <OverlayInput

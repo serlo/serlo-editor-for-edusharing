@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import { default as ToastNotice } from 'react-notify-toast'
 
 import { InstanceDataProvider } from '@frontend/src/contexts/instance-context'
 import {
@@ -10,6 +11,7 @@ import { Instance } from '@frontend/src/fetcher/graphql-types/operations'
 import { LoggedInDataProvider } from '@frontend/src/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@frontend/src/data-types'
 import { Renderer } from '@frontend/src/serlo-editor/renderer'
+import { PluginsContext } from '@frontend/src/serlo-editor/core/contexts/plugins-context'
 
 import type { EditorProps } from './editor'
 import { createPlugins } from './plugins'
@@ -36,6 +38,8 @@ export function SerloEditor({
   const plugins = createPlugins({ ltik: ltik })
   const initialDocumentState = state.document
 
+  const serloLoggedInData = getLoggedInData(Instance.De) as LoggedInData
+
   return (
     <>
       <Head>
@@ -44,9 +48,7 @@ export function SerloEditor({
       <InstanceDataProvider
         value={getInstanceDataByLang(Instance.De) as InstanceData | null}
       >
-        <LoggedInDataProvider
-          value={getLoggedInData(Instance.De) as LoggedInData}
-        >
+        <LoggedInDataProvider value={serloLoggedInData}>
           <div className="serlo-editor-hacks">
             {mayEdit ? (
               <Editor
@@ -57,13 +59,16 @@ export function SerloEditor({
               />
             ) : (
               <Layout>
-                <Renderer
-                  plugins={plugins}
-                  documentState={initialDocumentState}
-                />
+                <PluginsContext.Provider value={plugins}>
+                  <Renderer
+                    plugins={plugins}
+                    documentState={initialDocumentState}
+                  />
+                </PluginsContext.Provider>
               </Layout>
             )}
           </div>
+          <ToastNotice />
         </LoggedInDataProvider>
       </InstanceDataProvider>
     </>

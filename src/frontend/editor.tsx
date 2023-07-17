@@ -15,7 +15,6 @@ import {
   selectDocuments,
 } from '@frontend/src/serlo-editor/store'
 import { Renderer } from '@frontend/src/serlo-editor/renderer'
-import { EditorPlugin } from '@frontend/src/serlo-editor/internal__plugin'
 
 import { Layout } from './layout'
 import {
@@ -26,9 +25,10 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
+import { PluginsContextPlugins } from '@/serlo-editor/core/contexts/plugins-context'
 
 export interface EditorProps {
-  plugins: Record<string, EditorPlugin>
+  plugins: PluginsContextPlugins
   state: StorageFormat
   providerUrl: string
   ltik: string
@@ -36,7 +36,7 @@ export interface EditorProps {
 
 export function Editor({ plugins, state, providerUrl, ltik }: EditorProps) {
   return (
-    <Edtr plugins={plugins} initialState={state.document}>
+    <Edtr plugins={plugins} initialState={state.document} editable>
       {(document) => {
         return (
           <EditInner

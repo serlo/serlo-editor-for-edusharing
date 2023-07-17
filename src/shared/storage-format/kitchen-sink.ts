@@ -46,6 +46,41 @@ export const kitchenSink = {
         {
           type: 'h',
           level: 2,
+          children: [{ text: 'Multimedia-Inhalt' }],
+        },
+      ],
+    },
+    {
+      plugin: 'multimedia',
+      state: {
+        explanation: {
+          plugin: 'rows',
+          state: [
+            {
+              plugin: 'text',
+              state: [
+                {
+                  type: 'p',
+                  children: [{ text: 'Erklärung zum Bild' }],
+                },
+              ],
+            },
+          ],
+        },
+        illustrating: true,
+        multimedia: {
+          plugin: 'edusharingAsset',
+          state: {},
+        },
+        width: 50,
+      },
+    },
+    {
+      plugin: 'text',
+      state: [
+        {
+          type: 'h',
+          level: 2,
           children: [{ text: 'Quelltext' }],
         },
       ],
@@ -119,31 +154,32 @@ export const kitchenSink = {
       plugin: 'serloInjection',
       state: '54210',
     },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Spoiler' }],
-        },
-      ],
-    },
-    {
-      plugin: 'spoiler',
-      state: {
-        title: 'Spoilertitel',
-        content: {
-          plugin: 'rows',
-          state: [
-            {
-              plugin: 'text',
-              state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
-            },
-          ],
-        },
-      },
-    },
+    // TODO: Reactivate when fixed in `frontend`
+    // {
+    //   plugin: 'text',
+    //   state: [
+    //     {
+    //       type: 'h',
+    //       level: 2,
+    //       children: [{ text: 'Spoiler' }],
+    //     },
+    //   ],
+    // },
+    // {
+    //   plugin: 'spoiler',
+    //   state: {
+    //     title: 'Spoilertitel',
+    //     content: {
+    //       plugin: 'rows',
+    //       state: [
+    //         {
+    //           plugin: 'text',
+    //           state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
+    //         },
+    //       ],
+    //     },
+    //   },
+    // },
     {
       plugin: 'text',
       state: [
@@ -155,20 +191,136 @@ export const kitchenSink = {
       ],
     },
     {
+      plugin: 'text',
+      state: [
+        {
+          type: 'p',
+          children: [
+            {
+              text: 'Was ist 1+1?',
+            },
+          ],
+        },
+      ],
+    },
+    {
       plugin: 'inputExercise',
+      state: {
+        answers: [
+          {
+            feedback: {
+              plugin: 'text',
+              state: [
+                {
+                  children: [
+                    {
+                      text: '',
+                    },
+                  ],
+                  type: 'p',
+                },
+              ],
+            },
+            isCorrect: true,
+            value: '2',
+          },
+        ],
+        type: 'input-number-exact-match-challenge',
+        unit: '',
+      },
     },
     {
       plugin: 'text',
       state: [
         {
-          type: 'h',
+          children: [
+            {
+              text: 'Single / multiple choice Aufgabe',
+            },
+          ],
           level: 2,
-          children: [{ text: 'Choice Exercise' }],
+          type: 'h',
+        },
+      ],
+    },
+    {
+      plugin: 'text',
+      state: [
+        {
+          children: [
+            {
+              text: 'Wähle die richtigen Antworten aus:',
+            },
+          ],
+          type: 'p',
         },
       ],
     },
     {
       plugin: 'scMcExercise',
+      state: {
+        answers: [
+          {
+            content: {
+              plugin: 'text',
+              state: [
+                {
+                  children: [
+                    {
+                      text: 'Antwort A',
+                    },
+                  ],
+                  type: 'p',
+                },
+              ],
+            },
+            feedback: {
+              plugin: 'text',
+              state: [
+                {
+                  children: [
+                    {
+                      text: '',
+                    },
+                  ],
+                  type: 'p',
+                },
+              ],
+            },
+            isCorrect: true,
+          },
+          {
+            content: {
+              plugin: 'text',
+              state: [
+                {
+                  children: [
+                    {
+                      text: 'Antwort B',
+                    },
+                  ],
+                  type: 'p',
+                },
+              ],
+            },
+            feedback: {
+              plugin: 'text',
+              state: [
+                {
+                  children: [
+                    {
+                      text: '',
+                    },
+                  ],
+                  type: 'p',
+                },
+              ],
+            },
+            isCorrect: false,
+          },
+        ],
+        isSingleChoice: false,
+      },
     },
   ],
 }
