@@ -14,7 +14,7 @@
     "_prettier": "prettier .",
     "build": "next build",
     "dev": "yarn start:server-with-edusharing",
-    "docker:build": "docker build -t serlo-editor-for-edusharing-local-build:latest . && docker image prune --force --filter label=stage=build",
+    "docker:build": "docker build -t serlo-editor-for-edusharing-local-build:latest .",
     "docker:rm": "docker image rm serlo-editor-for-edusharing-local-build",
     "docker:run": "yarn start:mongodb && docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name serlo-editor-for-edusharing-from-local-build serlo-editor-for-edusharing-local-build",
     "docker:run-sh": "yarn start:mongodb && docker run --add-host=host.docker.internal:host-gateway --entrypoint sh -it --env-file .env --env-file .env-docker -p 3000:3000 --name serlo-editor-for-edusharing-from-local-build serlo-editor-for-edusharing-local-build",
