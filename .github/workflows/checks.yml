@@ -90,51 +90,51 @@ jobs:
       - run: yarn test
 
   # https://docs.cypress.io/guides/continuous-integration/github-actions#Basic-Setup
-  # cypress:
-  #   name: Run cypress tests (locally)
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         submodules: 'recursive'
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         cache: yarn
-  #         node-version: 18
+  cypress:
+    name: Run cypress tests (locally)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 18
 
-  #     - name: Cypress run
-  #       uses: cypress-io/github-action@v5
-  #       with:
-  #         install-command: yarn --immutable --immutable-cache
-  #         browser: chrome
-  #         start: yarn start:server
-  #         wait-on: 'http://localhost:3000'
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          install-command: yarn --immutable --immutable-cache
+          browser: chrome
+          start: yarn start:server
+          wait-on: 'http://localhost:3000'
 
-  #     - uses: actions/upload-artifact@v3
-  #       if: failure()
-  #       with:
-  #         name: cypress-outcome
-  #         path: |
-  #           cypress/screenshots
-  #           cypress/videos
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-outcome
+          path: |
+            cypress/screenshots
+            cypress/videos
 
-  # cypress-docker:
-  #   name: Run cypress tests (with docker build)
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         submodules: 'recursive'
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         cache: yarn
-  #         node-version: 18
+  cypress-docker:
+    name: Run cypress tests (with docker build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 18
 
-  #     - name: Cypress run
-  #       uses: cypress-io/github-action@v5
-  #       with:
-  #         install-command: yarn --immutable --immutable-cache
-  #         browser: chrome
-  #         build: yarn docker:build
-  #         start: yarn docker:run
-  #         wait-on: 'http://localhost:3000'
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          install-command: yarn --immutable --immutable-cache
+          browser: chrome
+          build: yarn docker:build
+          start: yarn docker:run
+          wait-on: 'http://localhost:3000'

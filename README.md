@@ -26,9 +26,10 @@ development. The most important ones are:
      Serlo editor using LTI
   2. The Serlo editor: Listens on port 3000
 - `yarn e2e:docker-build`: Build the docker container and run cypress e2e tests.
-  IMPORTANT: Confirm this runs without errors before merging into `main`.
-  Cypress tests are currently not part of the Github workflows because they were
-  flaky in the CI pipeline and kept failing.
+  IMPORTANT: Uncomment test in `editor.cy.ts` first. Confirm this runs without
+  errors before merging into `main`. Cypress tests are temporarily disabled in
+  the Github workflows because they were flaky in the CI pipeline and kept
+  failing.
 - `yarn test`: Run all jest tests.
 - `yarn lint`: Run all lints (eslint, prettier, ...).
 - `yarn format`: Format all source code.
