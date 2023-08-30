@@ -140,21 +140,8 @@ export const kitchenSink = {
         },
       },
     },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Serlo Injection' }],
-        },
-      ],
-    },
-    {
-      plugin: 'serloInjection',
-      state: '54210',
-    },
-    // TODO: Reactivate when fixed in `frontend`
+    // Deactivated temporarily. Spoiler could not be uncollapsed in no-edit view.
+    // TODO Reactivate this when fixed
     // {
     //   plugin: 'text',
     //   state: [
@@ -174,12 +161,26 @@ export const kitchenSink = {
     //       state: [
     //         {
     //           plugin: 'text',
-    //           state: [{ type: 'p', children: [{ text: 'Inhalte' }] }],
+    //           state: [{ type: 'p', children: [{ text: 'Spoilerinhalt' }] }],
     //         },
     //       ],
     //     },
     //   },
     // },
+    {
+      plugin: 'text',
+      state: [
+        {
+          type: 'h',
+          level: 2,
+          children: [{ text: 'Serlo Injection' }],
+        },
+      ],
+    },
+    {
+      plugin: 'serloInjection',
+      state: '54210',
+    },
     {
       plugin: 'text',
       state: [

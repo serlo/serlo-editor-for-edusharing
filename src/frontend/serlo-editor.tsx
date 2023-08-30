@@ -11,12 +11,13 @@ import { Instance } from '@frontend/src/fetcher/graphql-types/operations'
 import { LoggedInDataProvider } from '@frontend/src/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@frontend/src/data-types'
 import { Renderer } from '@frontend/src/serlo-editor/renderer'
-import { PluginsContext } from '@frontend/src/serlo-editor/core/contexts/plugins-context'
+import { editorPlugins } from '@/serlo-editor/plugin/helpers/editor-plugins'
 
 import type { EditorProps } from './editor'
 import { createPlugins } from './plugins'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
+import { PluginToolMenuCustomizationContext } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-tool-menu-customization-context'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor)
@@ -35,7 +36,7 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
-  const plugins = createPlugins({ ltik: ltik })
+  editorPlugins.init(createPlugins({ ltik: ltik }))
   const initialDocumentState = state.document
 
   const serloLoggedInData = getLoggedInData(Instance.De) as LoggedInData
@@ -49,25 +50,19 @@ export function SerloEditor({
         value={getInstanceDataByLang(Instance.De) as InstanceData | null}
       >
         <LoggedInDataProvider value={serloLoggedInData}>
-          <div className="serlo-editor-hacks">
-            {mayEdit ? (
-              <Editor
-                plugins={plugins}
-                state={state}
-                providerUrl={providerUrl}
-                ltik={ltik}
-              />
-            ) : (
-              <Layout>
-                <PluginsContext.Provider value={plugins}>
-                  <Renderer
-                    plugins={plugins}
-                    documentState={initialDocumentState}
-                  />
-                </PluginsContext.Provider>
-              </Layout>
-            )}
-          </div>
+          <PluginToolMenuCustomizationContext.Provider
+            value={{ hideAnchorLinkButton: true }}
+          >
+            <div className="serlo-editor-hacks">
+              {mayEdit ? (
+                <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+              ) : (
+                <Layout>
+                  <Renderer documentState={initialDocumentState} />
+                </Layout>
+              )}
+            </div>
+          </PluginToolMenuCustomizationContext.Provider>
           <ToastNotice />
         </LoggedInDataProvider>
       </InstanceDataProvider>

@@ -11,7 +11,8 @@ import styled from 'styled-components'
 import { SerloInjectionProps } from '.'
 import { useSerloInjectionConfig } from './config'
 import { SerloInjectionRenderer } from './renderer'
-import { OverlayInput } from '@/serlo-editor/plugin/plugin-toolbar'
+import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
+import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
 
 const createURL = (id: string) => {
   const pureId =
@@ -26,6 +27,7 @@ const PlaceholderWrapper = styled.div({
 })
 
 export const SerloInjectionEditor = (props: SerloInjectionProps) => {
+  const { focused, id } = props
   const config = useSerloInjectionConfig(props.config)
   const [cache, setCache] = useState(props.state.value)
   const [preview, setPreview] = useState(false)
@@ -45,6 +47,7 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
 
   return (
     <>
+      {renderPluginToolbar()}
       {cache ? (
         <PreviewOverlay
           focused={props.focused || false}
@@ -80,16 +83,17 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
           />
         </div>
       ) : null}
-      {props.renderIntoSettings(
-        <OverlayInput
-          label={config.i18n.label}
-          placeholder={config.i18n.placeholder}
-          value={props.state.value}
-          onChange={(e) => {
-            props.state.set(e.target.value)
-          }}
-        />
-      )}
     </>
   )
+
+  function renderPluginToolbar() {
+    if (!focused) return null
+
+    return (
+      <PluginToolbar
+        pluginType="serloInjection"
+        pluginControls={<PluginDefaultTools pluginId={id} />}
+      />
+    )
+  }
 }

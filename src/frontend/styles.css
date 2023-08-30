@@ -18,6 +18,13 @@
     @apply ece-button bg-transparent text-sky-800 hover:bg-sky-100;
   }
 
+  /* HACK: This was needed to position the ModalWithCloseButton like on serlo.org. But this should instead be fixed in `frontend` */
+  .ReactModal__Content {
+    transform: translate(-50%, 0);
+    max-height: 100%;
+    overflow: auto;
+  }
+
   /*
    * Fix for misplacement of slate placeholders
    *
