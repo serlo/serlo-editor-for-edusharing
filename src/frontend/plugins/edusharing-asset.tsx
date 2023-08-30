@@ -13,6 +13,8 @@ import {
 } from '@frontend/src/serlo-editor/plugin'
 
 import { EdusharingAssetDecoder } from '../../shared/decoders'
+import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
+import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
 
 const state = object({
   edusharingAsset: optional(
@@ -42,7 +44,7 @@ export interface EdusharingConfig {
 type State = typeof state
 type Props = EditorPluginProps<State, EdusharingConfig>
 
-function EdusharingAsset({ state, editable, focused, config }: Props) {
+function EdusharingAsset({ state, editable, focused, config, id }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
   const { edusharingAsset } = state
@@ -117,36 +119,50 @@ function EdusharingAsset({ state, editable, focused, config }: Props) {
   }, [state.edusharingAsset])
 
   return (
-    <figure
-      className={clsx(
-        'flex items-center justify-center',
-        !edusharingAsset.defined && 'h-40 w-full',
-        (focused || !edusharingAsset.defined) && 'border border-gray-400 p-1'
-      )}
-    >
-      {renderModal()}
-      {edusharingAsset.defined ? (
-        renderEmbed()
-      ) : (
-        <Image
-          className="block opacity-50"
-          src="/edusharing.svg"
-          alt="Edusharing Logo"
-          width="100"
-          height="100"
-        />
-      )}
-      {editable && (!edusharingAsset.defined || focused) ? (
-        <button
-          className="ece-button-blue absolute right-2 bottom-2 text-sm"
-          onClick={() => setModalIsOpen(true)}
-          data-testid="edusharing-plugin-button"
-        >
-          Datei von edu-sharing einbinden
-        </button>
-      ) : null}
-    </figure>
+    <>
+      {renderPluginToolbar()}
+      <figure
+        className={clsx(
+          'flex items-center justify-center',
+          !edusharingAsset.defined && 'h-40 w-full',
+          (focused || !edusharingAsset.defined) && 'border border-gray-400 p-1'
+        )}
+      >
+        {renderModal()}
+        {edusharingAsset.defined ? (
+          renderEmbed()
+        ) : (
+          <Image
+            className="block opacity-50"
+            src="/edusharing.svg"
+            alt="Edusharing Logo"
+            width="100"
+            height="100"
+          />
+        )}
+        {editable && (!edusharingAsset.defined || focused) ? (
+          <button
+            className="ece-button-blue absolute right-2 bottom-2 text-sm"
+            onClick={() => setModalIsOpen(true)}
+            data-testid="edusharing-plugin-button"
+          >
+            Datei von edu-sharing einbinden
+          </button>
+        ) : null}
+      </figure>
+    </>
   )
+
+  function renderPluginToolbar() {
+    if (!focused) return null
+
+    return (
+      <PluginToolbar
+        pluginType="edusharingAsset"
+        pluginControls={<PluginDefaultTools pluginId={id} />}
+      />
+    )
+  }
 
   function renderEmbed() {
     if (embedHtml == null) return

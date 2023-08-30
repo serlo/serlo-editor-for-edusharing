@@ -25,26 +25,19 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { PluginsContextPlugins } from '@/serlo-editor/core/contexts/plugins-context'
 
 export interface EditorProps {
-  plugins: PluginsContextPlugins
   state: StorageFormat
   providerUrl: string
   ltik: string
 }
 
-export function Editor({ plugins, state, providerUrl, ltik }: EditorProps) {
+export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
-    <Edtr plugins={plugins} initialState={state.document} editable>
+    <Edtr initialState={state.document} editable>
       {(document) => {
         return (
-          <EditInner
-            plugins={plugins}
-            ltik={ltik}
-            state={state}
-            providerUrl={providerUrl}
-          >
+          <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
             {document}
           </EditInner>
         )
@@ -55,7 +48,6 @@ export function Editor({ plugins, state, providerUrl, ltik }: EditorProps) {
 
 function EditInner({
   children,
-  plugins,
   ltik,
   state,
   providerUrl,
@@ -204,7 +196,7 @@ function EditInner({
       <>
         <Toolbar mode="render" setIsEditing={setIsEditing} />
         <Layout>
-          <Renderer plugins={plugins} documentState={state.document} />
+          <Renderer documentState={state.document} />
         </Layout>
       </>
     )

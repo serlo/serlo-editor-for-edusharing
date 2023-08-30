@@ -9,7 +9,6 @@ import IconSpoiler from '@/assets-webkit/img/editor/icon-spoiler.svg'
 import IconTable from '@/assets-webkit/img/editor/icon-table.svg'
 import IconText from '@/assets-webkit/img/editor/icon-text.svg'
 import IconFallback from '@/assets-webkit/img/editor/icon-fallback.svg'
-import { PluginsContextPlugins } from '@/serlo-editor/core/contexts/plugins-context'
 import { createBoxPlugin } from '@/serlo-editor/plugins/box'
 import { equationsPlugin } from '@/serlo-editor/plugins/equations'
 import { geoGebraPlugin } from '@/serlo-editor/plugins/geogebra'
@@ -25,12 +24,9 @@ import { createSerloInjectionPlugin } from './serlo-injection'
 import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
 import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
 import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
+import { PluginsWithData } from '@frontend/src/serlo-editor/plugin/helpers/editor-plugins'
 
-export function createPlugins({
-  ltik,
-}: {
-  ltik: string
-}): PluginsContextPlugins {
+export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
   const pluginsThatCannotContainOtherPlugins = [
     EditorPluginType.Text,
     EditorPluginType.Equations,
@@ -45,7 +41,7 @@ export function createPlugins({
     {
       type: EditorPluginType.Text,
       plugin: createTextPlugin({ serloLinkSearch: false }),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconText />,
     },
     {
@@ -53,37 +49,37 @@ export function createPlugins({
       plugin: createBoxPlugin({
         allowedPlugins: pluginsThatCannotContainOtherPlugins,
       }),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconBox />,
     },
     {
-      type: 'edusharingAsset', // TODO This could be EditorPluginType.EdusharingAsset in the future, but we need to figure out how to extend the type.
+      type: 'edusharingAsset',
       plugin: createEdusharingAssetPlugin({ ltik }),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconImage />,
     },
     {
       type: EditorPluginType.Equations,
       plugin: equationsPlugin,
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconEquation />,
     },
     {
       type: EditorPluginType.Geogebra,
       plugin: geoGebraPlugin,
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconGeogebra />,
     },
     {
       type: EditorPluginType.Highlight,
       plugin: createHighlightPlugin(),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconHighlight />,
     },
     {
-      type: 'serloInjection', // TODO This could be EditorPluginType.SerloInjection in the future, but we need to figure out how to extend the type.
+      type: 'serloInjection',
       plugin: createSerloInjectionPlugin(),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconInjection />,
     },
     {
@@ -97,16 +93,16 @@ export function createPlugins({
         },
         allowedPlugins: ['edusharingAsset', EditorPluginType.Geogebra],
       }),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconMultimedia />,
     },
-    // TODO: Reactivate when fixed in `frontend`
+    // NOTE: Deactivated because does not work in no-edit view.
     // {
     //   type: EditorPluginType.Spoiler,
     //   plugin: createSpoilerPlugin({
     //     allowedPlugins: pluginsThatCannotContainOtherPlugins,
     //   }),
-    //   visible: true,
+    //   visibleInSuggestions: true,
     //   icon: <IconSpoiler />,
     // },
     {
@@ -114,7 +110,7 @@ export function createPlugins({
       plugin: createSerloTablePlugin({
         allowImageInTableCells: false,
       }),
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconTable />,
     },
     {
@@ -125,7 +121,7 @@ export function createPlugins({
         defaultDescription:
           'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
       },
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconFallback />,
     },
     {
@@ -136,7 +132,7 @@ export function createPlugins({
         defaultDescription:
           'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
       },
-      visible: true,
+      visibleInSuggestions: true,
       icon: <IconFallback />,
     },
 
