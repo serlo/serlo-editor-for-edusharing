@@ -54,31 +54,30 @@ it('Button "Saved named version" saves a named version', () => {
   expectSavedVersionWithComment('version-name')
 })
 
-// TODO Reenable test
-// describe('Feature to automatically save the document', () => {
-//   it('The editor saves automatically when it is open for long enough after there have been changes made.', () => {
-//     openSerloEditorWithLTI()
+describe('Feature to automatically save the document', () => {
+  it('The editor saves automatically when it is open for long enough after there have been changes made.', () => {
+    openSerloEditorWithLTI()
 
-//     expectEditorOpenedSuccessfully()
+    expectEditorOpenedSuccessfully()
 
-//     changeContent()
+    changeContent()
 
-//     cy.wait(6000)
-//     expectSavedVersionWithComment(null)
-//   })
+    cy.wait(6000)
+    expectSavedVersionWithComment(null)
+  })
 
-//   it('The editor does not save automatically when there are no changes', () => {
-//     openSerloEditorWithLTI()
+  it('The editor does not save automatically when there are no changes', () => {
+    openSerloEditorWithLTI()
 
-//     expectEditorOpenedSuccessfully()
+    expectEditorOpenedSuccessfully()
 
-//     // Wait 8 seconds -> Autosave is set to be done all 5 seconds
-//     cy.wait(8000)
-//     cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-//       expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
-//     })
-//   })
-// })
+    // Wait 8 seconds -> Autosave is set to be done all 5 seconds
+    cy.wait(8000)
+    cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
+      expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
+    })
+  })
+})
 
 it('Saved versions can be opened again', () => {
   openSerloEditorWithLTI()
@@ -97,27 +96,26 @@ it('Saved versions can be opened again', () => {
   cy.contains('Vorgehen')
 })
 
-// TODO Reactivate test
-// it('Editor saves a named version of the document when the user navigates to another side', () => {
-//   const savedBySerloComment =
-//     'Diese Version wurde automatisch vom Serlo-Editor erstellt'
+it('Editor saves a named version of the document when the user navigates to another side', () => {
+  const savedBySerloComment =
+    'Diese Version wurde automatisch vom Serlo-Editor erstellt'
 
-//   openSerloEditorWithLTI()
+  openSerloEditorWithLTI()
 
-//   expectEditorOpenedSuccessfully()
+  expectEditorOpenedSuccessfully()
 
-//   changeContent()
+  changeContent()
 
-//   cy.wait(1000)
+  cy.wait(1000)
 
-//   cy.visit('http://example.org/')
-//   cy.contains('Example Domain') // Reload is finished
+  cy.visit('http://example.org/')
+  cy.contains('Example Domain') // Reload is finished
 
-//   // Wait so that there is enough time for the automatic save to happen when unloading the editor page.
-//   cy.wait(2000)
+  // Wait so that there is enough time for the automatic save to happen when unloading the editor page.
+  cy.wait(2000)
 
-//   expectSavedVersionWithComment(savedBySerloComment)
-// })
+  expectSavedVersionWithComment(savedBySerloComment)
+})
 
 it('Assets from edu-sharing can be included', () => {
   openSerloEditorWithLTI()
