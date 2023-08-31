@@ -10,6 +10,7 @@ import {
   optional,
   EditorPluginProps,
   EditorPlugin,
+  number,
 } from '@frontend/src/serlo-editor/plugin'
 
 import { EdusharingAssetDecoder } from '../../shared/decoders'
@@ -23,6 +24,7 @@ const state = object({
       nodeId: string(''),
     })
   ),
+  height: number(20),
 })
 
 export function createEdusharingAssetPlugin(
@@ -47,7 +49,7 @@ type Props = EditorPluginProps<State, EdusharingConfig>
 function EdusharingAsset({ state, editable, focused, config, id }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
-  const { edusharingAsset } = state
+  const { edusharingAsset, height } = state
   const [embedHtml, setEmbedHtml] = useState<string | null>(null)
 
   useEffect(() => {
@@ -160,6 +162,28 @@ function EdusharingAsset({ state, editable, focused, config, id }: Props) {
       <PluginToolbar
         pluginType="edusharingAsset"
         pluginControls={<PluginDefaultTools pluginId={id} />}
+        pluginSettings={
+          <>
+            <button
+              onClick={() =>
+                height.set((currentValue) => Math.min(currentValue + 2, 100))
+              }
+              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+              data-qa="plugin-edusharing-bigger-button"
+            >
+              Größer
+            </button>
+            <button
+              onClick={() =>
+                height.set((currentValue) => Math.max(currentValue - 2, 2))
+              }
+              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+              data-qa="plugin-edusharing-smaller-button"
+            >
+              Kleiner
+            </button>
+          </>
+        }
       />
     )
   }
@@ -170,11 +194,28 @@ function EdusharingAsset({ state, editable, focused, config, id }: Props) {
     // TODO: Remove fix when not needed any more...
     const fixedEmbedHtml = embedHtml.replaceAll('width:0px;', '')
 
-    // TODO: Sanatize embed html?!
+    const parser = new DOMParser()
+    let document = parser.parseFromString(fixedEmbedHtml, 'text/html')
+
+    const imgElement = document.querySelector('img')
+
+    if (imgElement) {
+      imgElement.style.height = `${height.get()}rem`
+    }
+
+    const videoElement = document.querySelector('video')
+
+    if (videoElement) {
+      videoElement.style.height = `${height.get()}rem`
+    }
+
+    const updatedEmbedHtml = document.body.innerHTML
+
+    // TODO: Sanatize embed html? But I observed that embedHtml for videos contains <script>
     return (
       <div
-        className="not-prose"
-        dangerouslySetInnerHTML={{ __html: fixedEmbedHtml }}
+        className="not-prose h-full overflow-auto"
+        dangerouslySetInnerHTML={{ __html: updatedEmbedHtml }}
       />
     )
   }
