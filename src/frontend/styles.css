@@ -1,6 +1,11 @@
 @tailwind components;
 
 @layer components {
+  /* HACK: Makes file name invisible (requested by RLP) in edusharing-plugin after embedding a file. Better solution: edu-sharing should modify the html they send. */
+  .license_permalink {
+    @apply invisible;
+  }
+
   .ece-button {
     @apply inline-block rounded-[4rem] py-1 px-2 transition-all;
     @apply cursor-pointer border-none font-bold no-underline;
