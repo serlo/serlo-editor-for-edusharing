@@ -125,8 +125,9 @@ function EdusharingAsset({ state, editable, focused, config, id }: Props) {
       {renderPluginToolbar()}
       <figure
         className={clsx(
-          'flex items-center justify-center',
-          !edusharingAsset.defined && 'h-40 w-full',
+          'flex items-center',
+          edusharingAsset.defined && 'justify-start',
+          !edusharingAsset.defined && 'h-40 w-full justify-center',
           (focused || !edusharingAsset.defined) && 'border border-gray-400 p-1'
         )}
       >
