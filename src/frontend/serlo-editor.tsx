@@ -17,7 +17,6 @@ import type { EditorProps } from './editor'
 import { createPlugins } from './plugins'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
-import { PluginToolMenuCustomizationContext } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-tool-menu-customization-context'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor)
@@ -50,19 +49,15 @@ export function SerloEditor({
         value={getInstanceDataByLang(Instance.De) as InstanceData | null}
       >
         <LoggedInDataProvider value={serloLoggedInData}>
-          <PluginToolMenuCustomizationContext.Provider
-            value={{ hideAnchorLinkButton: true }}
-          >
-            <div className="serlo-editor-hacks">
-              {mayEdit ? (
-                <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
-              ) : (
-                <Layout>
-                  <Renderer documentState={initialDocumentState} />
-                </Layout>
-              )}
-            </div>
-          </PluginToolMenuCustomizationContext.Provider>
+          <div className="serlo-editor-hacks">
+            {mayEdit ? (
+              <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+            ) : (
+              <Layout>
+                <Renderer documentState={initialDocumentState} />
+              </Layout>
+            )}
+          </div>
           <ToastNotice />
         </LoggedInDataProvider>
       </InstanceDataProvider>
