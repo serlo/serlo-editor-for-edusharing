@@ -10,7 +10,7 @@ import {
   selectPendingChanges,
   selectHasUndoActions,
   selectHasRedoActions,
-  selectSerializedRootDocument,
+  selectSerializedDocument,
   persistHistory,
   selectDocuments,
 } from '@frontend/src/serlo-editor/store'
@@ -25,6 +25,7 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
+import { ROOT } from '@/serlo-editor/store/root/constants'
 
 export interface EditorProps {
   state: StorageFormat
@@ -77,7 +78,7 @@ function EditInner({
     [providerUrl]
   )
   const getBodyForSave = useCallback(() => {
-    const document = selectSerializedRootDocument(store.getState())
+    const document = selectSerializedDocument(store.getState(), ROOT)
 
     if (document === null) {
       throw new Error(
