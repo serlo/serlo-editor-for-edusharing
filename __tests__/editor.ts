@@ -101,7 +101,7 @@ describe('endpoint "/platform/login"', () => {
   })
 
   function fetchLogin(params: Partial<typeof searchParams>) {
-    const url = new URL('http://localhost:3000/platform/login')
+    const url = new URL(process.env.EDITOR_URL + 'platform/login')
 
     for (const [name, value] of Object.entries(params)) {
       url.searchParams.append(name, value)
@@ -121,11 +121,11 @@ describe('endpoint "/platform/done"', () => {
   const validNonceValue = 'nonce-value'
   const validPayloadWithDataClaim = {
     iss: 'editor',
-    aud: 'http://localhost:3000/',
+    aud: process.env.EDITOR_URL,
     iat,
     exp: iat + 100,
     nonce: validNonceValue,
-    azp: 'http://localhost:3000/',
+    azp: process.env.EDITOR_URL,
     'https://purl.imsglobal.org/spec/lti/claim/deployment_id': '2',
     'https://purl.imsglobal.org/spec/lti/claim/message_type':
       'LtiDeepLinkingResponse',
@@ -138,12 +138,16 @@ describe('endpoint "/platform/done"', () => {
         },
         icon: {
           width: 'null',
-          url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/themes/default/images/common/mime-types/svg/file-image.svg',
+          url:
+            process.env.EDUSHARING_URL +
+            '/themes/default/images/common/mime-types/svg/file-image.svg',
           height: 'null',
         },
         type: 'ltiResourceLink',
         title: '2020-11-13-152700_392x305_scrot.png',
-        url: 'http://repository.127.0.0.1.nip.io:8100/edu-sharing/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
+        url:
+          process.env.EDUSHARING_URL +
+          '/rest/lti/v13/lti13/960c48d0-5e01-45ca-aaf6-d648269f0db2',
       },
     ],
   }
@@ -302,7 +306,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(400)
       expect(await response.text()).toBe(
-        'jwt audience invalid. expected: http://localhost:3000/'
+        `jwt audience invalid. expected: ${process.env.EDITOR_URL}`
       )
     })
 
@@ -458,7 +462,7 @@ describe('endpoint "/platform/done"', () => {
   }
 
   function fetchDone(init?: RequestInit) {
-    const url = 'http://localhost:3000/platform/done'
+    const url = process.env.EDITOR_URL + 'platform/done'
     return fetch(url, { method: 'POST', ...init })
   }
 })
