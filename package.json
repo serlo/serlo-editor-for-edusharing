@@ -29,7 +29,7 @@
     "lint": "run-p \"lint:*\"",
     "lint:eslint": "yarn _eslint",
     "lint:prettier": "yarn _prettier --check",
-    "lint:tsc": "tsc --noEmit --project tsconfig.json",
+    "lint:tsc": "tsc --noEmit --project tsconfig.excludingFrontendDependency.json",
     "scripts:is-server-running": "ts-node-esm --transpileOnly scripts/is-server-running.ts",
     "start:edusharing": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon --watch src/server-utils.ts --watch src/edusharing-server --watch src/shared src/edusharing-server/start-server.ts",
     "start:mongodb": "yarn scripts:is-server-running --reverse-mode 27017 && docker-compose up -d || node -e 'process.exit(0)'",
