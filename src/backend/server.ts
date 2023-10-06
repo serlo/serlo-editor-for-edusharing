@@ -50,6 +50,10 @@ if (process.env.NODE_ENV == 'production') {
 
 const nextJsRequestHandler = app.getRequestHandler()
 
+if (!process.env.MONGODB_URL) {
+  throw new Error('env `MONGODB_URL` needs to be specified')
+}
+
 const mongoUrl = new URL(process.env.MONGODB_URL)
 if (process.env.MONGODB_USERNAME && process.env.MONGODB_PASSWORD) {
   mongoUrl.username = encodeURI(process.env.MONGODB_USERNAME)
