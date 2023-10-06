@@ -57,24 +57,22 @@ if (process.env.MONGODB_USERNAME && process.env.MONGODB_PASSWORD) {
 }
 const mongoClient = new MongoClient(mongoUrl.href)
 
-const ltiMongoConnection: any = {
+const ltiMongoDBConfig = {
   url: process.env.MONGODB_URL,
+  ...(process.env.MONGODB_USERNAME && process.env.MONGODB_PASSWORD
+    ? {
+        connection: {
+          user: process.env.MONGODB_USERNAME,
+          pass: process.env.MONGODB_PASSWORD,
+        },
+      }
+    : {}),
 }
-if (process.env.MONGODB_USERNAME && process.env.MONGODB_PASSWORD) {
-  ltiMongoConnection.connection = {
-    user: process.env.MONGODB_USERNAME,
-    pass: process.env.MONGODB_PASSWORD,
-  }
-}
-
 Provider.setup(
-  process.env.EDITOR_KEY_FOR_SIGNING_COOKIES_AND_ENCRYPTING_DATABASE_ENTRIES, //
-  ltiMongoConnection,
+  process.env.EDITOR_KEY_FOR_SIGNING_COOKIES_AND_ENCRYPTING_DATABASE_ENTRIES,
+  ltiMongoDBConfig,
   {
-    cookies: {
-      secure: true,
-      sameSite: 'None',
-    },
+    cookies: { secure: true, sameSite: 'None' },
     devMode: false,
   }
 )
