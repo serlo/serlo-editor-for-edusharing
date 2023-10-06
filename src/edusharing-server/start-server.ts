@@ -3,7 +3,7 @@ import { EdusharingServer } from './server'
 
 loadEnvConfig()
 
-const edusharingPort = 8100
+const edusharingPort = parseInt(process.env.EDUSHARING_PORT, 10) || 8100
 const edusharingServer = new EdusharingServer()
 
 edusharingServer.listen(edusharingPort, () => {
