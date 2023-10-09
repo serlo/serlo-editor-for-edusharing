@@ -17,6 +17,7 @@ import { createInputExercisePlugin } from '@/serlo-editor/plugins/input-exercise
 import { createRowsPlugin } from '@/serlo-editor/plugins/rows'
 import { createScMcExercisePlugin } from '@/serlo-editor/plugins/sc-mc-exercise'
 import { createSerloTablePlugin } from '@/serlo-editor/plugins/serlo-table'
+import { exercisePlugin } from '@/serlo-editor/plugins/exercise'
 import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
 import { createTextPlugin } from '@/serlo-editor/plugins/text'
 import { createEdusharingAssetPlugin } from './edusharing-asset'
@@ -114,25 +115,25 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
       icon: <IconTable />,
     },
     {
-      type: EditorPluginType.InputExercise,
+      type: 'exercise',
       plugin: {
-        ...createInputExercisePlugin({}),
-        defaultTitle: 'Aufgabe mit Eingabefeld',
-        defaultDescription:
-          'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
+        ...exercisePlugin,
+        defaultTitle: 'Aufgabe mit interaktiven Elementen',
+        defaultDescription: '(Interaktive) Aufgabe',
       },
       visibleInSuggestions: true,
       icon: <IconFallback />,
     },
     {
+      type: EditorPluginType.InputExercise,
+      plugin: createInputExercisePlugin({}),
+      visibleInSuggestions: false,
+      icon: <IconFallback />,
+    },
+    {
       type: EditorPluginType.ScMcExercise,
-      plugin: {
-        ...createScMcExercisePlugin(),
-        defaultTitle: 'Multiple-Choice-Aufgabe',
-        defaultDescription:
-          'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
-      },
-      visibleInSuggestions: true,
+      plugin: createScMcExercisePlugin(),
+      visibleInSuggestions: false,
       icon: <IconFallback />,
     },
 
