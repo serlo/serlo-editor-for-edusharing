@@ -198,13 +198,15 @@ function EdusharingAsset({ state, editable, focused, config, id }: Props) {
     const parser = new DOMParser()
     let document = parser.parseFromString(fixedEmbedHtml, 'text/html')
 
-    const imgElement = document.querySelector('img')
+    const imgElement = document.querySelector(
+      '.edusharing_rendering_content_wrapper > img'
+    )
 
     if (imgElement) {
       imgElement.style.height = `${height.get()}rem`
     }
 
-    const videoElement = document.querySelector('video')
+    const videoElement = document.querySelector('.videoWrapperInner > video')
 
     if (videoElement) {
       videoElement.style.height = `${height.get()}rem`
