@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic'
 import { ComponentProps } from 'react'
 
-import { Lazy } from '@/components/content/lazy'
 import { Link } from '@/components/content/link'
 import {
   InitRenderersArgs,
@@ -15,7 +14,6 @@ import { TextStaticRenderer } from '@/serlo-editor/plugins/text/static'
 import type {
   EditorFillInTheBlanksExerciseDocument,
   EditorHighlightDocument,
-  EditorInjectionDocument,
   EditorInputExerciseDocument,
   EditorScMcExerciseDocument,
   EditorSerloTableDocument,
@@ -29,44 +27,50 @@ import type {
 import { MultimediaStaticRenderer } from '@/serlo-editor/plugins/multimedia/static'
 import { GeogebraStaticRenderer } from '@/serlo-editor/plugins/geogebra/static'
 import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
-import { SerloInjectionDocument } from './types/editor-plugins'
-import { ScMcSerloStaticRenderer } from '@/serlo-editor-integration/serlo-plugin-wrappers/sc-mc-serlo-static-renderer'
-import { InputSerloStaticRenderer } from '@/serlo-editor-integration/serlo-plugin-wrappers/input-serlo-static-renderer'
+import { EditorSerloInjectionDocument } from './types/editor-plugins'
 import { InputExerciseStaticRenderer } from '@/serlo-editor/plugins/input-exercise/static'
 import { ScMcExerciseStaticRenderer } from '@/serlo-editor/plugins/sc-mc-exercise/static'
 import { ExerciseStaticRenderer } from '@/serlo-editor/plugins/exercise/static'
 import { StaticSolutionRenderer } from '@/serlo-editor/plugins/solution/static'
+import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 
 const EquationsStaticRenderer = dynamic<EditorEquationsDocument>(() =>
   import('@/serlo-editor/plugins/equations/static').then(
-    (mod) => mod.EquationsStaticRenderer
-  )
+    (mod) => mod.EquationsStaticRenderer,
+  ),
 )
 const FillInTheBlanksStaticRenderer =
   dynamic<EditorFillInTheBlanksExerciseDocument>(() =>
     import('@/serlo-editor/plugins/fill-in-the-blanks-exercise/static').then(
-      (mod) => mod.FillInTheBlanksStaticRenderer
-    )
+      (mod) => mod.FillInTheBlanksStaticRenderer,
+    ),
   )
 const SerloTableStaticRenderer = dynamic<EditorSerloTableDocument>(() =>
   import('@/serlo-editor/plugins/serlo-table/static').then(
-    (mod) => mod.SerloTableStaticRenderer
-  )
+    (mod) => mod.SerloTableStaticRenderer,
+  ),
 )
 const HighlightStaticRenderer = dynamic<EditorHighlightDocument>(() =>
   import('@/serlo-editor/plugins/highlight/static').then(
-    (mod) => mod.HighlightStaticRenderer
-  )
+    (mod) => mod.HighlightStaticRenderer,
+  ),
 )
 const StaticMath = dynamic<MathElement>(() =>
   import('@/serlo-editor/plugins/text/static-components/static-math').then(
-    (mod) => mod.StaticMath
-  )
+    (mod) => mod.StaticMath,
+  ),
 )
 
 export function createRenderers(): InitRenderersArgs {
   return {
     pluginRenderers: [
+      // edu-sharing specific
+      { type: 'edusharingAsset', renderer: EdusharingAssetStaticRenderer },
+      {
+        type: 'serloInjection',
+        renderer: (props: EditorSerloInjectionDocument) => null, // TODO: Implement
+      },
+
       // plugins
       { type: EditorPluginType.Rows, renderer: RowsStaticRenderer },
       { type: EditorPluginType.Text, renderer: TextStaticRenderer },
@@ -84,10 +88,6 @@ export function createRenderers(): InitRenderersArgs {
       },
       { type: EditorPluginType.Box, renderer: BoxStaticRenderer },
       { type: EditorPluginType.SerloTable, renderer: SerloTableStaticRenderer },
-      {
-        type: 'serloInjection',
-        renderer: (props: SerloInjectionDocument) => null, // TODO: Implement
-      },
       { type: EditorPluginType.Equations, renderer: EquationsStaticRenderer },
       {
         type: EditorPluginType.Geogebra,
@@ -118,11 +118,18 @@ export function createRenderers(): InitRenderersArgs {
       {
         type: EditorPluginType.ScMcExercise,
         renderer: (props: EditorScMcExerciseDocument) => {
-          // @@@ Do these extra properties have to be mandatory? 
-          return <ScMcExerciseStaticRenderer {...props} idBase='temp' onEvaluate={() => {}} renderExtraAnswerContent={() => <></>} />
+          // @@@ Do these extra properties have to be mandatory?
+          return (
+            <ScMcExerciseStaticRenderer
+              {...props}
+              idBase="temp"
+              onEvaluate={() => {}}
+              renderExtraAnswerContent={() => <></>}
+            />
+          )
         },
       },
-      
+
       {
         type: EditorPluginType.FillInTheBlanksExercise,
         renderer: FillInTheBlanksStaticRenderer,
@@ -130,10 +137,9 @@ export function createRenderers(): InitRenderersArgs {
       {
         type: EditorPluginType.Solution,
         renderer: (props: EditorSolutionDocument) => {
-          return <StaticSolutionRenderer
-          {...props}
-          solutionVisibleOnInit={false}
-        />
+          return (
+            <StaticSolutionRenderer {...props} solutionVisibleOnInit={false} />
+          )
         },
       },
 

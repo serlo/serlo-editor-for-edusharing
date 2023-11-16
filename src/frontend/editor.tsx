@@ -35,7 +35,7 @@ export interface EditorProps {
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
-    <Edtr initialState={state.document} editable>
+    <Edtr initialState={state.document}>
       {(document) => {
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>

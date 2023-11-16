@@ -29,7 +29,7 @@ const isDevEnvironment = process.env.NODE_ENV !== 'production'
 if (isDevEnvironment && !(await isPortOpen(port))) {
   console.error(`ERROR: Cannot listen on port ${port}`)
   console.error(
-    `Probably there is already a dev server running -> so we do not start another server`
+    `Probably there is already a dev server running -> so we do not start another server`,
   )
   process.exit(0)
 }
@@ -78,7 +78,7 @@ Provider.setup(
   {
     cookies: { secure: true, sameSite: 'None' },
     devMode: false,
-  }
+  },
 )
 
 // Register callback to execute when serlo editor was successfully launched as a LTI tool.
@@ -114,13 +114,13 @@ const server = (async () => {
     { createdAt: 1 },
     // Since in the deeplink flow a user activity is integrated (choosing
     // the asset to include) we need a longer wait time
-    { expireAfterSeconds: 60 * 60 }
+    { expireAfterSeconds: 60 * 60 },
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
     // Since edusharing should directly redirect the user to our page a small
     // max age should be fine her
-    { expireAfterSeconds: 20 }
+    { expireAfterSeconds: 20 },
   )
 
   await app.prepare()
@@ -307,7 +307,7 @@ const server = (async () => {
 
     const url = new URL(
       process.env.EDUSHARING_DETAILS_URL_FOR_EMBEDDING +
-        `/${repositoryId}/${nodeId}`
+        `/${repositoryId}/${nodeId}`,
     )
 
     url.searchParams.append('displayMode', 'inline')
@@ -533,7 +533,7 @@ const server = (async () => {
                 </script>
               </body>
             </html>
-          `
+          `,
       )
       .end()
   })

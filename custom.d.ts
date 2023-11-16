@@ -26,7 +26,7 @@ declare global {
      */
     hasOwn<T extends Record<keyof any, any>, K extends KeyofUnion<T>>(
       o: T,
-      v: K
+      v: K,
     ): o is ExtractByKey<T, K>
   }
 }

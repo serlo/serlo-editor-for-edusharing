@@ -19,6 +19,7 @@ import { editorRenderers } from '@/serlo-editor/plugin/helpers/editor-renderer'
 import { createRenderers } from './plugins/create-renderers'
 import { createPlugins } from './plugins/create-plugins'
 import { StaticRenderer } from '@/serlo-editor/static-renderer/static-renderer'
+import { LtikContext } from './context/ltikContext'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor),
@@ -39,7 +40,6 @@ export function SerloEditor({
 }: SerloEditorProps) {
   editorPlugins.init(createPlugins({ ltik: ltik }))
   editorRenderers.init(createRenderers())
-  const initialDocumentState = state.document
 
   const serloLoggedInData = getLoggedInData(Instance.De) as LoggedInData
 
@@ -48,22 +48,24 @@ export function SerloEditor({
       <Head>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
       </Head>
-      <InstanceDataProvider
-        value={getInstanceDataByLang(Instance.De) as InstanceData | null}
-      >
-        <LoggedInDataProvider value={serloLoggedInData}>
-          <div className="serlo-editor-hacks">
-            {mayEdit ? (
-              <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
-            ) : (
-              <Layout>
-                <StaticRenderer document={state.document} />
-              </Layout>
-            )}
-          </div>
-          <ToastNotice />
-        </LoggedInDataProvider>
-      </InstanceDataProvider>
+      <LtikContext.Provider value={ltik}>
+        <InstanceDataProvider
+          value={getInstanceDataByLang(Instance.De) as InstanceData | null}
+        >
+          <LoggedInDataProvider value={serloLoggedInData}>
+            <div className="serlo-editor-hacks">
+              {mayEdit ? (
+                <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+              ) : (
+                <Layout>
+                  <StaticRenderer document={state.document} />
+                </Layout>
+              )}
+            </div>
+            <ToastNotice />
+          </LoggedInDataProvider>
+        </InstanceDataProvider>
+      </LtikContext.Provider>
     </>
   )
 }

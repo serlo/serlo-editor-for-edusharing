@@ -87,7 +87,7 @@ describe('endpoint "/platform/login"', () => {
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(
-      'login_hint is invalid or session is expired'
+      'login_hint is invalid or session is expired',
     )
   })
 
@@ -96,7 +96,7 @@ describe('endpoint "/platform/login"', () => {
 
     expect(response.status).toBe(200)
     expect(response.headers.get('content-type')).toBe(
-      'text/html; charset=utf-8'
+      'text/html; charset=utf-8',
     )
   })
 
@@ -115,7 +115,7 @@ describe('endpoint "/platform/done"', () => {
   const validKeyid = 'keyid'
   const validKey = Buffer.from(
     process.env.EDITOR_PRIVATE_KEY_FOR_EMBEDDING,
-    'base64'
+    'base64',
   ).toString('utf-8')
   const iat = Math.floor(Date.now() / 1000)
   const validNonceValue = 'nonce-value'
@@ -157,7 +157,7 @@ describe('endpoint "/platform/done"', () => {
 
     expect(response.status).toBe(400)
     expect(await response.text()).toBe(
-      '"content-type" is not "application/x-www-form-urlencoded"'
+      '"content-type" is not "application/x-www-form-urlencoded"',
     )
   })
 
@@ -187,7 +187,7 @@ describe('endpoint "/platform/done"', () => {
 
     expect(response.status).toBe(502)
     expect(await response.text()).toBe(
-      'An error occured while fetching key from the keyset URL'
+      'An error occured while fetching key from the keyset URL',
     )
   })
 
@@ -232,7 +232,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
-        'An error occured while fetching key from the keyset URL'
+        'An error occured while fetching key from the keyset URL',
       )
     })
 
@@ -243,7 +243,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
-        'An error occured while fetching key from the keyset URL'
+        'An error occured while fetching key from the keyset URL',
       )
     })
 
@@ -254,7 +254,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
-        'An error occured while fetching key from the keyset URL'
+        'An error occured while fetching key from the keyset URL',
       )
     })
 
@@ -265,7 +265,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
-        'An error occured while fetching key from the keyset URL'
+        'An error occured while fetching key from the keyset URL',
       )
     })
 
@@ -274,7 +274,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(502)
       expect(await response.text()).toBe(
-        'An error occured while fetching key from the keyset URL'
+        'An error occured while fetching key from the keyset URL',
       )
     })
 
@@ -306,7 +306,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(400)
       expect(await response.text()).toBe(
-        `jwt audience invalid. expected: ${process.env.EDITOR_URL}`
+        `jwt audience invalid. expected: ${process.env.EDITOR_URL}`,
       )
     })
 
@@ -422,7 +422,7 @@ describe('endpoint "/platform/done"', () => {
 
       expect(response.status).toBe(200)
       expect(response.headers.get('content-type')).toBe(
-        'text/html; charset=utf-8'
+        'text/html; charset=utf-8',
       )
     })
   })

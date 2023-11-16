@@ -1,9 +1,3 @@
-import clsx from 'clsx'
-import Modal from 'react-modal'
-import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
-import * as t from 'io-ts'
-
 import {
   object,
   string,
@@ -13,9 +7,6 @@ import {
   number,
 } from '@frontend/src/serlo-editor/plugin'
 
-import { EdusharingAssetDecoder } from '../../../shared/decoders'
-import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
-import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
 import { EdusharingAssetEditor } from './editor'
 
 const state = object({
@@ -23,13 +14,13 @@ const state = object({
     object({
       repositoryId: string(''),
       nodeId: string(''),
-    })
+    }),
   ),
   height: number(20),
 })
 
 export function createEdusharingAssetPlugin(
-  config: EdusharingAssetConfig
+  config: EdusharingAssetConfig,
 ): EditorPlugin<EdusharingAssetState, EdusharingAssetConfig> {
   return {
     Component: EdusharingAssetEditor,
@@ -45,4 +36,7 @@ export interface EdusharingAssetConfig {
 }
 
 export type EdusharingAssetState = typeof state
-export type EdusharingAssetProps = EditorPluginProps<EdusharingAssetState, EdusharingAssetConfig>
+export type EdusharingAssetProps = EditorPluginProps<
+  EdusharingAssetState,
+  EdusharingAssetConfig
+>

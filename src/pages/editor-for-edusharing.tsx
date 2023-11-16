@@ -9,7 +9,7 @@ import {
 import { SerloEditor, SerloEditorProps } from '../frontend'
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
+  context,
 ) => {
   const mayEdit = context.query.mayEdit === 'true'
   const ltik = Array.isArray(context.query.ltik)
@@ -61,7 +61,7 @@ export default function Page(props: PageProps) {
         setState({
           type: 'error',
           message: `Content json received from edu-sharing was malformed. Contained: ${JSON.stringify(
-            contentJson
+            contentJson,
           )}`,
         })
         return
