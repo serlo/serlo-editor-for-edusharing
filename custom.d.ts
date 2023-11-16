@@ -1,3 +1,10 @@
+import { FC, SVGAttributes } from 'react'
+
+declare module '*.svg' {
+  const content: FC<SVGAttributes<SVGElement>>
+  export default content
+}
+
 // from https://github.com/microsoft/TypeScript/issues/44253
 // let's keep an eye on this to see if they merge it at some point
 

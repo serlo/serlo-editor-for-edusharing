@@ -10,11 +10,10 @@ import {
   selectPendingChanges,
   selectHasUndoActions,
   selectHasRedoActions,
-  selectSerializedDocument,
   persistHistory,
   selectDocuments,
+  selectStaticDocument,
 } from '@frontend/src/serlo-editor/store'
-import { Renderer } from '@frontend/src/serlo-editor/renderer'
 
 import { Layout } from './layout'
 import {
@@ -26,6 +25,7 @@ import {
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 import { ROOT } from '@/serlo-editor/store/root/constants'
+import { StaticRenderer } from '@/serlo-editor/static-renderer/static-renderer'
 
 export interface EditorProps {
   state: StorageFormat
@@ -75,14 +75,14 @@ function EditInner({
 
       return saveUrl.href
     },
-    [providerUrl]
+    [providerUrl],
   )
   const getBodyForSave = useCallback(() => {
-    const document = selectSerializedDocument(store.getState(), ROOT)
+    const document = selectStaticDocument(store.getState(), ROOT)
 
     if (document === null) {
       throw new Error(
-        'Transforming the document content into a saveable format failed!'
+        'Transforming the document content into a saveable format failed!',
       )
     }
 
@@ -120,18 +120,18 @@ function EditInner({
           window.alert(
             `Aktuelle version konnte nicht gespeichert werden. Server gab ein Response mit dem Code ${
               response.status
-            } und dem Body ${await response.text()} zurück.`
+            } und dem Body ${await response.text()} zurück.`,
           )
         }
       } catch (error) {
         window.alert(
-          `Aktuelle version konnte nicht gespeichert werden. Fehlermeldung: ${error.message}`
+          `Aktuelle version konnte nicht gespeichert werden. Fehlermeldung: ${error.message}`,
         )
       } finally {
         setIsSaving(false)
       }
     },
-    [isSaving, getSaveUrl, ltik, getBodyForSave, dispatch]
+    [isSaving, getSaveUrl, ltik, getBodyForSave, dispatch],
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -197,7 +197,7 @@ function EditInner({
       <>
         <Toolbar mode="render" setIsEditing={setIsEditing} />
         <Layout>
-          <Renderer documentState={state.document} />
+          <StaticRenderer document={state.document} />
         </Layout>
       </>
     )

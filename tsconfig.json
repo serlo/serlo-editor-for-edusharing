@@ -28,6 +28,6 @@
   "ts-node": {
     "esm": true
   },
-  "include": ["next-env.d.ts", "src/**/*.{ts,tsx}"],
+  "include": ["custom.d.ts", "next-env.d.ts", "src/**/*"],
   "exclude": ["node_modules", "dep/frontend/node_modules"]
 }
