@@ -46,8 +46,7 @@ export function EdusharingAssetRenderer(props: {
     }
 
     void fetchEmbedHtml()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodeId, repositoryId])
+  }, [nodeId, repositoryId, ltik])
 
   return (
     <figure
