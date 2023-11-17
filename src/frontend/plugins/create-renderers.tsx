@@ -19,15 +19,12 @@ import type {
   EditorSerloTableDocument,
   EditorSpoilerDocument,
   EditorEquationsDocument,
-  EditorGeogebraDocument,
   EditorMultimediaDocument,
   EditorExerciseDocument,
   EditorSolutionDocument,
 } from '@/serlo-editor-integration/types/editor-plugins'
 import { MultimediaStaticRenderer } from '@/serlo-editor/plugins/multimedia/static'
-import { GeogebraStaticRenderer } from '@/serlo-editor/plugins/geogebra/static'
 import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
-import { EditorSerloInjectionDocument } from './types/editor-plugins'
 import { InputExerciseStaticRenderer } from '@/serlo-editor/plugins/input-exercise/static'
 import { ScMcExerciseStaticRenderer } from '@/serlo-editor/plugins/sc-mc-exercise/static'
 import { ExerciseStaticRenderer } from '@/serlo-editor/plugins/exercise/static'
@@ -90,12 +87,18 @@ export function createRenderers(): InitRenderersArgs {
       { type: EditorPluginType.Box, renderer: BoxStaticRenderer },
       { type: EditorPluginType.SerloTable, renderer: SerloTableStaticRenderer },
       { type: EditorPluginType.Equations, renderer: EquationsStaticRenderer },
-      {
-        type: EditorPluginType.Geogebra,
-        renderer: (props: EditorGeogebraDocument) => {
-          return <GeogebraStaticRenderer {...props} />
-        },
-      },
+      // Deactivated because geogebra embeds don't size themselves correctly in static renderer view. Having a relative div around GeogebraStaticRenderer already improved it (probably because of the absolute positioned child element). But now the geogebra applet has a height of 0, does not resize itself correctly to the space available. Specifying a height in the container div is not an option because applets have different heights.
+      // TODO: Fix issue with geogebra static renderer view and reenable
+      // {
+      //   type: EditorPluginType.Geogebra,
+      //   renderer: (props: EditorGeogebraDocument) => {
+      //     return (
+      //       <div className="relative">
+      //         <GeogebraStaticRenderer {...props} />
+      //       </div>
+      //     )
+      //   },
+      // },
 
       // exercises
       {

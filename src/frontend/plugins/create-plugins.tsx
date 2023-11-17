@@ -1,6 +1,5 @@
 import IconBox from '@/assets-webkit/img/editor/icon-box.svg'
 import IconEquation from '@/assets-webkit/img/editor/icon-equation.svg'
-import IconGeogebra from '@/assets-webkit/img/editor/icon-geogebra.svg'
 import IconHighlight from '@/assets-webkit/img/editor/icon-highlight.svg'
 import IconImage from '@/assets-webkit/img/editor/icon-image.svg'
 import IconInjection from '@/assets-webkit/img/editor/icon-injection.svg'
@@ -11,7 +10,6 @@ import IconText from '@/assets-webkit/img/editor/icon-text.svg'
 import IconFallback from '@/assets-webkit/img/editor/icon-fallback.svg'
 import { createBoxPlugin } from '@/serlo-editor/plugins/box'
 import { equationsPlugin } from '@/serlo-editor/plugins/equations'
-import { geoGebraPlugin } from '@/serlo-editor/plugins/geogebra'
 import { createHighlightPlugin } from '@/serlo-editor/plugins/highlight'
 import { createInputExercisePlugin } from '@/serlo-editor/plugins/input-exercise'
 import { createRowsPlugin } from '@/serlo-editor/plugins/rows'
@@ -56,7 +54,7 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
             allowedPlugins: [EditorPluginType.Text],
           },
         },
-        allowedPlugins: ['edusharingAsset', EditorPluginType.Geogebra],
+        allowedPlugins: ['edusharingAsset'],
       }),
       visibleInSuggestions: true,
       icon: <IconMultimedia />,
@@ -97,12 +95,13 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
       visibleInSuggestions: true,
       icon: <IconEquation />,
     },
-    {
-      type: EditorPluginType.Geogebra,
-      plugin: geoGebraPlugin,
-      visibleInSuggestions: true,
-      icon: <IconGeogebra />,
-    },
+    // Deactivated temporarily because geogebra static renderer view is broken
+    // {
+    //   type: EditorPluginType.Geogebra,
+    //   plugin: geoGebraPlugin,
+    //   visibleInSuggestions: true,
+    //   icon: <IconGeogebra />,
+    // },
     {
       type: EditorPluginType.Highlight,
       plugin: createHighlightPlugin(),
