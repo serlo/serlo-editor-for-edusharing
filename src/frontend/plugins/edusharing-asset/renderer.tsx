@@ -79,14 +79,16 @@ export function EdusharingAssetRenderer(props: {
     const parser = new DOMParser()
     let document = parser.parseFromString(fixedEmbedHtml, 'text/html')
 
-    const imgElement = document.querySelector('img')
+    const imgElement = document.querySelector(
+      '.edusharing_rendering_content_wrapper > img',
+    )
 
     if (imgElement) {
       imgElement.style.height = `${height}rem`
       imgElement.style.objectFit = 'contain'
     }
 
-    const videoElement = document.querySelector('video')
+    const videoElement = document.querySelector('.videoWrapperInner > video')
 
     if (videoElement) {
       videoElement.style.height = `${height}rem`
