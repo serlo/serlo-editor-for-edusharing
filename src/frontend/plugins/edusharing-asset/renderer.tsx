@@ -76,6 +76,15 @@ export function EdusharingAssetRenderer(props: {
     const parser = new DOMParser()
     let document = parser.parseFromString(embedHtml, 'text/html')
 
+    const contentWrapperElement = document.querySelector(
+      '.edusharing_rendering_content_wrapper',
+    )
+
+    if (contentWrapperElement) {
+      // Embed html sent by edusharing includes "width: 0px"
+      contentWrapperElement.style.width = ''
+    }
+
     const imgElement = document.querySelector(
       '.edusharing_rendering_content_wrapper > img',
     )
@@ -92,7 +101,7 @@ export function EdusharingAssetRenderer(props: {
     if (videoElement) {
       videoElement.style.height = `${height}rem`
       imgElement.style.objectFit = 'contain'
-      // Embed html sent by edusharing includes "width: 0px" for images.
+      // Embed html sent by edusharing includes "width: 0px" for videos.
       imgElement.style.width = ''
     }
 
