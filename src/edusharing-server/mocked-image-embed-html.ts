@@ -5,6 +5,7 @@ export const mockedImageEmbedHtml = `
   class="edusharing_rendering_content_wrapper"
   style="max-width: 100%; width: 0px"
 >
+  Inhalt von edu-sharing
   <img
     style="max-width: 100%; width: 0px"
     src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg"
