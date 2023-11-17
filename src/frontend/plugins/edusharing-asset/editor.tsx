@@ -84,7 +84,7 @@ export function EdusharingAssetEditor({
 
     return (
       <PluginToolbar
-        pluginType="edusharingAsset"
+        pluginType="Edu-sharing Inhalt"
         pluginControls={<PluginDefaultTools pluginId={id} />}
         pluginSettings={
           <>

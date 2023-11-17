@@ -14,12 +14,6 @@ import { SerloInjectionRenderer } from './renderer'
 import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
 import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
 
-const createURL = (id: string) => {
-  const pureId =
-    id.startsWith('/') || id.startsWith('\\') ? id.substring(1) : id
-  return `https://de.serlo.org/${pureId}?contentOnly`
-}
-
 const PlaceholderWrapper = styled.div({
   position: 'relative',
   width: '100%',
@@ -41,10 +35,6 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
     }
   }, [props.focused, props.state.value])
 
-  if (!props.editable) {
-    return <SerloInjectionRenderer src={createURL(props.state.value)} />
-  }
-
   return (
     <>
       {renderPluginToolbar()}
@@ -58,7 +48,7 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
             }
           }}
         >
-          <SerloInjectionRenderer src={createURL(cache)} />
+          <SerloInjectionRenderer contentId={cache} />
         </PreviewOverlay>
       ) : (
         <PlaceholderWrapper>
@@ -68,6 +58,7 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
           />
         </PlaceholderWrapper>
       )}
+
       {props.focused && !preview ? (
         <div className="mt-4">
           <EditorInput
@@ -79,7 +70,6 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
             }}
             width="30%"
             inputWidth="100%"
-            ref={props.autofocusRef}
           />
         </div>
       ) : null}
@@ -91,7 +81,7 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
 
     return (
       <PluginToolbar
-        pluginType="serloInjection"
+        pluginType="serlo.org Inhalt"
         pluginControls={<PluginDefaultTools pluginId={id} />}
       />
     )
