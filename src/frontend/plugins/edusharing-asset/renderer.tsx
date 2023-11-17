@@ -73,11 +73,8 @@ export function EdusharingAssetRenderer(props: {
   function renderEmbed() {
     if (embedHtml == null) return
 
-    // Embed html sent by edusharing includes "width: 0px" for images. Maybe other. This hack removes those entries.
-    const fixedEmbedHtml = embedHtml.replaceAll('width:0px;', '')
-
     const parser = new DOMParser()
-    let document = parser.parseFromString(fixedEmbedHtml, 'text/html')
+    let document = parser.parseFromString(embedHtml, 'text/html')
 
     const imgElement = document.querySelector(
       '.edusharing_rendering_content_wrapper > img',
@@ -86,6 +83,8 @@ export function EdusharingAssetRenderer(props: {
     if (imgElement) {
       imgElement.style.height = `${height}rem`
       imgElement.style.objectFit = 'contain'
+      // Embed html sent by edusharing includes "width: 0px" for images.
+      imgElement.style.width = ''
     }
 
     const videoElement = document.querySelector('.videoWrapperInner > video')
@@ -93,6 +92,8 @@ export function EdusharingAssetRenderer(props: {
     if (videoElement) {
       videoElement.style.height = `${height}rem`
       imgElement.style.objectFit = 'contain'
+      // Embed html sent by edusharing includes "width: 0px" for images.
+      imgElement.style.width = ''
     }
 
     const updatedEmbedHtml = document.body.innerHTML
