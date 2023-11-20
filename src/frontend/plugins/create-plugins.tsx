@@ -22,7 +22,6 @@ import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
 import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
 import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
 import { PluginsWithData } from '@frontend/src/serlo-editor/plugin/helpers/editor-plugins'
-import { fillInTheBlanksExercise } from '@/serlo-editor/plugins/fill-in-the-blanks-exercise'
 import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
 import { exercisePlugin } from '@/serlo-editor/plugins/exercise'
 import { solutionPlugin } from '@/serlo-editor/plugins/solution'
@@ -151,10 +150,10 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
       },
       icon: <IconFallback />,
     },
-    {
-      type: EditorPluginType.FillInTheBlanksExercise,
-      plugin: fillInTheBlanksExercise,
-    },
+    // {
+    //   type: EditorPluginType.FillInTheBlanksExercise,
+    //   plugin: fillInTheBlanksExercise,
+    // },
 
     // Special plugins, never visible in suggestions
     // ===================================================
