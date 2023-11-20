@@ -10,16 +10,19 @@ import {
 import { Instance } from '@frontend/src/fetcher/graphql-types/operations'
 import { LoggedInDataProvider } from '@frontend/src/contexts/logged-in-data-context'
 import { InstanceData, LoggedInData } from '@frontend/src/data-types'
-import { Renderer } from '@frontend/src/serlo-editor/renderer'
 import { editorPlugins } from '@/serlo-editor/plugin/helpers/editor-plugins'
 
 import type { EditorProps } from './editor'
-import { createPlugins } from './plugins'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
+import { editorRenderers } from '@/serlo-editor/plugin/helpers/editor-renderer'
+import { createRenderers } from './plugins/create-renderers'
+import { createPlugins } from './plugins/create-plugins'
+import { StaticRenderer } from '@/serlo-editor/static-renderer/static-renderer'
+import { LtikContext } from './context/ltikContext'
 
 const Editor = dynamic<EditorProps>(() =>
-  import('../frontend/editor').then((mod) => mod.Editor)
+  import('../frontend/editor').then((mod) => mod.Editor),
 )
 
 export interface SerloEditorProps {
@@ -36,7 +39,7 @@ export function SerloEditor({
   mayEdit,
 }: SerloEditorProps) {
   editorPlugins.init(createPlugins({ ltik: ltik }))
-  const initialDocumentState = state.document
+  editorRenderers.init(createRenderers())
 
   const serloLoggedInData = getLoggedInData(Instance.De) as LoggedInData
 
@@ -45,22 +48,24 @@ export function SerloEditor({
       <Head>
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
       </Head>
-      <InstanceDataProvider
-        value={getInstanceDataByLang(Instance.De) as InstanceData | null}
-      >
-        <LoggedInDataProvider value={serloLoggedInData}>
-          <div className="serlo-editor-hacks">
-            {mayEdit ? (
-              <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
-            ) : (
-              <Layout>
-                <Renderer documentState={initialDocumentState} />
-              </Layout>
-            )}
-          </div>
-          <ToastNotice />
-        </LoggedInDataProvider>
-      </InstanceDataProvider>
+      <LtikContext.Provider value={ltik}>
+        <InstanceDataProvider
+          value={getInstanceDataByLang(Instance.De) as InstanceData | null}
+        >
+          <LoggedInDataProvider value={serloLoggedInData}>
+            <div className="serlo-editor-hacks">
+              {mayEdit ? (
+                <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+              ) : (
+                <Layout>
+                  <StaticRenderer document={state.document} />
+                </Layout>
+              )}
+            </div>
+            <ToastNotice />
+          </LoggedInDataProvider>
+        </InstanceDataProvider>
+      </LtikContext.Provider>
     </>
   )
 }

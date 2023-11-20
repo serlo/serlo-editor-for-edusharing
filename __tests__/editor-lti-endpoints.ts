@@ -150,10 +150,10 @@ describe('endpoint "/lti"', () => {
 
     validCookieValue = response.headers.get('set-cookie').split(';')[0]
     validState = new URL(response.headers.get('location')).searchParams.get(
-      'state'
+      'state',
     )
     nonceReceivedInLoginRequest = new URL(
-      response.headers.get('location')
+      response.headers.get('location'),
     ).searchParams.get('nonce')
   })
 

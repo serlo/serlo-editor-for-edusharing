@@ -16,7 +16,7 @@ export function loadEnvConfig(args?: { showLogs?: boolean }) {
   nextEnv.loadEnvConfig(
     process.cwd(),
     true,
-    showLogs ? console : doNothingLogger
+    showLogs ? console : doNothingLogger,
   )
 }
 
@@ -35,7 +35,7 @@ export function createJWKSResponse(args: {
           alg: 'RS256',
           use: 'sig',
           ...JSONWebKey.fromPEM(
-            Buffer.from(key, 'base64').toString('utf-8')
+            Buffer.from(key, 'base64').toString('utf-8'),
           ).toJSON(),
         },
       ],
@@ -107,7 +107,7 @@ export function verifyJwt(args: {
 
     function getKey(
       header: { kid?: string },
-      callback: (_: Error, key: string) => void
+      callback: (_: Error, key: string) => void,
     ) {
       if (header.kid == null) {
         resolve({
@@ -189,33 +189,33 @@ export function createAutoFromResponse({
        </script>
      </body>
      </html>
-    `.trim()
+    `.trim(),
   )
   res.end()
 }
 
 export function sendCustomInvalidErrorMessage(
   res: Response,
-  requestPath: string
+  requestPath: string,
 ) {
   res
     .status(500)
     .setHeader('Content-type', 'text/html')
     .send(
       createErrorHtml(
-        `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${requestPath}`
-      )
+        `The LTI claim https://purl.imsglobal.org/spec/lti/claim/custom was invalid during request to endpoint ${requestPath}`,
+      ),
     )
 }
 
 export function createErrorHtml(message: string) {
   // TODO: Add support contact
   const headerForAllErrorMessages = escapeHTML(
-    'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!'
+    'Something went wrong! Please try again or contact support with the details below if the error persists. Thank you!',
   )
 
   return `<html><body><h1>${headerForAllErrorMessages}</h1><p>Error: ${escapeHTML(
-    message
+    message,
   )}</p></body></html>`
 }
 

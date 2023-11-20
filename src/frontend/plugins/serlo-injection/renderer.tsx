@@ -9,14 +9,24 @@ const Iframe = styled(IframeResizer)({
   borderRadius: '2px',
 })
 
-export const SerloInjectionRenderer = (props: { src: string }) => {
+export function SerloInjectionRenderer(props: {
+  contentId: string | undefined
+}) {
+  const url = createURL(props.contentId)
+
   return (
     <Iframe
-      key={props.src}
-      src={props.src}
+      key={url}
+      src={url}
       checkOrigin={false}
       heightCalculationMethod="lowestElement"
       sizeHeight
     />
   )
+}
+
+function createURL(id: string) {
+  const pureId =
+    id.startsWith('/') || id.startsWith('\\') ? id.substring(1) : id
+  return `https://de.serlo.org/${pureId}?contentOnly`
 }

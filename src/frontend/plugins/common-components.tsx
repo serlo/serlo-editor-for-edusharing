@@ -18,7 +18,7 @@ export function FaIcon({ icon, className, style }: FaIconProps) {
       focusable={false}
       className={clsx(
         'inline-block h-[1em] overflow-visible align-[-0.125em]',
-        className
+        className,
       )}
       style={style}
     >

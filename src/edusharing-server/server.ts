@@ -8,6 +8,7 @@ import {
   signJwtWithBase64Key,
   verifyJwt,
 } from '../server-utils'
+import { mockedImageEmbedHtml } from './mocked-image-embed-html'
 
 // We define the absence of `versionComment` with `null` so that we can
 // tranfer it inside the cypress environment (only proper JSON can be
@@ -147,7 +148,7 @@ export class EdusharingServer {
           console.log(
             `[${new Date().toISOString()}]: Save registered with comment ${
               req.query['versionComment']
-            }`
+            }`,
           )
           res.sendStatus(200).end()
         } else {
@@ -155,7 +156,7 @@ export class EdusharingServer {
           // https://www.npmjs.com/package/qs) which should never happen
           res.sendStatus(400).end()
         }
-      }
+      },
     )
 
     this.app.get(
@@ -190,7 +191,7 @@ export class EdusharingServer {
             client_id: process.env.EDITOR_CLIENT_ID_FOR_EMBEDDING,
           },
         })
-      }
+      },
     )
 
     this.app.post('/edu-sharing/rest/lti/v13/lti13', async (req, res) => {
@@ -279,8 +280,7 @@ export class EdusharingServer {
     this.app.get('/edu-sharing/rest/lti/v13/details/*/*', (_req, res) => {
       res
         .json({
-          detailsSnippet:
-            '<p><b>Inhalt von edu-sharing</b></p><p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg/640px-Aurora_in_Abisko_near_Tornetr%C3%A4sk.jpg" /></p>',
+          detailsSnippet: mockedImageEmbedHtml,
         })
         .end()
     })

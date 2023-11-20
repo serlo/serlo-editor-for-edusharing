@@ -9,7 +9,7 @@ export const JwtDeepflowResponseDecoder = t.type({
   'https://purl.imsglobal.org/spec/lti-dl/claim/content_items': t.array(
     t.type({
       custom: EdusharingAssetDecoder,
-    })
+    }),
   ),
 })
 

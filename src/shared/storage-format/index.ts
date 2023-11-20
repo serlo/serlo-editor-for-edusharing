@@ -29,7 +29,7 @@ export const kitchenSinkDocument: StorageFormat = {
 export function migrate(state: StorageFormat): StorageFormat {
   const migrationsToApply = migrations.slice(
     state.version,
-    currentVersion - state.version
+    currentVersion - state.version,
   )
 
   let document = state.document

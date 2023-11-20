@@ -8,7 +8,7 @@ import {
 import { SerloInjectionEditor } from './editor'
 
 export function createSerloInjectionPlugin(
-  config: SerloInjectionConfig = {}
+  config: SerloInjectionConfig = {},
 ): EditorPlugin<SerloInjectionPluginState, SerloInjectionConfig> {
   return {
     Component: SerloInjectionEditor,
