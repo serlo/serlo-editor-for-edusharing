@@ -12,7 +12,6 @@ import { SpoilerStaticRenderer } from '@/serlo-editor/plugins/spoiler/static'
 import type { MathElement } from '@/serlo-editor/plugins/text'
 import { TextStaticRenderer } from '@/serlo-editor/plugins/text/static'
 import type {
-  EditorFillInTheBlanksExerciseDocument,
   EditorHighlightDocument,
   EditorInputExerciseDocument,
   EditorScMcExerciseDocument,
@@ -37,12 +36,12 @@ const EquationsStaticRenderer = dynamic<EditorEquationsDocument>(() =>
     (mod) => mod.EquationsStaticRenderer,
   ),
 )
-const FillInTheBlanksStaticRenderer =
-  dynamic<EditorFillInTheBlanksExerciseDocument>(() =>
-    import('@/serlo-editor/plugins/fill-in-the-blanks-exercise/static').then(
-      (mod) => mod.FillInTheBlanksStaticRenderer,
-    ),
-  )
+// const FillInTheBlanksStaticRenderer =
+//   dynamic<EditorFillInTheBlanksExerciseDocument>(() =>
+//     import('@/serlo-editor/plugins/fill-in-the-blanks-exercise/static').then(
+//       (mod) => mod.FillInTheBlanksStaticRenderer,
+//     ),
+//   )
 const SerloTableStaticRenderer = dynamic<EditorSerloTableDocument>(() =>
   import('@/serlo-editor/plugins/serlo-table/static').then(
     (mod) => mod.SerloTableStaticRenderer,
@@ -133,11 +132,10 @@ export function createRenderers(): InitRenderersArgs {
           )
         },
       },
-
-      {
-        type: EditorPluginType.FillInTheBlanksExercise,
-        renderer: FillInTheBlanksStaticRenderer,
-      },
+      // {
+      //   type: EditorPluginType.FillInTheBlanksExercise,
+      //   renderer: FillInTheBlanksStaticRenderer,
+      // },
       {
         type: EditorPluginType.Solution,
         renderer: (props: EditorSolutionDocument) => {
