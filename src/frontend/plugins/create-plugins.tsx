@@ -1,13 +1,13 @@
-import IconBox from '@/assets-webkit/img/editor/icon-box.svg'
-import IconEquation from '@/assets-webkit/img/editor/icon-equation.svg'
-import IconHighlight from '@/assets-webkit/img/editor/icon-highlight.svg'
-import IconImage from '@/assets-webkit/img/editor/icon-image.svg'
-import IconInjection from '@/assets-webkit/img/editor/icon-injection.svg'
-import IconMultimedia from '@/assets-webkit/img/editor/icon-multimedia.svg'
-import IconTable from '@/assets-webkit/img/editor/icon-table.svg'
-import IconSpoiler from '@/assets-webkit/img/editor/icon-spoiler.svg'
-import IconText from '@/assets-webkit/img/editor/icon-text.svg'
-import IconFallback from '@/assets-webkit/img/editor/icon-fallback.svg'
+import IconBox from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-box.svg'
+import IconEquation from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-equation.svg'
+import IconHighlight from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-highlight.svg'
+import IconImage from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-image.svg'
+import IconInjection from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-injection.svg'
+import IconMultimedia from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-multimedia.svg'
+import IconSpoiler from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-spoiler.svg'
+import IconTable from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-table.svg'
+import IconText from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-text.svg'
+import IconFallback from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-fallback.svg'
 import { createBoxPlugin } from '@/serlo-editor/plugins/box'
 import { equationsPlugin } from '@/serlo-editor/plugins/equations'
 import { createHighlightPlugin } from '@/serlo-editor/plugins/highlight'
@@ -19,21 +19,18 @@ import { createTextPlugin } from '@/serlo-editor/plugins/text'
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
 import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
-import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
 import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
 import { PluginsWithData } from '@frontend/src/serlo-editor/plugin/helpers/editor-plugins'
 import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
 import { exercisePlugin } from '@/serlo-editor/plugins/exercise'
 import { solutionPlugin } from '@/serlo-editor/plugins/solution'
+import { EditorPluginType } from '@frontend/src/serlo-editor/types/editor-plugin-type'
 
 export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
   const pluginsThatCannotContainOtherPlugins = [
     EditorPluginType.Text,
     EditorPluginType.Equations,
-    EditorPluginType.Geogebra,
     EditorPluginType.Highlight,
-    EditorPluginType.InputExercise,
-    EditorPluginType.ScMcExercise,
     'edusharingAsset',
   ]
 

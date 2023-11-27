@@ -21,9 +21,9 @@ import type {
   EditorMultimediaDocument,
   EditorExerciseDocument,
   EditorSolutionDocument,
-} from '@/serlo-editor-integration/types/editor-plugins'
+} from '@frontend/src/serlo-editor/types/editor-plugins'
 import { MultimediaStaticRenderer } from '@/serlo-editor/plugins/multimedia/static'
-import { EditorPluginType } from '@/serlo-editor-integration/types/editor-plugin-type'
+import { EditorPluginType } from '@frontend/src/serlo-editor/types/editor-plugin-type'
 import { InputExerciseStaticRenderer } from '@/serlo-editor/plugins/input-exercise/static'
 import { ScMcExerciseStaticRenderer } from '@/serlo-editor/plugins/sc-mc-exercise/static'
 import { ExerciseStaticRenderer } from '@/serlo-editor/plugins/exercise/static'
