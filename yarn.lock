@@ -3939,6 +3939,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-linux-x64-gnu@npm:^14.0.3":
+  version: 14.0.3
+  resolution: "@next/swc-linux-x64-gnu@npm:14.0.3"
+  checksum: 7555ae496efe4e25fd9342b0ee05fb6e218d27b91df879c3a64a60400e5112ccf4f7ad9c65e4aabeaf17379b192d1150922381394c7cd57908723158b97ad045
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
 "@next/swc-linux-x64-musl@npm:13.2.3":
   version: 13.2.3
   resolution: "@next/swc-linux-x64-musl@npm:13.2.3"
@@ -5109,6 +5117,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.2.0
     "@fortawesome/react-fontawesome": ^0.2.0
     "@next/env": ^13.2.3
+    "@next/swc-linux-x64-gnu": ^14.0.3
     "@ory/client": ^1.2.11
     "@ory/integrations": ^1.1.5
     "@prezly/slate-lists": ^0.97.0
