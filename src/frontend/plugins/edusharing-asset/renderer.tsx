@@ -96,7 +96,9 @@ export function EdusharingAssetRenderer(props: {
       imgElement.style.width = ''
     }
 
-    const videoElement = document.querySelector<HTMLVideoElement>('.videoWrapperInner > video')
+    const videoElement = document.querySelector<HTMLVideoElement>(
+      '.videoWrapperInner > video',
+    )
 
     if (videoElement) {
       videoElement.style.height = `${height}rem`
