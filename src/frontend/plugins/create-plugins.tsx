@@ -1,30 +1,34 @@
-import IconBox from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-box.svg'
-import IconEquation from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-equation.svg'
-import IconHighlight from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-highlight.svg'
-import IconImage from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-image.svg'
-import IconInjection from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-injection.svg'
-import IconMultimedia from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-multimedia.svg'
-import IconSpoiler from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-spoiler.svg'
-import IconTable from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-table.svg'
-import IconText from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-text.svg'
-import IconFallback from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-fallback.svg'
-import { createBoxPlugin } from '@/serlo-editor/plugins/box'
-import { equationsPlugin } from '@/serlo-editor/plugins/equations'
-import { createHighlightPlugin } from '@/serlo-editor/plugins/highlight'
-import { createInputExercisePlugin } from '@/serlo-editor/plugins/input-exercise'
-import { createRowsPlugin } from '@/serlo-editor/plugins/rows'
-import { createScMcExercisePlugin } from '@/serlo-editor/plugins/sc-mc-exercise'
-import { createSerloTablePlugin } from '@/serlo-editor/plugins/serlo-table'
-import { createTextPlugin } from '@/serlo-editor/plugins/text'
+import IconBox from '../assets/plugin-icons/icon-box.svg'
+import IconEquation from '../assets/plugin-icons/icon-equation.svg'
+import IconHighlight from '../assets/plugin-icons/icon-highlight.svg'
+import IconImage from '../assets/plugin-icons/icon-image.svg'
+import IconInjection from '../assets/plugin-icons/icon-injection.svg'
+import IconMultimedia from '../assets/plugin-icons/icon-multimedia.svg'
+import IconSpoiler from '../assets/plugin-icons/icon-spoiler.svg'
+import IconTable from '../assets/plugin-icons/icon-table.svg'
+import IconText from '../assets/plugin-icons/icon-text.svg'
+import IconFallback from '../assets/plugin-icons/icon-fallback.svg'
+import {
+  PluginsWithData,
+createBoxPlugin,
+equationsPlugin,
+createHighlightPlugin,
+// createInputExercisePlugin,
+createRowsPlugin,
+// createScMcExercisePlugin,
+createSerloTablePlugin,
+  createTextPlugin,
+createMultimediaPlugin,
+unsupportedPlugin,
+createSpoilerPlugin,
+// exercisePlugin,
+// solutionPlugin,
+EditorPluginType,
+
+} from '@serlo/editor'
+
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
-import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
-import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
-import { PluginsWithData } from '@frontend/src/serlo-editor/plugin/helpers/editor-plugins'
-import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
-import { exercisePlugin } from '@/serlo-editor/plugins/exercise'
-import { solutionPlugin } from '@/serlo-editor/plugins/solution'
-import { EditorPluginType } from '@frontend/src/serlo-editor/types/editor-plugin-type'
 
 export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
   const pluginsThatCannotContainOtherPlugins = [
@@ -114,39 +118,39 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
     // Exercises etc.
     // ===================================================
 
-    {
-      type: EditorPluginType.Exercise,
-      plugin: exercisePlugin,
-      visibleInSuggestions: true,
-    },
-    { type: EditorPluginType.Solution, plugin: solutionPlugin },
-    {
-      type: EditorPluginType.InputExercise,
-      plugin: {
-        ...createInputExercisePlugin({
-          feedback: {
-            plugin: EditorPluginType.Text,
-            config: {
-              placeholder: 'Schreibe ein Feedback für diese Antwort',
-            },
-          },
-        }),
-        defaultTitle: 'Aufgabe mit Eingabefeld',
-        defaultDescription:
-          'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
-      },
-      icon: <IconFallback />,
-    },
-    {
-      type: EditorPluginType.ScMcExercise,
-      plugin: {
-        ...createScMcExercisePlugin(),
-        defaultTitle: 'Multiple-Choice-Aufgabe',
-        defaultDescription:
-          'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
-      },
-      icon: <IconFallback />,
-    },
+    // {
+    //   type: EditorPluginType.Exercise,
+    //   plugin: exercisePlugin,
+    //   visibleInSuggestions: true,
+    // },
+    // { type: EditorPluginType.Solution, plugin: solutionPlugin },
+    // {
+    //   type: EditorPluginType.InputExercise,
+    //   plugin: {
+    //     ...createInputExercisePlugin({
+    //       feedback: {
+    //         plugin: EditorPluginType.Text,
+    //         config: {
+    //           placeholder: 'Schreibe ein Feedback für diese Antwort',
+    //         },
+    //       },
+    //     }),
+    //     defaultTitle: 'Aufgabe mit Eingabefeld',
+    //     defaultDescription:
+    //       'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
+    //   },
+    //   icon: <IconFallback />,
+    // },
+    // {
+    //   type: EditorPluginType.ScMcExercise,
+    //   plugin: {
+    //     ...createScMcExercisePlugin(),
+    //     defaultTitle: 'Multiple-Choice-Aufgabe',
+    //     defaultDescription:
+    //       'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
+    //   },
+    //   icon: <IconFallback />,
+    // },
     // {
     //   type: EditorPluginType.FillInTheBlanksExercise,
     //   plugin: fillInTheBlanksExercise,

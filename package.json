@@ -14,6 +14,7 @@
     "_prettier": "prettier .",
     "build": "next build",
     "dev": "yarn start:server-with-edusharing",
+    "dev-no-docker": "next dev",
     "docker:build": "docker build -t serlo-editor-for-edusharing-local-build:latest .",
     "docker:rm": "docker image rm serlo-editor-for-edusharing-local-build",
     "docker:run": "yarn start:mongodb && docker run --add-host=host.docker.internal:host-gateway --env-file .env --env-file .env-docker -p 3000:3000 --detach --name serlo-editor-for-edusharing-from-local-build serlo-editor-for-edusharing-local-build",
@@ -59,6 +60,8 @@
     "@prezly/slate-lists": "^0.97.0",
     "@radix-ui/react-navigation-menu": "^1.1.4",
     "@reduxjs/toolkit": "^1.9.7",
+    "@serlo/editor": "/Users/work/Documents/GitHub/frontend/serlo-editor-0.0.21.tgz",
+    "add": "^2.0.6",
     "algebra.js": "^0.2.6",
     "clsx": "^1.2.1",
     "default-import": "^1.1.5",
@@ -108,7 +111,8 @@
     "swr": "^2.2.4",
     "ts-key-enum": "^2.0.12",
     "ts-node": "^10.9.1",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yarn": "^1.22.21"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

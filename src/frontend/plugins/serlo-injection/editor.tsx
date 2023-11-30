@@ -4,16 +4,17 @@ import { faNewspaper } from '@fortawesome/free-solid-svg-icons'
 import {
   EditorInput,
   PreviewOverlay,
-} from '@frontend/src/serlo-editor/editor-ui'
-import { FaIcon } from '@frontend/src/components/fa-icon'
+  FaIcon,
+  PluginToolbar,
+  PluginDefaultTools
+} from '@serlo/editor'
 import styled from 'styled-components'
 
 import { SerloInjectionProps } from '.'
 import { useSerloInjectionConfig } from './config'
 import { SerloInjectionRenderer } from './renderer'
-import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
-import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
 
+// TODO: replace
 const PlaceholderWrapper = styled.div({
   position: 'relative',
   width: '100%',

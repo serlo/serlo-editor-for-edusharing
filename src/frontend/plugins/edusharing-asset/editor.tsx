@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { EdusharingAssetProps } from '.'
 import { EdusharingAssetDecoder } from '../../../shared/decoders'
-import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
-import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
+import { PluginToolbar, PluginDefaultTools } from '@serlo/editor'
 import Modal from 'react-modal'
 import { EdusharingAssetRenderer } from './renderer'
 

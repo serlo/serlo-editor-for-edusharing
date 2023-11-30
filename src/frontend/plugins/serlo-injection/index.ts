@@ -3,7 +3,7 @@ import {
   EditorPluginProps,
   string,
   StringStateType,
-} from '@frontend/src/serlo-editor/plugin'
+} from '@serlo/editor'
 
 import { SerloInjectionEditor } from './editor'
 

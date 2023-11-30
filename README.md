@@ -76,15 +76,7 @@ This project includes:
   via LTI (only used for local development & testing, not part of the docker
   image)
 
-The repository [frontend](https://github.com/serlo/frontend/) is a git submodule
-in this repository under `dep/frontend`. This allows us to use the same editor
-code (and styling) that is used on serlo.org. Each commit in this repository
-will reference a specific commit in `dep/frontend`. Use command
-`git submodule update` in the outermost repository to checkout the commit that
-is referenced. This solution involving a git submodule was chosen to get to a
-working solution fast but might be replaced in the future. Optimally
-[frontend](https://github.com/serlo/frontend/) would provide the editor code as
-a package.
+This uses an unpublished alpha version of `@serlo/editor`.
 
 ## Implementation details
 

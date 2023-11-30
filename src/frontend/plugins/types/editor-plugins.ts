@@ -1,4 +1,4 @@
-import { PrettyStaticState } from '@/serlo-editor/plugin'
+import { PrettyStaticState } from '@serlo/editor'
 import { SerloInjectionPluginState } from '../serlo-injection'
 import { EdusharingAssetState } from '../edusharing-asset'
 

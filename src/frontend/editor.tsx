@@ -1,8 +1,8 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
-import { Editor as Edtr } from '@frontend/src/serlo-editor/core'
 import {
+  SerloEditor as SerloEditorPackage,
   selectHasPendingChanges,
   useAppDispatch,
   useAppSelector,
@@ -13,7 +13,13 @@ import {
   persistHistory,
   selectDocuments,
   selectStaticDocument,
-} from '@frontend/src/serlo-editor/store'
+  ROOT,
+  StaticRenderer,
+  instanceDataDe,
+  loggedInDataDe,
+  type InstanceData,
+  type LoggedInData
+} from '@serlo/editor'
 
 import { Layout } from './layout'
 import {
@@ -24,8 +30,6 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { ROOT } from '@/serlo-editor/store/root/constants'
-import { StaticRenderer } from '@/serlo-editor/static-renderer/static-renderer'
 
 export interface EditorProps {
   state: StorageFormat
@@ -35,7 +39,7 @@ export interface EditorProps {
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
-    <Edtr initialState={state.document}>
+    <SerloEditorPackage initialState={state.document} instanceData={instanceDataDe as InstanceData} loggedInData={loggedInDataDe as LoggedInData}>
       {(document) => {
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
@@ -43,7 +47,7 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
           </EditInner>
         )
       }}
-    </Edtr>
+    </SerloEditorPackage>
   )
 }
 
