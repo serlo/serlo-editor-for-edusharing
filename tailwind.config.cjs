@@ -1,6 +1,4 @@
 module.exports = {
-  templates: [require('./src/shared/tailwind-base.cjs')],
-  mode: 'jit',
   content: ['./src/**/*.{ts,tsx}'],
   /* Class name license_permalink can not be found by tailwind in the source files. It appears in the embed html sent by edu-sharing at runtime. This prevents tailwind from tree-shaking it. */
   safelist: ['license_permalink'],
