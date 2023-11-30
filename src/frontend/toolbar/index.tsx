@@ -9,7 +9,13 @@ import {
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 
-import { redo, undo, useAppDispatch,useAppSelector,selectHasPendingChanges } from '@serlo/editor'
+import {
+  redo,
+  undo,
+  useAppDispatch,
+  useAppSelector,
+  selectHasPendingChanges,
+} from '@serlo/editor'
 
 import { ToolbarButton } from './button'
 

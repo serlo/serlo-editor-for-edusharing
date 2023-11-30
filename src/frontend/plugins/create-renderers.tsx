@@ -20,13 +20,13 @@ import {
   // type EditorExerciseDocument,
   // type EditorSolutionDocument,
   EditorPluginType,
-//   MultimediaStaticRenderer,
-//   InputExerciseStaticRenderer,
-// ScMcExerciseStaticRenderer,
-// ExerciseStaticRenderer,
-// StaticSolutionRenderer,
-SerloTableStaticRenderer,
-StaticMath,
+  //   MultimediaStaticRenderer,
+  //   InputExerciseStaticRenderer,
+  // ScMcExerciseStaticRenderer,
+  // ExerciseStaticRenderer,
+  // StaticSolutionRenderer,
+  SerloTableStaticRenderer,
+  StaticMath,
 } from '@serlo/editor'
 
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'

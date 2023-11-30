@@ -18,7 +18,7 @@ import {
   instanceDataDe,
   loggedInDataDe,
   type InstanceData,
-  type LoggedInData
+  type LoggedInData,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -39,7 +39,11 @@ export interface EditorProps {
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
-    <SerloEditorPackage initialState={state.document} instanceData={instanceDataDe as InstanceData} loggedInData={loggedInDataDe as LoggedInData}>
+    <SerloEditorPackage
+      initialState={state.document}
+      instanceData={instanceDataDe as InstanceData}
+      loggedInData={loggedInDataDe as LoggedInData}
+    >
       {(document) => {
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>

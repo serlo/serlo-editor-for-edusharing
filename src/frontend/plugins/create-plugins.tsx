@@ -10,21 +10,20 @@ import IconText from '../assets/plugin-icons/icon-text.svg'
 import IconFallback from '../assets/plugin-icons/icon-fallback.svg'
 import {
   PluginsWithData,
-createBoxPlugin,
-equationsPlugin,
-createHighlightPlugin,
-// createInputExercisePlugin,
-createRowsPlugin,
-// createScMcExercisePlugin,
-createSerloTablePlugin,
+  createBoxPlugin,
+  equationsPlugin,
+  createHighlightPlugin,
+  // createInputExercisePlugin,
+  createRowsPlugin,
+  // createScMcExercisePlugin,
+  createSerloTablePlugin,
   createTextPlugin,
-createMultimediaPlugin,
-unsupportedPlugin,
-createSpoilerPlugin,
-// exercisePlugin,
-// solutionPlugin,
-EditorPluginType,
-
+  createMultimediaPlugin,
+  unsupportedPlugin,
+  createSpoilerPlugin,
+  // exercisePlugin,
+  // solutionPlugin,
+  EditorPluginType,
 } from '@serlo/editor'
 
 import { createEdusharingAssetPlugin } from './edusharing-asset'

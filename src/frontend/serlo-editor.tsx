@@ -2,11 +2,7 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { default as ToastNotice } from 'react-notify-toast'
 
-import {
-  editorPlugins,
-  editorRenderers,
-  StaticRenderer
-} from '@serlo/editor'
+import { editorPlugins, editorRenderers, StaticRenderer } from '@serlo/editor'
 
 import type { EditorProps } from './editor'
 import { Layout } from './layout'
@@ -41,17 +37,16 @@ export function SerloEditor({
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
       </Head>
       <LtikContext.Provider value={ltik}>
-       
-            <div className="serlo-editor-hacks">
-              {mayEdit ? (
-                <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
-              ) : (
-                <Layout>
-                  <StaticRenderer document={state.document} />
-                </Layout>
-              )}
-            </div>
-            <ToastNotice />
+        <div className="serlo-editor-hacks">
+          {mayEdit ? (
+            <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+          ) : (
+            <Layout>
+              <StaticRenderer document={state.document} />
+            </Layout>
+          )}
+        </div>
+        <ToastNotice />
       </LtikContext.Provider>
     </>
   )

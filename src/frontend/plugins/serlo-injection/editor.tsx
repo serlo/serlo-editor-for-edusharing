@@ -6,7 +6,7 @@ import {
   PreviewOverlay,
   FaIcon,
   PluginToolbar,
-  PluginDefaultTools
+  PluginDefaultTools,
 } from '@serlo/editor'
 import styled from 'styled-components'
 

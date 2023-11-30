@@ -6,7 +6,7 @@ import clsx, { type ClassValue } from 'clsx'
  */
 export function cn(...inputs: ClassValue[]) {
   const replaced = inputs.map((input) =>
-    typeof input === 'string' ? input.trim().replace(/\s+/gm, ' ') : input
+    typeof input === 'string' ? input.trim().replace(/\s+/gm, ' ') : input,
   )
   return clsx(replaced)
 }
