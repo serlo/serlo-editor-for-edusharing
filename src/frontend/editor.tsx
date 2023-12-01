@@ -3,6 +3,7 @@ import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
+  SerloEditorProps,
   selectHasPendingChanges,
   useAppDispatch,
   useAppSelector,
@@ -17,8 +18,6 @@ import {
   StaticRenderer,
   instanceDataDe,
   loggedInDataDe,
-  type InstanceData,
-  type LoggedInData,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -41,8 +40,8 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
     <SerloEditorPackage
       initialState={state.document}
-      instanceData={instanceDataDe as InstanceData}
-      loggedInData={loggedInDataDe as LoggedInData}
+      instanceData={instanceDataDe as SerloEditorProps['instanceData']}
+      loggedInData={loggedInDataDe as SerloEditorProps['loggedInData']}
     >
       {(document) => {
         return (
