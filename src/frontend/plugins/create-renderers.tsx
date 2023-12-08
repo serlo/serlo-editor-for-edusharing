@@ -30,6 +30,7 @@ import { ExerciseStaticRenderer } from '@/serlo-editor/plugins/exercise/static'
 import { StaticSolutionRenderer } from '@/serlo-editor/plugins/solution/static'
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 import { SerloInjectionStaticRenderer } from './serlo-injection/static'
+import { TextAreaExerciseStaticRenderer } from '@/serlo-editor/plugins/text-area-exercise/static'
 
 const EquationsStaticRenderer = dynamic<EditorEquationsDocument>(() =>
   import('@/serlo-editor/plugins/equations/static').then(
@@ -117,6 +118,10 @@ export function createRenderers(): InitRenderersArgs {
         renderer: (props: EditorInputExerciseDocument) => {
           return <InputExerciseStaticRenderer {...props} />
         },
+      },
+      {
+        type: EditorPluginType.TextAreaExercise,
+        renderer: TextAreaExerciseStaticRenderer,
       },
       {
         type: EditorPluginType.ScMcExercise,

@@ -19,6 +19,7 @@ import { createTextPlugin } from '@/serlo-editor/plugins/text'
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
 import { createMultimediaPlugin } from '@/serlo-editor/plugins/multimedia'
+import { textAreaExercisePlugin } from '@/serlo-editor/plugins/text-area-exercise'
 import { unsupportedPlugin } from '@/serlo-editor/plugins/unsupported'
 import { PluginsWithData } from '@frontend/src/serlo-editor/plugin/helpers/editor-plugins'
 import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
@@ -136,6 +137,10 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
           'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
       },
       icon: <IconFallback />,
+    },
+    {
+      type: EditorPluginType.TextAreaExercise,
+      plugin: textAreaExercisePlugin,
     },
     {
       type: EditorPluginType.ScMcExercise,
