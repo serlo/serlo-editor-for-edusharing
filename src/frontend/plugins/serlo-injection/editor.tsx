@@ -42,7 +42,8 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
       {cache ? (
         <PreviewOverlay
           focused={props.focused || false}
-          onChange={(nextActive) => {
+          // Todo: nextActive should be of type SetStateAction<boolean>
+          onChange={(nextActive: boolean | ((x: boolean) => boolean)) => {
             setPreview(nextActive)
             if (nextActive) {
               setCache(props.state.value)
