@@ -43,10 +43,10 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
       instanceData={instanceDataDe as SerloEditorProps['instanceData']}
       loggedInData={loggedInDataDe as SerloEditorProps['loggedInData']}
     >
-      {(document) => {
+      {(editor) => {
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
-            {document}
+            {editor}
           </EditInner>
         )
       }}
