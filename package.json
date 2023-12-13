@@ -60,7 +60,7 @@
     "@prezly/slate-lists": "^0.97.0",
     "@radix-ui/react-navigation-menu": "^1.1.4",
     "@reduxjs/toolkit": "^1.9.7",
-    "@serlo/editor": "/Users/work/Documents/GitHub/frontend/serlo-editor-0.0.21.tgz",
+    "@serlo/editor": "/home/kulla/workspace/serlo/frontend/serlo-editor-0.0.16.tgz",
     "add": "^2.0.6",
     "algebra.js": "^0.2.6",
     "clsx": "^1.2.1",
