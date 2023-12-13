@@ -31,18 +31,6 @@ import {
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 import { SerloInjectionStaticRenderer } from './serlo-injection/static'
 
-// const EquationsStaticRenderer = dynamic<EditorEquationsDocument>(() =>
-//   import('@serlo/editor/serlo-editor/plugins/equations/static').then(
-//     (mod) => mod.EquationsStaticRenderer,
-//   ),
-// )
-// const FillInTheBlanksStaticRenderer =
-//   dynamic<EditorFillInTheBlanksExerciseDocument>(() =>
-//     import('@/serlo-editor/plugins/fill-in-the-blanks-exercise/static').then(
-//       (mod) => mod.FillInTheBlanksStaticRenderer,
-//     ),
-//   )
-
 export function createRenderers(): ReturnType<typeof createBasicRenderers> {
   const { pluginRenderers, ...otherRenderers } = createBasicRenderers()
 
