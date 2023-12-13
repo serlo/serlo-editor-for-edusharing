@@ -1,28 +1,7 @@
-import IconBox from '../assets/plugin-icons/icon-box.svg'
-import IconEquation from '../assets/plugin-icons/icon-equation.svg'
-import IconHighlight from '../assets/plugin-icons/icon-highlight.svg'
 import IconImage from '../assets/plugin-icons/icon-image.svg'
 import IconInjection from '../assets/plugin-icons/icon-injection.svg'
-import IconMultimedia from '../assets/plugin-icons/icon-multimedia.svg'
-import IconSpoiler from '../assets/plugin-icons/icon-spoiler.svg'
-import IconTable from '../assets/plugin-icons/icon-table.svg'
-import IconText from '../assets/plugin-icons/icon-text.svg'
-import IconFallback from '../assets/plugin-icons/icon-fallback.svg'
 import {
   PluginsWithData,
-  createBoxPlugin,
-  equationsPlugin,
-  createHighlightPlugin,
-  // createInputExercisePlugin,
-  createRowsPlugin,
-  // createScMcExercisePlugin,
-  createSerloTablePlugin,
-  createTextPlugin,
-  createMultimediaPlugin,
-  unsupportedPlugin,
-  createSpoilerPlugin,
-  // exercisePlugin,
-  // solutionPlugin,
   EditorPluginType,
   createBasicPlugins,
   loggedInDataDe,
