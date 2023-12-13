@@ -1,14 +1,6 @@
-// import dynamic from 'next/dynamic'
-import { ComponentProps } from 'react'
-
-import { Link } from '../link'
 import {
   createRenderers as createBasicRenderers,
-  BoxStaticRenderer,
-  RowsStaticRenderer,
   // SpoilerStaticRenderer,
-  MathElement,
-  TextStaticRenderer,
   // type EditorHighlightDocument,
   // type EditorInputExerciseDocument,
   // type EditorScMcExerciseDocument,
@@ -24,8 +16,6 @@ import {
   // ScMcExerciseStaticRenderer,
   // ExerciseStaticRenderer,
   // StaticSolutionRenderer,
-  SerloTableStaticRenderer,
-  StaticMath,
 } from '@serlo/editor'
 
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
