@@ -1,22 +1,4 @@
-import {
-  createRenderers as createBasicRenderers,
-  // SpoilerStaticRenderer,
-  // type EditorHighlightDocument,
-  // type EditorInputExerciseDocument,
-  // type EditorScMcExerciseDocument,
-  // type EditorSerloTableDocument,
-  // type EditorSpoilerDocument,
-  // type EditorEquationsDocument,
-  // type EditorMultimediaDocument,
-  // type EditorExerciseDocument,
-  // type EditorSolutionDocument,
-  EditorPluginType,
-  //   MultimediaStaticRenderer,
-  //   InputExerciseStaticRenderer,
-  // ScMcExerciseStaticRenderer,
-  // ExerciseStaticRenderer,
-  // StaticSolutionRenderer,
-} from '@serlo/editor'
+import { createRenderers as createBasicRenderers } from '@serlo/editor'
 
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 import { SerloInjectionStaticRenderer } from './serlo-injection/static'
