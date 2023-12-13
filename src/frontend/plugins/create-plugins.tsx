@@ -1,7 +1,6 @@
 import IconImage from '../assets/plugin-icons/icon-image.svg'
 import IconInjection from '../assets/plugin-icons/icon-injection.svg'
 import {
-  PluginsWithData,
   EditorPluginType,
   createBasicPlugins,
   loggedInDataDe,
@@ -10,7 +9,7 @@ import {
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
 
-export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
+export function createPlugins({ ltik }: { ltik: string }) {
   return [
     ...createBasicPlugins({
       editorStrings: loggedInDataDe.strings.editor,
