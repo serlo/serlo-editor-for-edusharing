@@ -8,18 +8,10 @@ import {
   PluginToolbar,
   PluginDefaultTools,
 } from '@serlo/editor'
-import styled from 'styled-components'
 
 import { SerloInjectionProps } from '.'
 import { useSerloInjectionConfig } from './config'
 import { SerloInjectionRenderer } from './renderer'
-
-// TODO: replace
-const PlaceholderWrapper = styled.div({
-  position: 'relative',
-  width: '100%',
-  textAlign: 'center',
-})
 
 export const SerloInjectionEditor = (props: SerloInjectionProps) => {
   const { focused, id } = props
@@ -53,12 +45,12 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
           <SerloInjectionRenderer contentId={cache} />
         </PreviewOverlay>
       ) : (
-        <PlaceholderWrapper>
+        <div className="relative w-full text-center">
           <FaIcon
             icon={faNewspaper}
             className="relative w-full text-center text-[5rem] text-gray-400"
           />
-        </PlaceholderWrapper>
+        </div>
       )}
 
       {props.focused && !preview ? (
