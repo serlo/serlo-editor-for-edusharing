@@ -24,29 +24,26 @@ import {
   // exercisePlugin,
   // solutionPlugin,
   EditorPluginType,
+  createBasicPlugins,
+  loggedInDataDe,
 } from '@serlo/editor'
 
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
 
 export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
-  const pluginsThatCannotContainOtherPlugins = [
-    EditorPluginType.Text,
-    EditorPluginType.Equations,
-    EditorPluginType.Highlight,
-    'edusharingAsset',
-  ]
-
   return [
-    {
-      type: EditorPluginType.Text,
-      plugin: createTextPlugin({}),
-      visibleInSuggestions: true,
-      icon: <IconText />,
-    },
-    {
-      type: EditorPluginType.Multimedia,
-      plugin: createMultimediaPlugin({
+    ...createBasicPlugins({
+      editorStrings: loggedInDataDe.strings.editor,
+      allowImageInTableCells: false,
+      exerciseVisibleInSuggestion: true,
+      allowedChildPlugins: [
+        EditorPluginType.Text,
+        EditorPluginType.Equations,
+        EditorPluginType.Highlight,
+        'edusharingAsset',
+      ],
+      multimediaConfig: {
         explanation: {
           plugin: EditorPluginType.Rows,
           config: {
@@ -54,58 +51,13 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
           },
         },
         allowedPlugins: ['edusharingAsset'],
-      }),
-      visibleInSuggestions: true,
-      icon: <IconMultimedia />,
-    },
-    {
-      type: EditorPluginType.Spoiler,
-      plugin: createSpoilerPlugin({
-        allowedPlugins: pluginsThatCannotContainOtherPlugins,
-      }),
-      visibleInSuggestions: true,
-      icon: <IconSpoiler />,
-    },
-    {
-      type: EditorPluginType.Box,
-      plugin: createBoxPlugin({
-        allowedPlugins: pluginsThatCannotContainOtherPlugins,
-      }),
-      visibleInSuggestions: true,
-      icon: <IconBox />,
-    },
-    {
-      type: EditorPluginType.SerloTable,
-      plugin: createSerloTablePlugin({
-        allowImageInTableCells: false,
-      }),
-      visibleInSuggestions: true,
-      icon: <IconTable />,
-    },
+      },
+    }),
     {
       type: 'serloInjection',
       plugin: createSerloInjectionPlugin(),
       visibleInSuggestions: true,
       icon: <IconInjection />,
-    },
-    {
-      type: EditorPluginType.Equations,
-      plugin: equationsPlugin,
-      visibleInSuggestions: true,
-      icon: <IconEquation />,
-    },
-    // Deactivated temporarily because geogebra static renderer view is broken
-    // {
-    //   type: EditorPluginType.Geogebra,
-    //   plugin: geoGebraPlugin,
-    //   visibleInSuggestions: true,
-    //   icon: <IconGeogebra />,
-    // },
-    {
-      type: EditorPluginType.Highlight,
-      plugin: createHighlightPlugin(),
-      visibleInSuggestions: true,
-      icon: <IconHighlight />,
     },
     {
       type: 'edusharingAsset',
@@ -117,12 +69,6 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
     // Exercises etc.
     // ===================================================
 
-    // {
-    //   type: EditorPluginType.Exercise,
-    //   plugin: exercisePlugin,
-    //   visibleInSuggestions: true,
-    // },
-    // { type: EditorPluginType.Solution, plugin: solutionPlugin },
     // {
     //   type: EditorPluginType.InputExercise,
     //   plugin: {
@@ -150,14 +96,5 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
     //   },
     //   icon: <IconFallback />,
     // },
-    // {
-    //   type: EditorPluginType.FillInTheBlanksExercise,
-    //   plugin: fillInTheBlanksExercise,
-    // },
-
-    // Special plugins, never visible in suggestions
-    // ===================================================
-    { type: EditorPluginType.Rows, plugin: createRowsPlugin() },
-    { type: EditorPluginType.Unsupported, plugin: unsupportedPlugin },
   ]
 }
