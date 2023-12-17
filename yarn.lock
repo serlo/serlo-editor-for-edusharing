@@ -2272,13 +2272,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@file:/home/kulla/workspace/serlo/frontend/serlo-editor-0.0.24.tgz::locator=%40serlo%2Fserlo-editor-for-edusharing%40workspace%3A.":
-  version: 0.0.24
-  resolution: "@serlo/editor@file:/home/kulla/workspace/serlo/frontend/serlo-editor-0.0.24.tgz::locator=%40serlo%2Fserlo-editor-for-edusharing%40workspace%3A."
+"@serlo/editor@npm:^0.6.0-beta.1":
+  version: 0.6.0-beta.1
+  resolution: "@serlo/editor@npm:0.6.0-beta.1"
   dependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 4946287d258400b999474dd58415afe374c4146b8f410f40ce08a20bc2b10dece844465997e41cc1711f13ef8f3c6206b5f91e1d71f657100eed44fec513f85f
+  checksum: a0f87017b3c6b4ca0980f5774329de7bfb1816f77a2f5f68d69e45ca50f25ebdeb445e92d1a9f8d4694fd24b263639e6e72a32e15d53933923c7ca6b135d63ca
   languageName: node
   linkType: hard
 
@@ -2291,7 +2291,7 @@ __metadata:
     "@fortawesome/react-fontawesome": ^0.2.0
     "@next/env": ^13.2.3
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": /home/kulla/workspace/serlo/frontend/serlo-editor-0.0.24.tgz
+    "@serlo/editor": ^0.6.0-beta.1
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17
