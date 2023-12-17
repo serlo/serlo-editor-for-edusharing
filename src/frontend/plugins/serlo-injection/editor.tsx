@@ -64,7 +64,6 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
             }}
             width="30%"
             inputWidth="100%"
-            tw={undefined}
           />
         </div>
       ) : null}
