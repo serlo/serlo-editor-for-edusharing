@@ -43,6 +43,12 @@ export function SerloEditor({
 
   const serloLoggedInData = getLoggedInData(Instance.De) as LoggedInData
 
+  // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
+  serloLoggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
+    'https://example.com/'
+  serloLoggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
+    "Gib eine URL inklusive 'https://' ein"
+
   return (
     <>
       <Head>

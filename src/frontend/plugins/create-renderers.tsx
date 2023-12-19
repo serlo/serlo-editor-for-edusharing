@@ -163,7 +163,9 @@ export function createRenderers(): InitRenderersArgs {
     linkRenderer: ({ href, children }: ComponentProps<LinkRenderer>) => {
       return (
         <>
-          <Link href={href}>{children}</Link>
+          <a className="serlo-link" href={href}>
+            {children}
+          </a>
         </>
       )
     },
