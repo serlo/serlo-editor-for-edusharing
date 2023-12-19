@@ -14,7 +14,7 @@ export function EdusharingAssetEditor({
 }: EdusharingAssetProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
-  const { edusharingAsset, height } = state
+  const { edusharingAsset, widthInPercent } = state
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -61,21 +61,8 @@ export function EdusharingAssetEditor({
             : undefined
         }
         ltik={config.ltik}
-        height={height.value}
+        widthInPercent={widthInPercent.value}
       />
-      {!edusharingAsset.defined || focused ? (
-        <div className="w-full relative">
-          <div className="flex flex-col items-center absolute bottom-2 left-2">
-            <button
-              className="ece-button-blue text-sm"
-              onClick={() => setModalIsOpen(true)}
-              data-testid="edusharing-plugin-button"
-            >
-              Datei von edu-sharing einbinden
-            </button>
-          </div>
-        </div>
-      ) : null}
     </>
   )
 
@@ -89,23 +76,38 @@ export function EdusharingAssetEditor({
         pluginSettings={
           <>
             <button
-              onClick={() =>
-                height.set((currentValue) => Math.min(currentValue + 2, 100))
-              }
+              onClick={() => setModalIsOpen(true)}
               className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
               data-qa="plugin-edusharing-bigger-button"
             >
-              Größer
+              Inhalt wählen
             </button>
-            <button
-              onClick={() =>
-                height.set((currentValue) => Math.max(currentValue - 2, 2))
-              }
-              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
-              data-qa="plugin-edusharing-smaller-button"
-            >
-              Kleiner
-            </button>
+            {edusharingAsset.defined ? (
+              <>
+                <button
+                  onClick={() =>
+                    widthInPercent.set((currentValue) =>
+                      Math.min(currentValue + 10, 100),
+                    )
+                  }
+                  className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                  data-qa="plugin-edusharing-bigger-button"
+                >
+                  Größer
+                </button>
+                <button
+                  onClick={() =>
+                    widthInPercent.set((currentValue) =>
+                      Math.max(currentValue - 10, 10),
+                    )
+                  }
+                  className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                  data-qa="plugin-edusharing-smaller-button"
+                >
+                  Kleiner
+                </button>
+              </>
+            ) : null}
           </>
         }
       />

@@ -16,7 +16,7 @@ const state = object({
       nodeId: string(''),
     }),
   ),
-  height: number(20),
+  widthInPercent: number(100),
 })
 
 export function createEdusharingAssetPlugin(
