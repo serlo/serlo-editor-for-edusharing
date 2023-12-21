@@ -284,7 +284,10 @@ describe('endpoint "/lti"', () => {
     if ('issuer' in params.overwriteParameters) {
       payloadInIdToken.iss = params.overwriteParameters.issuer
     }
-    if ('nonce' in params.overwriteParameters) {
+    if (
+      'nonce' in params.overwriteParameters &&
+      params.overwriteParameters.nonce != null
+    ) {
       payloadInIdToken.nonce = params.overwriteParameters.nonce
     }
     if ('audience' in params.overwriteParameters) {
