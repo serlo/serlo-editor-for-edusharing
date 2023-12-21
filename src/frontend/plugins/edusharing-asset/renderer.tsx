@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as t from 'io-ts'
 import Image from 'next/image'
-import clsx from 'clsx'
 
 export function EdusharingAssetRenderer(props: {
   nodeId?: string
