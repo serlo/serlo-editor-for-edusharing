@@ -8,7 +8,9 @@ export function EdusharingAssetRenderer(props: {
   ltik: string
   widthInPercent: number
 }) {
-  const { nodeId, repositoryId, ltik, widthInPercent } = props
+  // Use default value for widthInPercent so that old content can be load
+  // where this property was not set
+  const { nodeId, repositoryId, ltik, widthInPercent = 100 } = props
 
   let [embedHtml, setEmbedHtml] = useState<string | null>(null)
 
