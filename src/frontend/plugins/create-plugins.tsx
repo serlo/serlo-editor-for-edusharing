@@ -13,6 +13,7 @@ export function createPlugins({ ltik }: { ltik: string }) {
   return [
     ...createBasicPlugins({
       editorStrings: loggedInDataDe.strings.editor,
+      enableTextAreaExercise: true,
       allowImageInTableCells: false,
       exerciseVisibleInSuggestion: true,
       allowedChildPlugins: [
