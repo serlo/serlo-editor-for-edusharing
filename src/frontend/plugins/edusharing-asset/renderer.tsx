@@ -120,7 +120,7 @@ export function EdusharingAssetRenderer(props: {
     const iframe = htmlDocument.querySelector('iframe')
 
     // H5P
-    const isH5P = iframe && iframe.getAttribute('src').includes('h5p')
+    const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
     if (isH5P) {
       // Remove footer because it covers up exercise
       const footer = htmlDocument.querySelector(
@@ -132,7 +132,7 @@ export function EdusharingAssetRenderer(props: {
       return htmlDocument.body.innerHTML
     }
 
-    const isPdf = iframe.id === 'docFrame'
+    const isPdf = iframe?.id === 'docFrame'
     if (isPdf) {
       // Do not adjust height based on container size
       iframe.style.height = 'auto'
