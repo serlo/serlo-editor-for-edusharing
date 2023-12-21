@@ -16,7 +16,7 @@ jobs:
           submodules: 'recursive'
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version-file: .tool-versions
       - run: yarn --immutable --immutable-cache --check-cache
 
   build:
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
       - run: yarn --immutable --immutable-cache
       - run: yarn build
 
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
       - run: yarn --immutable --immutable-cache
       - run: yarn lint:prettier --loglevel debug
 
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
       - run: yarn --immutable --immutable-cache
       - run: yarn lint:tsc
 
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
       - run: yarn --immutable --immutable-cache
       - run: yarn lint:eslint
 
@@ -85,7 +85,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
       - run: yarn --immutable --immutable-cache
       - run: yarn test
 
@@ -100,7 +100,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
 
       - name: Cypress run
         uses: cypress-io/github-action@v5
@@ -128,7 +128,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: yarn
-          node-version: 18
+          node-version-file: .tool-versions
 
       - name: Cypress run
         uses: cypress-io/github-action@v5

@@ -37,6 +37,12 @@ export interface EditorProps {
 }
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
+  // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
+  loggedInDataDe.strings.editor.plugins.text.linkOverlay.placeholder =
+    'https://example.com/'
+  loggedInDataDe.strings.editor.plugins.text.linkOverlay.inputLabel =
+    "Gib eine URL inklusive 'https://' ein"
+
   return (
     <SerloEditorPackage
       initialState={state.document}
