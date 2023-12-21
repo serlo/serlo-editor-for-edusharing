@@ -90,6 +90,7 @@
     "@types/react": "^18.0.28",
     "@types/react-modal": "^3.16.1",
     "@types/react-notify-toast": "^0.5.4",
+    "@typescript-eslint/parser": "^6.15.0",
     "autoprefixer": "^10.4.16",
     "cypress": "^12.17.4",
     "esbuild": "^0.17.10",
