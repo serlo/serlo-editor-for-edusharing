@@ -1,6 +1,7 @@
 import { createJWKSResponse, signJwtWithBase64Key } from '../src/server-utils'
 import express from 'express'
 import { Server } from 'node:http'
+import { test, expect, describe } from '@jest/globals'
 
 // See: https://cvmcosta.me/ltijs/#/provider?id=request-authentication
 describe('All requests to editor endpoints /lti/... shall return Unauthorized (401) if url parameter "ltik" is missing or invalid.', () => {
