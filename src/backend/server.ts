@@ -331,6 +331,7 @@ const server = (async () => {
         responseText: await response.text(),
         detailsSnippet:
           '<b>Es ist ein Fehler aufgetreten, den edu-sharing Inhalt einzubinden. Bitte wenden Sie sich an den Systemadministrator.</b>',
+        characterEncoding: response.headers.get('content-type'),
       })
     } else {
       // TODO: Error handling
