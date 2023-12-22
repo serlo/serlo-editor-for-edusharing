@@ -14,7 +14,7 @@ export function EdusharingAssetEditor({
 }: EdusharingAssetProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
-  const { edusharingAsset, widthInPercent } = state
+  const { edusharingAsset, contentWidth } = state
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -61,7 +61,7 @@ export function EdusharingAssetEditor({
             : undefined
         }
         ltik={config.ltik}
-        widthInPercent={widthInPercent.value}
+        contentWidth={contentWidth.defined ? contentWidth.value : null}
       />
     </>
   )
@@ -82,12 +82,25 @@ export function EdusharingAssetEditor({
             >
               Inhalt wählen
             </button>
-            {edusharingAsset.defined ? (
+            {edusharingAsset.defined && !contentWidth.defined ? (
+              <button
+                onClick={() => {
+                  if (contentWidth.defined === false) {
+                    contentWidth.create('30rem')
+                  }
+                }}
+                className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                data-qa="plugin-edusharing-bigger-button"
+              >
+                Größe verändern
+              </button>
+            ) : null}
+            {edusharingAsset.defined && contentWidth.defined ? (
               <>
                 <button
                   onClick={() =>
-                    widthInPercent.set((currentValue) =>
-                      Math.min(currentValue + 10, 100),
+                    contentWidth.set((previousContentWidth) =>
+                      addToContentWidth(previousContentWidth, 2),
                     )
                   }
                   className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
@@ -97,8 +110,8 @@ export function EdusharingAssetEditor({
                 </button>
                 <button
                   onClick={() =>
-                    widthInPercent.set((currentValue) =>
-                      Math.max(currentValue - 10, 10),
+                    contentWidth.set((previousContentWidth) =>
+                      addToContentWidth(previousContentWidth, -2),
                     )
                   }
                   className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
@@ -112,6 +125,14 @@ export function EdusharingAssetEditor({
         }
       />
     )
+
+    function addToContentWidth(previousContentWidth: string, value: number) {
+      const contentWidthNumber = parseFloat(
+        previousContentWidth.replace('rem', ''),
+      )
+      const newContentWidthNumber = Math.max(contentWidthNumber + value, 4)
+      return `${newContentWidthNumber}rem`
+    }
   }
 
   function renderModal() {

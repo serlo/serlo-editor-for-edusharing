@@ -6,11 +6,11 @@ export function EdusharingAssetRenderer(props: {
   nodeId?: string
   repositoryId?: string
   ltik: string
-  widthInPercent: number
+  contentWidth: string | null
 }) {
   // Use default value for widthInPercent so that old content can be load
   // where this property was not set
-  const { nodeId, repositoryId, ltik, widthInPercent = 100 } = props
+  const { nodeId, repositoryId, ltik, contentWidth } = props
 
   let [embedHtml, setEmbedHtml] = useState<string | null>(null)
 
@@ -43,7 +43,7 @@ export function EdusharingAssetRenderer(props: {
         return
       }
 
-      // HTML snipped returned by edu-sharing cannot be used as is.
+      // HTML snipped returned by edu-sharing cannot be used as it is.
       const newEmbedHtml = embedHtmlFor(result.detailsSnippet)
 
       setEmbedHtml(newEmbedHtml)
@@ -149,8 +149,8 @@ export function EdusharingAssetRenderer(props: {
     // TODO: Sanatize embed html? But I observed that embedHtml for videos contains <script>
     return (
       <div
-        className={`not-prose overflow-auto`}
-        style={{ width: `${widthInPercent}%` }}
+        className={`not-prose overflow-auto max-w-full`}
+        style={{ width: contentWidth ? contentWidth : '100%' }}
         dangerouslySetInnerHTML={{ __html: embedHtml }}
       />
     )

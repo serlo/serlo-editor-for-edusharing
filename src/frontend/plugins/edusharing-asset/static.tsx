@@ -9,7 +9,7 @@ export function EdusharingAssetStaticRenderer(
   const nodeId = props.state.edusharingAsset?.nodeId
   const repositoryId = props.state.edusharingAsset?.repositoryId
 
-  const { widthInPercent } = props.state
+  const { contentWidth: widthInPercent } = props.state
 
   const ltik = useContext(LtikContext)
 
@@ -17,7 +17,7 @@ export function EdusharingAssetStaticRenderer(
     <EdusharingAssetRenderer
       nodeId={nodeId}
       repositoryId={repositoryId}
-      widthInPercent={widthInPercent}
+      contentWidth={widthInPercent}
       ltik={ltik}
     />
   )
