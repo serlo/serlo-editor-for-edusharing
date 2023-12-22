@@ -333,8 +333,10 @@ const server = (async () => {
           '<b>Es ist ein Fehler aufgetreten, den edu-sharing Inhalt einzubinden. Bitte wenden Sie sich an den Systemadministrator.</b>',
       })
     } else {
-      // TODO: Error handling
-      res.json(await response.json())
+      // Forward response from edusharing as it is without decoding / encoding
+      response.headers.forEach((value, name) => res.setHeader(name, value))
+
+      res.send(Buffer.from(await response.arrayBuffer()))
     }
   })
 
