@@ -25,6 +25,8 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
   const config = useSerloInjectionConfig(props.config)
   const [cache, setCache] = useState(props.state.value)
   const [preview, setPreview] = useState(false)
+  const [userInput, setUserInput] = useState('')
+  const [showWarning, setShowWarning] = useState(false)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -64,17 +66,48 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
           <EditorInput
             label={config.i18n.label}
             placeholder={config.i18n.placeholder}
-            value={props.state.value}
+            value={userInput}
             onChange={(e) => {
-              props.state.set(e.target.value)
+              const newUserInput = e.target.value
+              setUserInput(newUserInput)
+              handleNewUserInput(newUserInput)
             }}
             width="30%"
             inputWidth="100%"
           />
+          {showWarning ? (
+            <div className="text-red-500 p-1 my-1">Eingabe ungültig</div>
+          ) : null}
         </div>
       ) : null}
     </>
   )
+
+  function handleNewUserInput(userInput: string) {
+    const serloContentId = tryGetId()
+    function tryGetId() {
+      for (const regex of [
+        /de.serlo.org\/(?<id>\d+)/,
+        /de.serlo.org\/entity\/view\/(?<id>\d+)$/,
+        /de.serlo.org\/(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)/,
+        /de.serlo.org\/entity\/repository\/compare\/\d+\/(?<id>\d+)$/,
+        /de.serlo.org\/user\/profile\/(?<id>\d+)$/,
+      ]) {
+        const match = regex.exec(userInput)
+
+        if (match && match.groups !== undefined) return match.groups.id
+      }
+      return null
+    }
+    if (userInput.length > 0 && !serloContentId) {
+      setShowWarning(true)
+    } else {
+      setShowWarning(false)
+    }
+    if (serloContentId) {
+      props.state.set(serloContentId)
+    }
+  }
 
   function renderPluginToolbar() {
     if (!focused) return null
