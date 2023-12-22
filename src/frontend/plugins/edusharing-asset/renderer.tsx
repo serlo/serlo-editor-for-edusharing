@@ -75,7 +75,7 @@ export function EdusharingAssetRenderer(props: {
     let htmlDocument = parser.parseFromString(detailsSnipped, 'text/html')
 
     // Image
-    const image = htmlDocument.querySelector(
+    const image = htmlDocument.querySelector<HTMLImageElement>(
       '.edusharing_rendering_content_wrapper > img',
     )
     const isImageSnippet =
@@ -103,7 +103,7 @@ export function EdusharingAssetRenderer(props: {
     }
 
     // Video
-    const video = htmlDocument.querySelector(
+    const video = htmlDocument.querySelector<HTMLVideoElement>(
       '.edusharing_rendering_content_video_wrapper > video',
     )
     const isVideoSnippet = video !== null
