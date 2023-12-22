@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import * as t from 'io-ts'
 import Image from 'next/image'
-import clsx from 'clsx'
 
 export function EdusharingAssetRenderer(props: {
   nodeId?: string
   repositoryId?: string
   ltik: string
-  height: number
+  contentWidth: string | null
 }) {
-  const { nodeId, repositoryId, ltik, height } = props
+  // Use default value for widthInPercent so that old content can be load
+  // where this property was not set
+  const { nodeId, repositoryId, ltik, contentWidth } = props
 
-  const [embedHtml, setEmbedHtml] = useState<string | null>(null)
+  let [embedHtml, setEmbedHtml] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchEmbedHtml() {
@@ -42,78 +43,115 @@ export function EdusharingAssetRenderer(props: {
         return
       }
 
-      setEmbedHtml(result.detailsSnippet)
+      // HTML snipped returned by edu-sharing cannot be used as it is.
+      const newEmbedHtml = embedHtmlFor(result.detailsSnippet)
+
+      setEmbedHtml(newEmbedHtml)
     }
 
     void fetchEmbedHtml()
   }, [nodeId, repositoryId, ltik])
 
   return (
-    <figure
-      className={clsx(
-        'flex items-center',
-        embedHtml && 'justify-start',
-        !embedHtml && 'h-40 w-full justify-center',
-      )}
-    >
+    <figure className="w-full">
       {embedHtml ? (
         renderEmbed()
       ) : (
-        <Image
-          className="block opacity-50"
-          src="/edusharing.svg"
-          alt="Edusharing Logo"
-          width="100"
-          height="100"
-        />
+        <div className="flex justify-center">
+          <Image
+            className="block opacity-50"
+            src="/edusharing.svg"
+            alt="Edusharing Logo"
+            width="100"
+            height="100"
+          />
+        </div>
       )}
     </figure>
   )
 
-  function renderEmbed() {
-    if (embedHtml == null) return
-
+  function embedHtmlFor(detailsSnipped: string) {
     const parser = new DOMParser()
-    let document = parser.parseFromString(embedHtml, 'text/html')
+    let htmlDocument = parser.parseFromString(detailsSnipped, 'text/html')
 
-    const contentWrapperElement = document.querySelector<HTMLDivElement>(
-      '.edusharing_rendering_content_wrapper',
-    )
-
-    if (contentWrapperElement) {
-      // Embed html sent by edusharing includes "width: 0px"
-      contentWrapperElement.style.width = ''
-    }
-
-    const imgElement = document.querySelector<HTMLImageElement>(
+    // Image
+    const image = htmlDocument.querySelector<HTMLImageElement>(
       '.edusharing_rendering_content_wrapper > img',
     )
-
-    if (imgElement) {
-      imgElement.style.height = `${height}rem`
-      imgElement.style.objectFit = 'contain'
-      // Embed html sent by edusharing includes "width: 0px" for images.
-      imgElement.style.width = ''
+    const isImageSnippet =
+      image && !image.classList.contains('edusharing_rendering_content_preview')
+    if (isImageSnippet) {
+      // Create completely new <img> element because patching the existing one is more work/error-prone
+      const imageSnippet = `
+        <img style="width: 100%; object-fit: contain;" src="${image.getAttribute(
+          'src',
+        )}" alt="${image.getAttribute('alt')}" title="${image.getAttribute(
+          'title',
+        )}" />
+      `
+      return imageSnippet
     }
 
-    const videoElement = document.querySelector<HTMLVideoElement>(
-      '.videoWrapperInner > video',
+    // .docx, .pptx
+    const isFilePreview =
+      image && image.classList.contains('edusharing_rendering_content_preview')
+    if (isFilePreview) {
+      // Make preview image visible
+      image.removeAttribute('width')
+      image.removeAttribute('height')
+      return htmlDocument.body.innerHTML
+    }
+
+    // Video
+    const video = htmlDocument.querySelector<HTMLVideoElement>(
+      '.edusharing_rendering_content_video_wrapper > video',
     )
-
-    if (videoElement) {
-      videoElement.style.height = `${height}rem`
-      imgElement.style.objectFit = 'contain'
-      // Embed html sent by edusharing includes "width: 0px" for videos.
-      imgElement.style.width = ''
+    const isVideoSnippet = video !== null
+    if (isVideoSnippet) {
+      // Create completely new <video> element because patching the existing one is more work/error-prone
+      const videoSnippet = `
+        <video style="width: 100%; object-fit: contain;" src="${video.getAttribute(
+          'src',
+        )}" controls controlsList="nodownload" oncontextmenu="return false;"></video>
+      `
+      return videoSnippet
     }
 
-    const updatedEmbedHtml = document.body.innerHTML
+    const iframe = htmlDocument.querySelector('iframe')
+
+    // H5P
+    const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
+    if (isH5P) {
+      // Remove footer because it covers up exercise
+      const footer = htmlDocument.querySelector(
+        '.edusharing_rendering_content_footer',
+      )
+      if (footer) {
+        footer.remove()
+      }
+      return htmlDocument.body.innerHTML
+    }
+
+    const isPdf = iframe?.id === 'docFrame'
+    if (isPdf) {
+      // Do not adjust height based on container size
+      iframe.style.height = 'auto'
+      return htmlDocument.body.innerHTML
+    }
+
+    // If the detailsSnipped was not handled by one of the handlers above, change nothing in html snippet
+    return detailsSnipped
+  }
+
+  function renderEmbed() {
+    if (embedHtml == null) return
 
     // TODO: Sanatize embed html? But I observed that embedHtml for videos contains <script>
     return (
       <div
-        className="not-prose h-full w-full overflow-auto"
-        dangerouslySetInnerHTML={{ __html: updatedEmbedHtml }}
+        className={`not-prose overflow-auto max-w-full`}
+        style={{ width: contentWidth ? contentWidth : '100%' }}
+        dangerouslySetInnerHTML={{ __html: embedHtml }}
       />
     )
   }

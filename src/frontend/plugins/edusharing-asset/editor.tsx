@@ -14,7 +14,7 @@ export function EdusharingAssetEditor({
 }: EdusharingAssetProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
-  const { edusharingAsset, height } = state
+  const { edusharingAsset, contentWidth } = state
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -61,21 +61,8 @@ export function EdusharingAssetEditor({
             : undefined
         }
         ltik={config.ltik}
-        height={height.value}
+        contentWidth={contentWidth.defined ? contentWidth.value : null}
       />
-      {!edusharingAsset.defined || focused ? (
-        <div className="w-full relative">
-          <div className="flex flex-col items-center absolute bottom-2 left-2">
-            <button
-              className="ece-button-blue text-sm"
-              onClick={() => setModalIsOpen(true)}
-              data-testid="edusharing-plugin-button"
-            >
-              Datei von edu-sharing einbinden
-            </button>
-          </div>
-        </div>
-      ) : null}
     </>
   )
 
@@ -89,27 +76,63 @@ export function EdusharingAssetEditor({
         pluginSettings={
           <>
             <button
-              onClick={() =>
-                height.set((currentValue) => Math.min(currentValue + 2, 100))
-              }
+              onClick={() => setModalIsOpen(true)}
               className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
               data-qa="plugin-edusharing-bigger-button"
             >
-              Größer
+              Inhalt wählen
             </button>
-            <button
-              onClick={() =>
-                height.set((currentValue) => Math.max(currentValue - 2, 2))
-              }
-              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
-              data-qa="plugin-edusharing-smaller-button"
-            >
-              Kleiner
-            </button>
+            {edusharingAsset.defined && !contentWidth.defined ? (
+              <button
+                onClick={() => {
+                  if (contentWidth.defined === false) {
+                    contentWidth.create('30rem')
+                  }
+                }}
+                className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                data-qa="plugin-edusharing-bigger-button"
+              >
+                Größe verändern
+              </button>
+            ) : null}
+            {edusharingAsset.defined && contentWidth.defined ? (
+              <>
+                <button
+                  onClick={() =>
+                    contentWidth.set((previousContentWidth) =>
+                      addToContentWidth(previousContentWidth, 2),
+                    )
+                  }
+                  className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                  data-qa="plugin-edusharing-bigger-button"
+                >
+                  Größer
+                </button>
+                <button
+                  onClick={() =>
+                    contentWidth.set((previousContentWidth) =>
+                      addToContentWidth(previousContentWidth, -2),
+                    )
+                  }
+                  className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                  data-qa="plugin-edusharing-smaller-button"
+                >
+                  Kleiner
+                </button>
+              </>
+            ) : null}
           </>
         }
       />
     )
+
+    function addToContentWidth(previousContentWidth: string, value: number) {
+      const contentWidthNumber = parseFloat(
+        previousContentWidth.replace('rem', ''),
+      )
+      const newContentWidthNumber = Math.max(contentWidthNumber + value, 4)
+      return `${newContentWidthNumber}rem`
+    }
   }
 
   function renderModal() {

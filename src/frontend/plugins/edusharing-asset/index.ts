@@ -16,7 +16,8 @@ const state = object({
       nodeId: string(''),
     }),
   ),
-  height: number(20),
+  height: optional(number(20)), // TODO: Remove before release. Not used any more. But removing this is a breaking change.
+  contentWidth: optional(string()), // Contains 'rem' size values, for example '40rem'
 })
 
 export function createEdusharingAssetPlugin(
