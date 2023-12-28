@@ -37,15 +37,13 @@ export function SerloEditor({
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
       </Head>
       <LtikContext.Provider value={ltik}>
-        <div className="serlo-editor-hacks">
-          {mayEdit ? (
-            <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
-          ) : (
-            <Layout>
-              <StaticRenderer document={state.document} />
-            </Layout>
-          )}
-        </div>
+        {mayEdit ? (
+          <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+        ) : (
+          <Layout>
+            <StaticRenderer document={state.document} />
+          </Layout>
+        )}
         <ToastNotice />
       </LtikContext.Provider>
     </>
