@@ -1,6 +1,4 @@
-@tailwind base;
 @tailwind components;
-@tailwind utilities;
 
 @layer components {
   /* HACK: Makes file name invisible (requested by RLP) in edusharing-plugin after embedding a file. Better solution: edu-sharing should modify the html they send. */
