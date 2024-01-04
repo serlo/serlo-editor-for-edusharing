@@ -51,16 +51,17 @@ export function EdusharingAssetRenderer(props: {
   return (
     <figure
       className={clsx(
-        'flex items-center',
-        embedHtml && 'justify-start',
-        !embedHtml && 'h-40 w-full justify-center',
+        'edusharing-flex edusharing-items-center',
+        embedHtml && 'edusharing-justify-start',
+        !embedHtml &&
+          'edusharing-h-40 edusharing-w-full edusharing-justify-center',
       )}
     >
       {embedHtml ? (
         renderEmbed()
       ) : (
         <Image
-          className="block opacity-50"
+          className="edusharing-block edusharing-opacity-50"
           src="/edusharing.svg"
           alt="Edusharing Logo"
           width="100"
@@ -112,7 +113,7 @@ export function EdusharingAssetRenderer(props: {
     // TODO: Sanatize embed html? But I observed that embedHtml for videos contains <script>
     return (
       <div
-        className="not-prose h-full w-full overflow-auto"
+        className="edusharing-not-prose edusharing-h-full edusharing-w-full edusharing-overflow-auto"
         dangerouslySetInnerHTML={{ __html: updatedEmbedHtml }}
       />
     )

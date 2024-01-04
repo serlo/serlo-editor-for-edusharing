@@ -45,16 +45,16 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
           <SerloInjectionRenderer contentId={cache} />
         </PreviewOverlay>
       ) : (
-        <div className="relative w-full text-center">
+        <div className="edusharing-relative edusharing-w-full edusharing-text-center">
           <FaIcon
             icon={faNewspaper}
-            className="relative w-full text-center text-[5rem] text-gray-400"
+            className="edusharing-relative edusharing-w-full edusharing-text-center edusharing-text-[5rem] edusharing-text-gray-400"
           />
         </div>
       )}
 
       {props.focused && !preview ? (
-        <div className="mt-4">
+        <div className="edusharing-mt-4">
           <EditorInput
             label={config.i18n.label}
             placeholder={config.i18n.placeholder}

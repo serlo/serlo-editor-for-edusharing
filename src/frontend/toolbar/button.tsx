@@ -17,9 +17,11 @@ export function ToolbarButton({
   return (
     <button
       className={clsx(
-        'ml-1 rounded-xl border border-transparent bg-sky-800/0 px-1.5 py-1 text-sm font-medium text-white shadow-sm hover:bg-sky-800 hover:opacity-100',
+        'edusharing-ml-1 edusharing-rounded-xl edusharing-border edusharing-border-transparent edusharing-bg-sky-800/0 edusharing-px-1.5 edusharing-py-1 edusharing-text-sm edusharing-font-medium edusharing-text-white edusharing-shadow-sm hover:edusharing-bg-sky-800 hover:edusharing-opacity-100',
         className,
-        active ? 'opacity-90' : 'cursor-not-allowed opacity-50',
+        active
+          ? 'edusharing-opacity-90'
+          : 'edusharing-cursor-not-allowed edusharing-opacity-50',
       )}
       disabled={active ? undefined : true}
       onClick={onClick}

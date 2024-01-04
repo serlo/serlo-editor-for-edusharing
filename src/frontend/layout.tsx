@@ -6,9 +6,9 @@ export function Layout({ children }: { children: ReactNode }) {
     <>
       <div
         className={clsx(
-          'prose lg:prose-lg mx-auto max-w-5xl py-20 px-4 sm:px-6 lg:px-8',
-          'prose-stone prose-headings:text-stone-800 prose-h1:font-bold',
-          'prose-a:text-sky-500',
+          'edusharing-prose lg:edusharing-prose-lg edusharing-mx-auto edusharing-max-w-5xl edusharing-py-20 edusharing-px-4 sm:edusharing-px-6 lg:edusharing-px-8',
+          'edusharing-prose-stone prose-headings:edusharing-text-stone-800 prose-h1:edusharing-font-bold',
+          'prose-a:edusharing-text-sky-500',
         )}
       >
         {children}

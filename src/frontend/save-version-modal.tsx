@@ -43,20 +43,20 @@ export function SaveVersionModal({
       <p>Erstelle und speichere eine neue Version:</p>
       <input
         type="text"
-        className="mt-3 block w-full rounded-md border border-gray-300 p-2 focus-visible:outline-sky-800"
+        className="edusharing-mt-3 edusharing-block edusharing-w-full edusharing-rounded-md edusharing-border edusharing-border-gray-300 edusharing-p-2 focus-visible:edusharing-outline-sky-800"
         ref={commentInput}
         size={50}
         placeholder="Name der neuen Version"
       />
-      <div className="mt-3 text-right">
+      <div className="edusharing-mt-3 edusharing-text-right">
         <button
-          className="ece-button-blue-transparent mr-3 text-base"
+          className="edusharing-ece-button-blue-transparent edusharing-mr-3 edusharing-text-base"
           onClick={() => setOpen(false)}
         >
           Schließen
         </button>
         <button
-          className="ece-button-blue text-base"
+          className="edusharing-ece-button-blue edusharing-text-base"
           onClick={async () => {
             await save(commentInput.current?.value)
             setOpen(false)

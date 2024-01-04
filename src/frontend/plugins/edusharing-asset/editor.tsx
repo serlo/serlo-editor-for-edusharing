@@ -63,10 +63,10 @@ export function EdusharingAssetEditor({
         height={height.value}
       />
       {!edusharingAsset.defined || focused ? (
-        <div className="w-full relative">
-          <div className="flex flex-col items-center absolute bottom-2 left-2">
+        <div className="edusharing-w-full edusharing-relative">
+          <div className="edusharing-flex edusharing-flex-col edusharing-items-center edusharing-absolute edusharing-bottom-2 edusharing-left-2">
             <button
-              className="ece-button-blue text-sm"
+              className="edusharing-ece-button-blue edusharing-text-sm"
               onClick={() => setModalIsOpen(true)}
               data-testid="edusharing-plugin-button"
             >
@@ -91,7 +91,7 @@ export function EdusharingAssetEditor({
               onClick={() =>
                 height.set((currentValue) => Math.min(currentValue + 2, 100))
               }
-              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+              className="edusharing-mr-2 edusharing-rounded-md edusharing-border edusharing-border-gray-500 edusharing-px-1 edusharing-text-sm edusharing-transition-all hover:edusharing-bg-editor-primary-200 focus-visible:edusharing-bg-editor-primary-200"
               data-qa="plugin-edusharing-bigger-button"
             >
               Größer
@@ -100,7 +100,7 @@ export function EdusharingAssetEditor({
               onClick={() =>
                 height.set((currentValue) => Math.max(currentValue - 2, 2))
               }
-              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+              className="edusharing-mr-2 edusharing-rounded-md edusharing-border edusharing-border-gray-500 edusharing-px-1 edusharing-text-sm edusharing-transition-all hover:edusharing-bg-editor-primary-200 focus-visible:edusharing-bg-editor-primary-200"
               data-qa="plugin-edusharing-smaller-button"
             >
               Kleiner
@@ -142,7 +142,11 @@ export function EdusharingAssetEditor({
           },
         }}
       >
-        <iframe src={url.href} className="h-full w-full" ref={iframeRef} />
+        <iframe
+          src={url.href}
+          className="edusharing-h-full edusharing-w-full"
+          ref={iframeRef}
+        />
       </Modal>
     )
   }
