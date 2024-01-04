@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic'
 import { ComponentProps } from 'react'
 
-import { Link } from '@/components/content/link'
 import {
   InitRenderersArgs,
   LinkRenderer,
@@ -21,6 +20,7 @@ import type {
   EditorMultimediaDocument,
   EditorExerciseDocument,
   EditorSolutionDocument,
+  EditorGeogebraDocument,
 } from '@frontend/src/serlo-editor/types/editor-plugins'
 import { MultimediaStaticRenderer } from '@/serlo-editor/plugins/multimedia/static'
 import { EditorPluginType } from '@frontend/src/serlo-editor/types/editor-plugin-type'
@@ -31,6 +31,7 @@ import { StaticSolutionRenderer } from '@/serlo-editor/plugins/solution/static'
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 import { SerloInjectionStaticRenderer } from './serlo-injection/static'
 import { TextAreaExerciseStaticRenderer } from '@/serlo-editor/plugins/text-area-exercise/static'
+import { GeogebraStaticRenderer } from '@/serlo-editor/plugins/geogebra/static'
 
 const EquationsStaticRenderer = dynamic<EditorEquationsDocument>(() =>
   import('@/serlo-editor/plugins/equations/static').then(
@@ -87,18 +88,17 @@ export function createRenderers(): InitRenderersArgs {
       { type: EditorPluginType.Box, renderer: BoxStaticRenderer },
       { type: EditorPluginType.SerloTable, renderer: SerloTableStaticRenderer },
       { type: EditorPluginType.Equations, renderer: EquationsStaticRenderer },
-      // Deactivated because geogebra embeds don't size themselves correctly in static renderer view. Having a relative div around GeogebraStaticRenderer already improved it (probably because of the absolute positioned child element). But now the geogebra applet has a height of 0, does not resize itself correctly to the space available. Specifying a height in the container div is not an option because applets have different heights.
-      // TODO: Fix issue with geogebra static renderer view and reenable
-      // {
-      //   type: EditorPluginType.Geogebra,
-      //   renderer: (props: EditorGeogebraDocument) => {
-      //     return (
-      //       <div className="relative">
-      //         <GeogebraStaticRenderer {...props} />
-      //       </div>
-      //     )
-      //   },
-      // },
+      // Geogebra embeds don't size themselves correctly in static renderer view. Having a relative div around GeogebraStaticRenderer already improved it (probably because of the absolute positioned child element). But now the geogebra applet has a height of 0, does not resize itself correctly to the space available. Specifying a height in the container div is not an option because applets have different heights.
+      {
+        type: EditorPluginType.Geogebra,
+        renderer: (props: EditorGeogebraDocument) => {
+          return (
+            <div className="relative">
+              <GeogebraStaticRenderer {...props} />
+            </div>
+          )
+        },
+      },
 
       // exercises
       {
