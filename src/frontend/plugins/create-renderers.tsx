@@ -93,7 +93,7 @@ export function createRenderers(): InitRenderersArgs {
         type: EditorPluginType.Geogebra,
         renderer: (props: EditorGeogebraDocument) => {
           return (
-            <div className="relative">
+            <div className="relative pb-[56.2%]">
               <GeogebraStaticRenderer {...props} />
             </div>
           )
