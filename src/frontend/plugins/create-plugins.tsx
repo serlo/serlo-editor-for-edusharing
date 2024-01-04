@@ -53,7 +53,7 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
             allowedPlugins: [EditorPluginType.Text],
           },
         },
-        allowedPlugins: ['edusharingAsset'],
+        allowedPlugins: ['edusharingAsset', EditorPluginType.Geogebra],
       }),
       visibleInSuggestions: true,
       icon: <IconMultimedia />,
