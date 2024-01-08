@@ -54,19 +54,21 @@ export function EdusharingAssetRenderer(props: {
 
   return (
     <figure className="w-full">
-      {embedHtml ? (
-        renderEmbed()
-      ) : (
-        <div className="flex justify-center">
-          <Image
-            className="block opacity-50"
-            src="/edusharing.svg"
-            alt="Edusharing Logo"
-            width="100"
-            height="100"
-          />
-        </div>
-      )}
+      <div className="mx-side">
+        {embedHtml ? (
+          renderEmbed()
+        ) : (
+          <div className="flex justify-center">
+            <Image
+              className="block opacity-50"
+              src="/edusharing.svg"
+              alt="Edusharing Logo"
+              width="100"
+              height="100"
+            />
+          </div>
+        )}
+      </div>
     </figure>
   )
 
