@@ -88,7 +88,6 @@ export function createRenderers(): InitRenderersArgs {
       { type: EditorPluginType.Box, renderer: BoxStaticRenderer },
       { type: EditorPluginType.SerloTable, renderer: SerloTableStaticRenderer },
       { type: EditorPluginType.Equations, renderer: EquationsStaticRenderer },
-      // Geogebra embeds don't size themselves correctly in static renderer view. Having a relative div around GeogebraStaticRenderer already improved it (probably because of the absolute positioned child element). But now the geogebra applet has a height of 0, does not resize itself correctly to the space available. Specifying a height in the container div is not an option because applets have different heights.
       {
         type: EditorPluginType.Geogebra,
         renderer: (props: EditorGeogebraDocument) => {
