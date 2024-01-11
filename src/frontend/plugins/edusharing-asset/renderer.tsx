@@ -138,7 +138,7 @@ export function EdusharingAssetRenderer(props: {
       const newEmbedHtml = `${detailsSnippet}<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>`
       return {
         html: newEmbedHtml,
-        renderMethod: 'dangerously-set-inner-html',
+        renderMethod: 'iframe',
       }
     }
 
