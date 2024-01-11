@@ -7,6 +7,7 @@ import IconMultimedia from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-mu
 import IconSpoiler from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-spoiler.svg'
 import IconTable from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-table.svg'
 import IconText from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-text.svg'
+import IconGeogebra from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-geogebra.svg'
 import IconFallback from '@/serlo-editor/editor-ui/assets/plugin-icons/icon-fallback.svg'
 import { createBoxPlugin } from '@/serlo-editor/plugins/box'
 import { equationsPlugin } from '@/serlo-editor/plugins/equations'
@@ -26,6 +27,7 @@ import { createSpoilerPlugin } from '@/serlo-editor/plugins/spoiler'
 import { exercisePlugin } from '@/serlo-editor/plugins/exercise'
 import { solutionPlugin } from '@/serlo-editor/plugins/solution'
 import { EditorPluginType } from '@frontend/src/serlo-editor/types/editor-plugin-type'
+import { geoGebraPlugin } from '@/serlo-editor/plugins/geogebra'
 
 export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
   const pluginsThatCannotContainOtherPlugins = [
@@ -92,13 +94,12 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
       visibleInSuggestions: true,
       icon: <IconEquation />,
     },
-    // Deactivated temporarily because geogebra static renderer view is broken
-    // {
-    //   type: EditorPluginType.Geogebra,
-    //   plugin: geoGebraPlugin,
-    //   visibleInSuggestions: true,
-    //   icon: <IconGeogebra />,
-    // },
+    {
+      type: EditorPluginType.Geogebra,
+      plugin: geoGebraPlugin,
+      visibleInSuggestions: true,
+      icon: <IconGeogebra />,
+    },
     {
       type: EditorPluginType.Highlight,
       plugin: createHighlightPlugin(),
