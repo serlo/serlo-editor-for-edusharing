@@ -2,7 +2,6 @@ import { memo, useEffect, useState } from 'react'
 import * as t from 'io-ts'
 import Image from 'next/image'
 import IframeResizer from 'iframe-resizer-react'
-// import InnerHTML from 'dangerously-set-html-content'
 
 type RenderMethod = 'dangerously-set-inner-html' | 'iframe'
 
@@ -20,6 +19,8 @@ export function EdusharingAssetRenderer(props: {
   const [renderMethod, setRenderMethod] = useState<RenderMethod>(
     'dangerously-set-inner-html',
   )
+  const [defineContainerHeight, setDefineContainerHeight] =
+    useState<boolean>(false)
 
   useEffect(() => {
     async function fetchEmbedHtml() {
@@ -51,12 +52,12 @@ export function EdusharingAssetRenderer(props: {
       }
 
       // HTML snipped returned by edu-sharing cannot be used as it is.
-      const { html, renderMethod } = embedHtmlAndRenderMethod(
-        result.detailsSnippet,
-      )
+      const { html, renderMethod, defineContainerHeight } =
+        embedHtmlAndRenderMethod(result.detailsSnippet)
 
       setEmbedHtml(html)
       setRenderMethod(renderMethod)
+      setDefineContainerHeight(defineContainerHeight)
     }
 
     void fetchEmbedHtml()
@@ -85,6 +86,7 @@ export function EdusharingAssetRenderer(props: {
   function embedHtmlAndRenderMethod(detailsSnippet: string): {
     html: string
     renderMethod: RenderMethod
+    defineContainerHeight: boolean
   } {
     // TODO: Hide metadata wrapper because it looks broken?
     // detailsSnipped = detailsSnipped.replace('</script>', ' .edusharing_metadata_wrapper { display: none; }</script>')
@@ -110,6 +112,7 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: imageSnippet,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
       }
     }
 
@@ -123,6 +126,7 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: htmlDocument.body.innerHTML,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
       }
     }
 
@@ -139,6 +143,7 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: newEmbedHtml,
         renderMethod: 'iframe',
+        defineContainerHeight: false,
       }
     }
 
@@ -157,6 +162,7 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: htmlDocument.body.innerHTML,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
       }
     }
 
@@ -167,6 +173,27 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: htmlDocument.body.innerHTML,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
+      }
+    }
+
+    // Learning apps
+    if (detailsSnippet.includes('learningapps.org/')) {
+      let iframeHtmlElement = htmlDocument.querySelector('iframe')
+      if (!iframeHtmlElement) {
+        return {
+          html: 'Error handling iframe. Please contact support.',
+          renderMethod: 'dangerously-set-inner-html',
+          defineContainerHeight: false,
+        }
+      }
+      const iframeHtml = iframeHtmlElement.outerHTML
+        .replace('width="95%"', 'width="100%"')
+        .replace('height: 80vh', '')
+      return {
+        html: iframeHtml,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: true,
       }
     }
 
@@ -174,6 +201,7 @@ export function EdusharingAssetRenderer(props: {
     return {
       html: detailsSnippet,
       renderMethod: 'dangerously-set-inner-html',
+      defineContainerHeight: false,
     }
   }
 
@@ -185,7 +213,10 @@ export function EdusharingAssetRenderer(props: {
       return (
         <div
           className={`not-prose overflow-auto max-w-full`}
-          style={{ width: contentWidth ? contentWidth : '100%' }}
+          style={{
+            width: contentWidth ? contentWidth : '100%',
+            aspectRatio: defineContainerHeight ? '16/9' : undefined,
+          }}
           dangerouslySetInnerHTML={{ __html: embedHtml }}
         />
       )
@@ -204,14 +235,24 @@ export function EdusharingAssetRenderer(props: {
       return (
         <div
           className="max-w-full"
-          style={{ width: contentWidth ? contentWidth : '100%' }}
+          style={{
+            width: contentWidth ? contentWidth : '100%',
+            aspectRatio: defineContainerHeight ? '16/9' : undefined,
+          }}
         >
-          <MemoizedIframeResizer
-            heightCalculationMethod="lowestElement"
-            checkOrigin={false}
-            srcDoc={embedHtml}
-            style={{ width: '1px', minWidth: '100%' }}
-          />
+          {defineContainerHeight ? (
+            <iframe
+              srcDoc={embedHtml}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <MemoizedIframeResizer
+              heightCalculationMethod="lowestElement"
+              checkOrigin={false}
+              srcDoc={embedHtml}
+              style={{ width: '1px', minWidth: '100%' }}
+            />
+          )}
         </div>
       )
     }

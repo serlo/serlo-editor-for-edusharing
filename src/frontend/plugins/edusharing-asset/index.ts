@@ -17,7 +17,7 @@ const state = object({
     }),
   ),
   height: optional(number(20)), // TODO: Remove before release. Not used any more. But removing this is a breaking change.
-  contentWidth: optional(string()), // Contains 'rem' size values, for example '40rem'
+  contentWidth: optional(string()), // Contains values like '40rem'. Possible values ['4rem', '6rem', ...]
 })
 
 export function createEdusharingAssetPlugin(
