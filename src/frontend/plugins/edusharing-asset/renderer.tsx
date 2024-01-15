@@ -93,7 +93,7 @@ export function EdusharingAssetRenderer(props: {
 
     // Hide all footers
     detailsSnippet = detailsSnippet.replaceAll(
-      /edusharing_rendering_content_footer {/g,
+      /edusharing_rendering_content_footer \{/g,
       'edusharing_rendering_content_footer { display: none;',
     )
 
@@ -136,9 +136,10 @@ export function EdusharingAssetRenderer(props: {
       }
     }
 
-    // Video
-    const isVideoSnippet = detailsSnippet.includes('videoFormat')
-    if (isVideoSnippet) {
+    // Video & audio
+    const isEmbedThatNeedsToFetchContent =
+      detailsSnippet.includes('get_resource')
+    if (isEmbedThatNeedsToFetchContent) {
       // Converts a function within a <script> tag in the html snippet sent by edu-sharing. Fixes "token issue" when executing script.
       detailsSnippet = detailsSnippet.replace(
         'get_resource = function(authstring)',
