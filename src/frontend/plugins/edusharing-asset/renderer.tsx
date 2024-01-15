@@ -88,8 +88,14 @@ export function EdusharingAssetRenderer(props: {
     renderMethod: RenderMethod
     defineContainerHeight: boolean
   } {
-    // TODO: Hide metadata wrapper because it looks broken?
-    // detailsSnipped = detailsSnipped.replace('</script>', ' .edusharing_metadata_wrapper { display: none; }</script>')
+    // Remove all min-width
+    detailsSnippet = detailsSnippet.replaceAll(/min-width[^;]*;/g, '')
+
+    // Hide all footers
+    detailsSnippet = detailsSnippet.replaceAll(
+      /edusharing_rendering_content_footer {/g,
+      'edusharing_rendering_content_footer { display: none;',
+    )
 
     const parser = new DOMParser()
     const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
@@ -139,7 +145,9 @@ export function EdusharingAssetRenderer(props: {
         'function get_resource(authstring)',
       )
       // Add iframe resizer script
-      const newEmbedHtml = `${detailsSnippet}<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>`
+      const newEmbedHtml =
+        detailsSnippet +
+        '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>'
       return {
         html: newEmbedHtml,
         renderMethod: 'iframe',
@@ -152,16 +160,11 @@ export function EdusharingAssetRenderer(props: {
     // H5P
     const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
     if (isH5P) {
-      // Remove footer because it covers up exercise
-      const footer = htmlDocument.querySelector(
-        '.edusharing_rendering_content_footer',
-      )
-      if (footer) {
-        footer.remove()
-      }
       return {
-        html: htmlDocument.body.innerHTML,
-        renderMethod: 'dangerously-set-inner-html',
+        html:
+          detailsSnippet +
+          '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>',
+        renderMethod: 'iframe',
         defineContainerHeight: false,
       }
     }
@@ -182,7 +185,7 @@ export function EdusharingAssetRenderer(props: {
       let iframeHtmlElement = htmlDocument.querySelector('iframe')
       if (!iframeHtmlElement) {
         return {
-          html: 'Error handling iframe. Please contact support.',
+          html: 'Error. Please contact support. Details: Could not find iframe in learningapp embed html.',
           renderMethod: 'dangerously-set-inner-html',
           defineContainerHeight: false,
         }
