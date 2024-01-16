@@ -2,7 +2,6 @@ import { memo, useEffect, useState } from 'react'
 import * as t from 'io-ts'
 import Image from 'next/image'
 import IframeResizer from 'iframe-resizer-react'
-// import InnerHTML from 'dangerously-set-html-content'
 
 type RenderMethod = 'dangerously-set-inner-html' | 'iframe'
 
@@ -20,6 +19,8 @@ export function EdusharingAssetRenderer(props: {
   const [renderMethod, setRenderMethod] = useState<RenderMethod>(
     'dangerously-set-inner-html',
   )
+  const [defineContainerHeight, setDefineContainerHeight] =
+    useState<boolean>(false)
 
   useEffect(() => {
     async function fetchEmbedHtml() {
@@ -51,12 +52,12 @@ export function EdusharingAssetRenderer(props: {
       }
 
       // HTML snipped returned by edu-sharing cannot be used as it is.
-      const { html, renderMethod } = embedHtmlAndRenderMethod(
-        result.detailsSnippet,
-      )
+      const { html, renderMethod, defineContainerHeight } =
+        embedHtmlAndRenderMethod(result.detailsSnippet)
 
       setEmbedHtml(html)
       setRenderMethod(renderMethod)
+      setDefineContainerHeight(defineContainerHeight)
     }
 
     void fetchEmbedHtml()
@@ -85,9 +86,16 @@ export function EdusharingAssetRenderer(props: {
   function embedHtmlAndRenderMethod(detailsSnippet: string): {
     html: string
     renderMethod: RenderMethod
+    defineContainerHeight: boolean
   } {
-    // TODO: Hide metadata wrapper because it looks broken?
-    // detailsSnipped = detailsSnipped.replace('</script>', ' .edusharing_metadata_wrapper { display: none; }</script>')
+    // Remove all min-width
+    detailsSnippet = detailsSnippet.replaceAll(/min-width[^;]*;/g, '')
+
+    // Hide all footers
+    detailsSnippet = detailsSnippet.replaceAll(
+      /edusharing_rendering_content_footer \{/g,
+      'edusharing_rendering_content_footer { display: none;',
+    )
 
     const parser = new DOMParser()
     const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
@@ -110,6 +118,7 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: imageSnippet,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
       }
     }
 
@@ -118,27 +127,33 @@ export function EdusharingAssetRenderer(props: {
       image && image.classList.contains('edusharing_rendering_content_preview')
     if (isFilePreview) {
       // Make preview image visible
-      image.removeAttribute('width')
-      image.removeAttribute('height')
+      detailsSnippet = detailsSnippet
+        .replace('width="0"', '')
+        .replace('height="0"', '')
       return {
-        html: htmlDocument.body.innerHTML,
+        html: detailsSnippet,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
       }
     }
 
-    // Video
-    const isVideoSnippet = detailsSnippet.includes('videoFormat')
-    if (isVideoSnippet) {
+    // Video & audio
+    const isEmbedThatNeedsToFetchContent =
+      detailsSnippet.includes('get_resource')
+    if (isEmbedThatNeedsToFetchContent) {
       // Converts a function within a <script> tag in the html snippet sent by edu-sharing. Fixes "token issue" when executing script.
       detailsSnippet = detailsSnippet.replace(
         'get_resource = function(authstring)',
         'function get_resource(authstring)',
       )
       // Add iframe resizer script
-      const newEmbedHtml = `${detailsSnippet}<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>`
+      const newEmbedHtml =
+        detailsSnippet +
+        '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>'
       return {
         html: newEmbedHtml,
         renderMethod: 'iframe',
+        defineContainerHeight: false,
       }
     }
 
@@ -147,16 +162,12 @@ export function EdusharingAssetRenderer(props: {
     // H5P
     const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
     if (isH5P) {
-      // Remove footer because it covers up exercise
-      const footer = htmlDocument.querySelector(
-        '.edusharing_rendering_content_footer',
-      )
-      if (footer) {
-        footer.remove()
-      }
       return {
-        html: htmlDocument.body.innerHTML,
-        renderMethod: 'dangerously-set-inner-html',
+        html:
+          detailsSnippet +
+          '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>',
+        renderMethod: 'iframe',
+        defineContainerHeight: false,
       }
     }
 
@@ -167,6 +178,27 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: htmlDocument.body.innerHTML,
         renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: true,
+      }
+    }
+
+    // Learning apps
+    if (detailsSnippet.includes('learningapps.org/')) {
+      let iframeHtmlElement = htmlDocument.querySelector('iframe')
+      if (!iframeHtmlElement) {
+        return {
+          html: 'Error. Please contact support. Details: Could not find iframe in learningapp embed html.',
+          renderMethod: 'dangerously-set-inner-html',
+          defineContainerHeight: false,
+        }
+      }
+      const iframeHtml = iframeHtmlElement.outerHTML
+        .replace('width="95%"', 'width="100%"')
+        .replace('height: 80vh', '')
+      return {
+        html: iframeHtml,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: true,
       }
     }
 
@@ -174,6 +206,7 @@ export function EdusharingAssetRenderer(props: {
     return {
       html: detailsSnippet,
       renderMethod: 'dangerously-set-inner-html',
+      defineContainerHeight: false,
     }
   }
 
@@ -185,7 +218,10 @@ export function EdusharingAssetRenderer(props: {
       return (
         <div
           className={`not-prose overflow-auto max-w-full`}
-          style={{ width: contentWidth ? contentWidth : '100%' }}
+          style={{
+            width: contentWidth ? contentWidth : '100%',
+            aspectRatio: defineContainerHeight ? '16/9' : undefined,
+          }}
           dangerouslySetInnerHTML={{ __html: embedHtml }}
         />
       )
@@ -204,14 +240,24 @@ export function EdusharingAssetRenderer(props: {
       return (
         <div
           className="max-w-full"
-          style={{ width: contentWidth ? contentWidth : '100%' }}
+          style={{
+            width: contentWidth ? contentWidth : '100%',
+            aspectRatio: defineContainerHeight ? '16/9' : undefined,
+          }}
         >
-          <MemoizedIframeResizer
-            heightCalculationMethod="lowestElement"
-            checkOrigin={false}
-            srcDoc={embedHtml}
-            style={{ width: '1px', minWidth: '100%' }}
-          />
+          {defineContainerHeight ? (
+            <iframe
+              srcDoc={embedHtml}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <MemoizedIframeResizer
+              heightCalculationMethod="lowestElement"
+              checkOrigin={false}
+              srcDoc={embedHtml}
+              style={{ width: '1px', minWidth: '100%' }}
+            />
+          )}
         </div>
       )
     }
