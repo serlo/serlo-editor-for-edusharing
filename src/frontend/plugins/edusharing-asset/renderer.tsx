@@ -127,10 +127,11 @@ export function EdusharingAssetRenderer(props: {
       image && image.classList.contains('edusharing_rendering_content_preview')
     if (isFilePreview) {
       // Make preview image visible
-      image.removeAttribute('width')
-      image.removeAttribute('height')
+      detailsSnippet = detailsSnippet
+        .replace('width="0"', '')
+        .replace('height="0"', '')
       return {
-        html: htmlDocument.body.innerHTML,
+        html: detailsSnippet,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: false,
       }
