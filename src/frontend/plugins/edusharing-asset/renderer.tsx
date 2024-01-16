@@ -177,7 +177,7 @@ export function EdusharingAssetRenderer(props: {
       return {
         html: htmlDocument.body.innerHTML,
         renderMethod: 'dangerously-set-inner-html',
-        defineContainerHeight: false,
+        defineContainerHeight: true,
       }
     }
 
