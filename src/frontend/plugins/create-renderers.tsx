@@ -32,6 +32,8 @@ import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 import { SerloInjectionStaticRenderer } from './serlo-injection/static'
 import { TextAreaExerciseStaticRenderer } from '@/serlo-editor/plugins/text-area-exercise/static'
 import { GeogebraStaticRenderer } from '@/serlo-editor/plugins/geogebra/static'
+import { TemplatePluginType } from '@/serlo-editor/types/template-plugin-type'
+import { GenericContentTypeStaticRenderer } from '../../../dep/frontend/src/serlo-editor/plugins/serlo-template-plugins/generic-content/static'
 
 const EquationsStaticRenderer = dynamic<EditorEquationsDocument>(() =>
   import('@/serlo-editor/plugins/equations/static').then(
@@ -147,6 +149,10 @@ export function createRenderers(): InitRenderersArgs {
             <StaticSolutionRenderer {...props} solutionVisibleOnInit={false} />
           )
         },
+      },
+      {
+        type: TemplatePluginType.GenericContent,
+        renderer: GenericContentTypeStaticRenderer,
       },
 
       {
