@@ -28,6 +28,8 @@ import { exercisePlugin } from '@/serlo-editor/plugins/exercise'
 import { solutionPlugin } from '@/serlo-editor/plugins/solution'
 import { EditorPluginType } from '@frontend/src/serlo-editor/types/editor-plugin-type'
 import { geoGebraPlugin } from '@/serlo-editor/plugins/geogebra'
+import { TemplatePluginType } from '@/serlo-editor/types/template-plugin-type'
+import { genericContentTypePlugin } from '@/serlo-editor/plugins/serlo-template-plugins/generic-content'
 
 export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
   const pluginsThatCannotContainOtherPlugins = [
@@ -162,5 +164,9 @@ export function createPlugins({ ltik }: { ltik: string }): PluginsWithData {
     // ===================================================
     { type: EditorPluginType.Rows, plugin: createRowsPlugin() },
     { type: EditorPluginType.Unsupported, plugin: unsupportedPlugin },
+    {
+      type: TemplatePluginType.GenericContent,
+      plugin: genericContentTypePlugin,
+    },
   ]
 }
