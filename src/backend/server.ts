@@ -76,7 +76,7 @@ Provider.setup(
   process.env.EDITOR_KEY_FOR_SIGNING_COOKIES_AND_ENCRYPTING_DATABASE_ENTRIES,
   ltiMongoDBConfig,
   {
-    cookies: { secure: true, sameSite: 'None' },
+    cookies: { secure: process.env.COOKIE_FLAG_SECURE ?? true, sameSite: process.env.COOKIE_FLAG_SAME_SITE ?? 'none' },
     devMode: false,
   },
 )
