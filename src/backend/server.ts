@@ -106,15 +106,13 @@ const server = (async () => {
 
   const deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
   const deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
-  // Make documents in the mongodb collections expire after `deeplinkFlowMaxAge`
-  // seconds.
-  //
-  // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
+
+  const sevenDaysInSeconds = 604800
   await deeplinkNonces.createIndex(
     { createdAt: 1 },
-    // Since in the deeplink flow a user activity is integrated (choosing
-    // the asset to include) we need a longer wait time
-    { expireAfterSeconds: 60 * 60 },
+    // The nonce is generated and stored in the database when the user clicks "embed content from edu sharing". It needs to stay valid until the user selects & embeds a content from edu-sharing within the iframe. But it should not exist indefinitely and the database should be cleared from old nonce values at some point. So we make them expire after 7 days.
+    // https://www.mongodb.com/docs/manual/tutorial/expire-data/
+    { expireAfterSeconds: sevenDaysInSeconds },
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
