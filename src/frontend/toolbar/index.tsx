@@ -122,11 +122,9 @@ export function Toolbar({
           <>
             Autom. Speichern <FontAwesomeIcon icon={faSpinner} spin />
           </>
-        ) : (
-          <>
-            Gespeichert <FontAwesomeIcon icon={faCheck} />
-          </>
-        )}
+        ) : hasPendingChanges ? (
+          <>Nicht gespeicherte Änderungen</>
+        ) : null}
       </div>
     )
   }
