@@ -107,7 +107,7 @@ Provider.onConnect((_token, _req, res) => {
 const server = (async () => {
   await mongoClient.connect()
 
-  const deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
+  const deeplinkNonces = mongoClient.db().collection('deeplink_nonce')
   const deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
 
   const sevenDaysInSeconds = 604800

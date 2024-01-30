@@ -20,7 +20,7 @@ beforeAll(async () => {
   mongoClient = new MongoClient(mongoUrl.href)
 
   await mongoClient.connect()
-  deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
+  deeplinkNonces = mongoClient.db().collection('deeplink_nonce')
   deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
 })
 
