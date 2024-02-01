@@ -225,49 +225,44 @@ export const kitchenSink = {
           ],
         },
         {
-          plugin: 'rows',
-          state: [
-            {
-              plugin: 'serloTable',
-              state: {
-                rows: [
+          plugin: 'serloTable',
+          state: {
+            rows: [
+              {
+                columns: [
                   {
-                    columns: [
-                      {
-                        content: {
-                          plugin: 'text',
-                          state: [{ type: 'p', children: [{ text: 'A' }] }],
-                        },
-                      },
-                      {
-                        content: {
-                          plugin: 'text',
-                          state: [{ type: 'p', children: [{ text: 'B' }] }],
-                        },
-                      },
-                    ],
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'A' }] }],
+                    },
                   },
                   {
-                    columns: [
-                      {
-                        content: {
-                          plugin: 'text',
-                          state: [{ type: 'p', children: [{ text: '1' }] }],
-                        },
-                      },
-                      {
-                        content: {
-                          plugin: 'text',
-                          state: [{ type: 'p', children: [{ text: '2' }] }],
-                        },
-                      },
-                    ],
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'B' }] }],
+                    },
                   },
                 ],
-                tableType: 'OnlyColumnHeader',
               },
-            },
-          ],
+              {
+                columns: [
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '1' }] }],
+                    },
+                  },
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '2' }] }],
+                    },
+                  },
+                ],
+              },
+            ],
+            tableType: 'OnlyColumnHeader',
+          },
         },
         {
           plugin: 'text',
