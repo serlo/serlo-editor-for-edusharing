@@ -31,15 +31,61 @@ export const kitchenSink = {
               type: 'p',
               children: [
                 { text: 'Der Editor unterstützt ' },
-                { text: 'formatierte Texte', strong: true },
-                { text: ' with ' },
+                { text: 'formatierte ', strong: true },
+                { text: 'Texte', em: true },
+                { text: ' mit ' },
                 {
                   type: 'a',
-                  href: 'https://serlo.org',
-                  children: [{ text: 'links' }],
+                  href: 'https://example.com/',
+                  children: [{ text: 'Links' }],
                 },
-                { text: ' usw.', strong: true },
+                { text: ', Formeln ' },
+                {
+                  type: 'math',
+                  src: 'x^{2}=1',
+                  inline: true,
+                  children: [{ text: '' }],
+                },
+                { text: ', Code ' },
+                { text: 'const value = 1', code: true },
+                { text: ' usw.' },
               ],
+            },
+            { type: 'p', children: [{ text: 'Auch Listen wie ...' }] },
+            {
+              children: [
+                {
+                  children: [
+                    { type: 'list-item-child', children: [{ text: 'Eins ' }] },
+                  ],
+                  type: 'list-item',
+                },
+                {
+                  children: [
+                    { children: [{ text: 'Zwei' }], type: 'list-item-child' },
+                  ],
+                  type: 'list-item',
+                },
+              ],
+              type: 'ordered-list',
+            },
+            { children: [{ text: 'oder' }], type: 'p' },
+            {
+              children: [
+                {
+                  children: [
+                    { type: 'list-item-child', children: [{ text: 'Eins' }] },
+                  ],
+                  type: 'list-item',
+                },
+                {
+                  children: [
+                    { children: [{ text: 'Zwei ' }], type: 'list-item-child' },
+                  ],
+                  type: 'list-item',
+                },
+              ],
+              type: 'unordered-list',
             },
           ],
         },
@@ -143,33 +189,250 @@ export const kitchenSink = {
             },
           },
         },
-        // Deactivated temporarily. Spoiler could not be uncollapsed in no-edit view.
-        // TODO Reactivate this when fixed
-        // {
-        //   plugin: 'text',
-        //   state: [
-        //     {
-        //       type: 'h',
-        //       level: 2,
-        //       children: [{ text: 'Spoiler' }],
-        //     },
-        //   ],
-        // },
-        // {
-        //   plugin: 'spoiler',
-        //   state: {
-        //     title: 'Spoilertitel',
-        //     content: {
-        //       plugin: 'rows',
-        //       state: [
-        //         {
-        //           plugin: 'text',
-        //           state: [{ type: 'p', children: [{ text: 'Spoilerinhalt' }] }],
-        //         },
-        //       ],
-        //     },
-        //   },
-        // },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Spoiler' }],
+            },
+          ],
+        },
+        {
+          plugin: 'spoiler',
+          state: {
+            title: 'Spoilertitel',
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [{ type: 'p', children: [{ text: 'Spoilerinhalt' }] }],
+                },
+              ],
+            },
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Tabellen' }],
+            },
+          ],
+        },
+        {
+          plugin: 'rows',
+          state: [
+            {
+              plugin: 'serloTable',
+              state: {
+                rows: [
+                  {
+                    columns: [
+                      {
+                        content: {
+                          plugin: 'text',
+                          state: [{ type: 'p', children: [{ text: 'A' }] }],
+                        },
+                      },
+                      {
+                        content: {
+                          plugin: 'text',
+                          state: [{ type: 'p', children: [{ text: 'B' }] }],
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    columns: [
+                      {
+                        content: {
+                          plugin: 'text',
+                          state: [{ type: 'p', children: [{ text: '1' }] }],
+                        },
+                      },
+                      {
+                        content: {
+                          plugin: 'text',
+                          state: [{ type: 'p', children: [{ text: '2' }] }],
+                        },
+                      },
+                    ],
+                  },
+                ],
+                tableType: 'OnlyColumnHeader',
+              },
+            },
+          ],
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Terme und Gleichungen' }],
+            },
+          ],
+        },
+        {
+          plugin: 'equations',
+          state: {
+            steps: [
+              {
+                left: 'x\\ -1',
+                sign: 'equals',
+                right: '9',
+                transform: '+1',
+                explanation: {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Beide Seiten + 1' }] },
+                  ],
+                },
+              },
+              {
+                left: 'x',
+                sign: 'equals',
+                right: '10',
+                transform: '',
+                explanation: {
+                  plugin: 'text',
+                  state: [{ type: 'p', children: [{ text: '' }] }],
+                },
+              },
+            ],
+            firstExplanation: {
+              plugin: 'text',
+              state: [{ type: 'p', children: [{ text: 'Gleichung' }] }],
+            },
+            transformationTarget: 'equation',
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Geogebra' }],
+            },
+          ],
+        },
+        { plugin: 'geogebra', state: 'nv5wNx9R' },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Interaktive Aufgaben' }],
+            },
+          ],
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Auswahlaufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'scMcExercise',
+              state: {
+                isSingleChoice: false,
+                answers: [
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'A' }] }],
+                    },
+                    isCorrect: true,
+                    feedback: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'B' }] }],
+                    },
+                    isCorrect: false,
+                    feedback: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Eingabefeld Aufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'inputExercise',
+              state: {
+                type: 'input-number-exact-match-challenge',
+                unit: '',
+                answers: [
+                  {
+                    value: 'A',
+                    isCorrect: true,
+                    feedback: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Freitext Aufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'textAreaExercise',
+              state: {},
+            },
+          },
+        },
         {
           plugin: 'text',
           state: [
