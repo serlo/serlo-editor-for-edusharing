@@ -1,17 +1,26 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import * as t from 'io-ts'
 import Image from 'next/image'
-import clsx from 'clsx'
+import IframeResizer from 'iframe-resizer-react'
+
+type RenderMethod = 'dangerously-set-inner-html' | 'iframe'
 
 export function EdusharingAssetRenderer(props: {
   nodeId?: string
   repositoryId?: string
   ltik: string
-  height: number
+  contentWidth: string | null
 }) {
-  const { nodeId, repositoryId, ltik, height } = props
+  // Use default value for widthInPercent so that old content can be load
+  // where this property was not set
+  const { nodeId, repositoryId, ltik, contentWidth } = props
 
-  const [embedHtml, setEmbedHtml] = useState<string | null>(null)
+  let [embedHtml, setEmbedHtml] = useState<string | null>(null)
+  const [renderMethod, setRenderMethod] = useState<RenderMethod>(
+    'dangerously-set-inner-html',
+  )
+  const [defineContainerHeight, setDefineContainerHeight] =
+    useState<boolean>(false)
 
   useEffect(() => {
     async function fetchEmbedHtml() {
@@ -42,80 +51,223 @@ export function EdusharingAssetRenderer(props: {
         return
       }
 
-      setEmbedHtml(result.detailsSnippet)
+      // HTML snipped returned by edu-sharing cannot be used as it is.
+      const { html, renderMethod, defineContainerHeight } =
+        embedHtmlAndRenderMethod(result.detailsSnippet)
+
+      setEmbedHtml(html)
+      setRenderMethod(renderMethod)
+      setDefineContainerHeight(defineContainerHeight)
     }
 
     void fetchEmbedHtml()
   }, [nodeId, repositoryId, ltik])
 
   return (
-    <figure
-      className={clsx(
-        'edusharing-flex edusharing-items-center',
-        embedHtml && 'edusharing-justify-start',
-        !embedHtml &&
-          'edusharing-h-40 edusharing-w-full edusharing-justify-center',
-      )}
-    >
-      {embedHtml ? (
-        renderEmbed()
-      ) : (
-        <Image
-          className="edusharing-block edusharing-opacity-50"
-          src="/edusharing.svg"
-          alt="Edusharing Logo"
-          width="100"
-          height="100"
-        />
-      )}
+    <figure className="w-full">
+      <div className="mx-side">
+        {embedHtml ? (
+          renderEmbed()
+        ) : (
+          <div className="flex justify-center">
+            <Image
+              className="block opacity-50"
+              src="/edusharing.svg"
+              alt="Edusharing Logo"
+              width="100"
+              height="100"
+            />
+          </div>
+        )}
+      </div>
     </figure>
   )
+
+  function embedHtmlAndRenderMethod(detailsSnippet: string): {
+    html: string
+    renderMethod: RenderMethod
+    defineContainerHeight: boolean
+  } {
+    // Remove all min-width
+    detailsSnippet = detailsSnippet.replaceAll(/min-width[^;]*;/g, '')
+
+    // Hide all footers
+    detailsSnippet = detailsSnippet.replaceAll(
+      /edusharing_rendering_content_footer \{/g,
+      'edusharing_rendering_content_footer { display: none;',
+    )
+
+    const parser = new DOMParser()
+    const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
+
+    // Image
+    const image = htmlDocument.querySelector<HTMLImageElement>(
+      '.edusharing_rendering_content_wrapper > img',
+    )
+    const isImageSnippet =
+      image && !image.classList.contains('edusharing_rendering_content_preview')
+    if (isImageSnippet) {
+      // Create completely new <img> element because patching the existing one is more work/error-prone
+      const imageSnippet = `
+        <img style="width: 100%; object-fit: contain;" src="${image.getAttribute(
+          'src',
+        )}" alt="${image.getAttribute('alt')}" title="${image.getAttribute(
+          'title',
+        )}" />
+      `
+      return {
+        html: imageSnippet,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
+      }
+    }
+
+    // .docx, .pptx
+    const isFilePreview =
+      image && image.classList.contains('edusharing_rendering_content_preview')
+    if (isFilePreview) {
+      // Make preview image visible
+      detailsSnippet = detailsSnippet
+        .replace('width="0"', '')
+        .replace('height="0"', '')
+      return {
+        html: detailsSnippet,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
+      }
+    }
+
+    // Video & audio
+    const isEmbedThatNeedsToFetchContent =
+      detailsSnippet.includes('get_resource')
+    if (isEmbedThatNeedsToFetchContent) {
+      // Converts a function within a <script> tag in the html snippet sent by edu-sharing. Fixes "token issue" when executing script.
+      detailsSnippet = detailsSnippet.replace(
+        'get_resource = function(authstring)',
+        'function get_resource(authstring)',
+      )
+      // Add iframe resizer script
+      const newEmbedHtml =
+        detailsSnippet +
+        '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>'
+      return {
+        html: newEmbedHtml,
+        renderMethod: 'iframe',
+        defineContainerHeight: false,
+      }
+    }
+
+    const iframe = htmlDocument.querySelector('iframe')
+
+    // H5P
+    const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
+    if (isH5P) {
+      return {
+        html:
+          detailsSnippet +
+          '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>',
+        renderMethod: 'iframe',
+        defineContainerHeight: false,
+      }
+    }
+
+    const isPdf = iframe?.id === 'docFrame'
+    if (isPdf) {
+      // Do not adjust height based on container size
+      iframe.style.height = 'auto'
+      return {
+        html: htmlDocument.body.innerHTML,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: true,
+      }
+    }
+
+    // Learning apps
+    if (detailsSnippet.includes('learningapps.org/')) {
+      let iframeHtmlElement = htmlDocument.querySelector('iframe')
+      if (!iframeHtmlElement) {
+        return {
+          html: 'Error. Please contact support. Details: Could not find iframe in learningapp embed html.',
+          renderMethod: 'dangerously-set-inner-html',
+          defineContainerHeight: false,
+        }
+      }
+      const iframeHtml = iframeHtmlElement.outerHTML
+        .replace('width="95%"', 'width="100%"')
+        .replace('height: 80vh', '')
+      return {
+        html: iframeHtml,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: true,
+      }
+    }
+
+    // If the detailsSnipped was not handled by one of the handlers above, change nothing in html snippet
+    return {
+      html: detailsSnippet,
+      renderMethod: 'dangerously-set-inner-html',
+      defineContainerHeight: false,
+    }
+  }
 
   function renderEmbed() {
     if (embedHtml == null) return
 
-    const parser = new DOMParser()
-    let document = parser.parseFromString(embedHtml, 'text/html')
-
-    const contentWrapperElement = document.querySelector<HTMLDivElement>(
-      '.edusharing_rendering_content_wrapper',
-    )
-
-    if (contentWrapperElement) {
-      // Embed html sent by edusharing includes "width: 0px"
-      contentWrapperElement.style.width = ''
+    if (renderMethod === 'dangerously-set-inner-html') {
+      // dangerouslySetInnerHTML does not execute <script> tags.
+      return (
+        <div
+          className={`not-prose overflow-auto max-w-full`}
+          style={{
+            width: contentWidth ? contentWidth : '100%',
+            aspectRatio: defineContainerHeight ? '16/9' : undefined,
+          }}
+          dangerouslySetInnerHTML={{ __html: embedHtml }}
+        />
+      )
+      // We could use dangerously-set-html-content npm package instead. This will execute <script> tags but sadly did not work in case of the video embed.
+      // return <InnerHTML className={`not-prose overflow-auto max-w-full`}
+      // style={{ width: contentWidth ? contentWidth : '100%' }} html={embedHtml} />
     }
 
-    const imgElement = document.querySelector<HTMLImageElement>(
-      '.edusharing_rendering_content_wrapper > img',
-    )
-
-    if (imgElement) {
-      imgElement.style.height = `${height}rem`
-      imgElement.style.objectFit = 'contain'
-      // Embed html sent by edusharing includes "width: 0px" for images.
-      imgElement.style.width = ''
+    if (renderMethod === 'iframe') {
+      // IframeResizer properties:
+      // - `heightCalculationMethod="lowestElement"` -> Documentation says its the most accurate (however worse performance than others)
+      // - `srcDoc` -> Sets the iframe content
+      // - `checkOrigin={false}` -> Necessary when using srcDoc
+      // - `style={{ width: '1px', minWidth: '100%' }}` -> Makes Iframe have width 100% and take as much height as it needs. Recommended by documentation.
+      // - Missing `sandbox` -> Should put no restrictions on what the iframe can do: A) Make iframe send the same cookies as the host. B) Allow it to execute scripts. Both important to be able to fetch video.
+      return (
+        <div
+          className="max-w-full"
+          style={{
+            width: contentWidth ? contentWidth : '100%',
+            aspectRatio: defineContainerHeight ? '16/9' : undefined,
+          }}
+        >
+          {defineContainerHeight ? (
+            <iframe
+              srcDoc={embedHtml}
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <MemoizedIframeResizer
+              heightCalculationMethod="lowestElement"
+              checkOrigin={false}
+              srcDoc={embedHtml}
+              style={{ width: '1px', minWidth: '100%' }}
+            />
+          )}
+        </div>
+      )
     }
 
-    const videoElement = document.querySelector<HTMLVideoElement>(
-      '.videoWrapperInner > video',
-    )
-
-    if (videoElement) {
-      videoElement.style.height = `${height}rem`
-      imgElement.style.objectFit = 'contain'
-      // Embed html sent by edusharing includes "width: 0px" for videos.
-      imgElement.style.width = ''
-    }
-
-    const updatedEmbedHtml = document.body.innerHTML
-
-    // TODO: Sanatize embed html? But I observed that embedHtml for videos contains <script>
-    return (
-      <div
-        className="edusharing-not-prose edusharing-h-full edusharing-w-full edusharing-overflow-auto"
-        dangerouslySetInnerHTML={{ __html: updatedEmbedHtml }}
-      />
-    )
+    return null
   }
 }
+
+// Only re-render if `srcDoc` prop changed. We do not want to re-render the Iframe every time when EdusharingAssetRenderer is re-rendered because the state within the iframe is lost.
+const MemoizedIframeResizer = memo(
+  IframeResizer,
+  (prevProps, nextProps) => prevProps.srcDoc === nextProps.srcDoc,
+)

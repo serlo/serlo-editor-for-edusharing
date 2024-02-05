@@ -232,6 +232,7 @@ function EditInner({
         save={save}
         isSaving={isSaving}
       />
+      <div className="h-20"></div>
       <Layout>{children}</Layout>
       {renderExtraEditorStyles()}
       <div ref={formDiv} />

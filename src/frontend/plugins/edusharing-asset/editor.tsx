@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { EdusharingAssetProps } from '.'
+import type { EdusharingAssetProps } from '.'
 import { EdusharingAssetDecoder } from '../../../shared/decoders'
 import { PluginToolbar, PluginDefaultTools } from '@serlo/editor'
 import Modal from 'react-modal'
@@ -13,7 +13,7 @@ export function EdusharingAssetEditor({
 }: EdusharingAssetProps) {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>()
-  const { edusharingAsset, height } = state
+  const { edusharingAsset, contentWidth } = state
 
   useEffect(() => {
     function handleIFrameEvent({ data, source }: MessageEvent) {
@@ -60,21 +60,8 @@ export function EdusharingAssetEditor({
             : undefined
         }
         ltik={config.ltik}
-        height={height.value}
+        contentWidth={contentWidth.defined ? contentWidth.value : null}
       />
-      {!edusharingAsset.defined || focused ? (
-        <div className="edusharing-w-full edusharing-relative">
-          <div className="edusharing-flex edusharing-flex-col edusharing-items-center edusharing-absolute edusharing-bottom-2 edusharing-left-2">
-            <button
-              className="edusharing-ece-button-blue edusharing-text-sm"
-              onClick={() => setModalIsOpen(true)}
-              data-testid="edusharing-plugin-button"
-            >
-              Datei von edu-sharing einbinden
-            </button>
-          </div>
-        </div>
-      ) : null}
     </>
   )
 
@@ -88,27 +75,63 @@ export function EdusharingAssetEditor({
         pluginSettings={
           <>
             <button
-              onClick={() =>
-                height.set((currentValue) => Math.min(currentValue + 2, 100))
-              }
-              className="edusharing-mr-2 edusharing-rounded-md edusharing-border edusharing-border-gray-500 edusharing-px-1 edusharing-text-sm edusharing-transition-all hover:edusharing-bg-editor-primary-200 focus-visible:edusharing-bg-editor-primary-200"
+              onClick={() => setModalIsOpen(true)}
+              className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
               data-qa="plugin-edusharing-bigger-button"
             >
-              Größer
+              Inhalt wählen
             </button>
-            <button
-              onClick={() =>
-                height.set((currentValue) => Math.max(currentValue - 2, 2))
-              }
-              className="edusharing-mr-2 edusharing-rounded-md edusharing-border edusharing-border-gray-500 edusharing-px-1 edusharing-text-sm edusharing-transition-all hover:edusharing-bg-editor-primary-200 focus-visible:edusharing-bg-editor-primary-200"
-              data-qa="plugin-edusharing-smaller-button"
-            >
-              Kleiner
-            </button>
+            {edusharingAsset.defined && !contentWidth.defined ? (
+              <button
+                onClick={() => {
+                  if (contentWidth.defined === false) {
+                    contentWidth.create('30rem')
+                  }
+                }}
+                className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                data-qa="plugin-edusharing-bigger-button"
+              >
+                Größe verändern
+              </button>
+            ) : null}
+            {edusharingAsset.defined && contentWidth.defined ? (
+              <>
+                <button
+                  onClick={() =>
+                    contentWidth.set((previousContentWidth) =>
+                      addToContentWidth(previousContentWidth, 2),
+                    )
+                  }
+                  className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                  data-qa="plugin-edusharing-bigger-button"
+                >
+                  Größer
+                </button>
+                <button
+                  onClick={() =>
+                    contentWidth.set((previousContentWidth) =>
+                      addToContentWidth(previousContentWidth, -2),
+                    )
+                  }
+                  className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
+                  data-qa="plugin-edusharing-smaller-button"
+                >
+                  Kleiner
+                </button>
+              </>
+            ) : null}
           </>
         }
       />
     )
+
+    function addToContentWidth(previousContentWidth: string, value: number) {
+      const contentWidthNumber = parseFloat(
+        previousContentWidth.replace('rem', ''),
+      )
+      const newContentWidthNumber = Math.max(contentWidthNumber + value, 4)
+      return `${newContentWidthNumber}rem`
+    }
   }
 
   function renderModal() {

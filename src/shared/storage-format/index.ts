@@ -15,7 +15,25 @@ export const emptyDocument: StorageFormat = {
   variant: variantType,
   version: 0,
   dateModified: getCurrentDatetime(),
-  document: { plugin: 'rows' },
+  document: {
+    // plugin: 'type-generic-content',
+    // state: {
+    // content: {
+    plugin: 'rows',
+    state: [
+      {
+        plugin: 'text',
+        state: [
+          {
+            type: 'p',
+            children: [{ text: '' }],
+          },
+        ],
+      },
+    ],
+    // },
+    // },
+  },
 }
 
 export const kitchenSinkDocument: StorageFormat = {

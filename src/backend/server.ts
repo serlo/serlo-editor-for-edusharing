@@ -76,7 +76,10 @@ Provider.setup(
   process.env.EDITOR_KEY_FOR_SIGNING_COOKIES_AND_ENCRYPTING_DATABASE_ENTRIES,
   ltiMongoDBConfig,
   {
-    cookies: { secure: true, sameSite: 'None' },
+    cookies: {
+      secure: process.env.COOKIE_FLAG_SECURE ?? true,
+      sameSite: process.env.COOKIE_FLAG_SAME_SITE ?? 'none',
+    },
     devMode: false,
   },
 )
@@ -104,17 +107,15 @@ Provider.onConnect((_token, _req, res) => {
 const server = (async () => {
   await mongoClient.connect()
 
-  const deeplinkNonces = mongoClient.db().collection('deeplink_nonces')
+  const deeplinkNonces = mongoClient.db().collection('deeplink_nonce')
   const deeplinkLoginData = mongoClient.db().collection('deeplink_login_data')
-  // Make documents in the mongodb collections expire after `deeplinkFlowMaxAge`
-  // seconds.
-  //
-  // see https://www.mongodb.com/docs/manual/tutorial/expire-data/
+
+  const sevenDaysInSeconds = 604800
   await deeplinkNonces.createIndex(
     { createdAt: 1 },
-    // Since in the deeplink flow a user activity is integrated (choosing
-    // the asset to include) we need a longer wait time
-    { expireAfterSeconds: 60 * 60 },
+    // The nonce is generated and stored in the database when the user clicks "embed content from edu sharing". It needs to stay valid until the user selects & embeds a content from edu-sharing within the iframe. But it should not exist indefinitely and the database should be cleared from old nonce values at some point. So we make them expire after 7 days.
+    // https://www.mongodb.com/docs/manual/tutorial/expire-data/
+    { expireAfterSeconds: sevenDaysInSeconds },
   )
   await deeplinkLoginData.createIndex(
     { createdAt: 1 },
@@ -310,7 +311,7 @@ const server = (async () => {
         `/${repositoryId}/${nodeId}`,
     )
 
-    url.searchParams.append('displayMode', 'inline')
+    url.searchParams.append('displayMode', 'embed')
     url.searchParams.append('jwt', encodeURIComponent(message))
 
     // HACK: Replace host when in docker, see .env
@@ -331,12 +332,11 @@ const server = (async () => {
         responseText: await response.text(),
         detailsSnippet:
           '<b>Es ist ein Fehler aufgetreten, den edu-sharing Inhalt einzubinden. Bitte wenden Sie sich an den Systemadministrator.</b>',
+        characterEncoding: response.headers.get('content-type'),
       })
     } else {
-      // Forward response from edusharing as it is without decoding / encoding
-      response.headers.forEach((value, name) => res.setHeader(name, value))
-
-      res.send(Buffer.from(await response.arrayBuffer()))
+      // TODO: Error handling
+      res.json(await response.json())
     }
   })
 
