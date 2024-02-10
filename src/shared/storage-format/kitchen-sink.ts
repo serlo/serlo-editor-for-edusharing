@@ -1,442 +1,448 @@
 export const kitchenSink = {
-  // plugin: 'type-generic-content',
-  // state: {
-  //   content: {
-  plugin: 'rows',
-  state: [
-    {
-      plugin: 'text',
+  plugin: 'type-generic-content',
+  state: {
+    content: {
+      plugin: 'rows',
       state: [
         {
-          type: 'h',
-          level: 1,
-          children: [{ text: 'Pluginübersicht' }],
-        },
-      ],
-    },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Rich Text' }],
-        },
-      ],
-    },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'p',
-          children: [
-            { text: 'Der Editor unterstützt ' },
-            { text: 'formatierte ', strong: true },
-            { text: 'Texte', em: true },
-            { text: ' mit ' },
-            {
-              type: 'a',
-              href: 'https://example.com/',
-              children: [{ text: 'Links' }],
-            },
-            { text: ', Formeln ' },
-            {
-              type: 'math',
-              src: 'x^{2}=1',
-              inline: true,
-              children: [{ text: '' }],
-            },
-            { text: ', Code ' },
-            { text: 'const value = 1', code: true },
-            { text: ' usw.' },
-          ],
-        },
-        { type: 'p', children: [{ text: 'Auch Listen wie ...' }] },
-        {
-          children: [
-            {
-              children: [
-                { type: 'list-item-child', children: [{ text: 'Eins ' }] },
-              ],
-              type: 'list-item',
-            },
-            {
-              children: [
-                { children: [{ text: 'Zwei' }], type: 'list-item-child' },
-              ],
-              type: 'list-item',
-            },
-          ],
-          type: 'ordered-list',
-        },
-        { children: [{ text: 'oder' }], type: 'p' },
-        {
-          children: [
-            {
-              children: [
-                { type: 'list-item-child', children: [{ text: 'Eins' }] },
-              ],
-              type: 'list-item',
-            },
-            {
-              children: [
-                { children: [{ text: 'Zwei ' }], type: 'list-item-child' },
-              ],
-              type: 'list-item',
-            },
-          ],
-          type: 'unordered-list',
-        },
-      ],
-    },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Multimedia-Inhalt' }],
-        },
-      ],
-    },
-    {
-      plugin: 'multimedia',
-      state: {
-        explanation: {
-          plugin: 'rows',
+          plugin: 'text',
           state: [
             {
-              plugin: 'text',
-              state: [
-                {
-                  type: 'p',
-                  children: [{ text: 'Erklärung zum Bild' }],
-                },
-              ],
+              type: 'h',
+              level: 1,
+              children: [{ text: 'Pluginübersicht' }],
             },
           ],
         },
-        illustrating: true,
-        multimedia: {
-          plugin: 'edusharingAsset',
-          state: {},
-        },
-        width: 50,
-      },
-    },
-    {
-      plugin: 'text',
-      state: [
         {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Quelltext' }],
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Rich Text' }],
+            },
+          ],
         },
-      ],
-    },
-    {
-      plugin: 'highlight',
-      state: {
-        code: "console.log('Hallo Welt!')",
-        language: 'javascript',
-      },
-    },
-    {
-      plugin: 'text',
-      state: [
         {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Zitat' }],
-        },
-      ],
-    },
-    {
-      plugin: 'box',
-      state: {
-        type: 'quote',
-        title: {
           plugin: 'text',
           state: [
             {
               type: 'p',
               children: [
+                { text: 'Der Editor unterstützt ' },
+                { text: 'formatierte ', strong: true },
+                { text: 'Texte', em: true },
+                { text: ' mit ' },
                 {
-                  text: 'Sir Isaac Newton',
+                  type: 'a',
+                  href: 'https://example.com/',
+                  children: [{ text: 'Links' }],
+                },
+                { text: ', Formeln ' },
+                {
+                  type: 'math',
+                  src: 'x^{2}=1',
+                  inline: true,
+                  children: [{ text: '' }],
+                },
+                { text: ', Code ' },
+                { text: 'const value = 1', code: true },
+                { text: ' usw.' },
+              ],
+            },
+            { type: 'p', children: [{ text: 'Auch Listen wie ...' }] },
+            {
+              children: [
+                {
+                  children: [
+                    { type: 'list-item-child', children: [{ text: 'Eins ' }] },
+                  ],
+                  type: 'list-item',
+                },
+                {
+                  children: [
+                    { children: [{ text: 'Zwei' }], type: 'list-item-child' },
+                  ],
+                  type: 'list-item',
                 },
               ],
+              type: 'ordered-list',
+            },
+            { children: [{ text: 'oder' }], type: 'p' },
+            {
+              children: [
+                {
+                  children: [
+                    { type: 'list-item-child', children: [{ text: 'Eins' }] },
+                  ],
+                  type: 'list-item',
+                },
+                {
+                  children: [
+                    { children: [{ text: 'Zwei ' }], type: 'list-item-child' },
+                  ],
+                  type: 'list-item',
+                },
+              ],
+              type: 'unordered-list',
             },
           ],
         },
-        anchorId: 'box82025',
-        content: {
-          plugin: 'rows',
+        {
+          plugin: 'text',
           state: [
             {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Multimedia-Inhalt' }],
+            },
+          ],
+        },
+        {
+          plugin: 'multimedia',
+          state: {
+            explanation: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    {
+                      type: 'p',
+                      children: [{ text: 'Erklärung zum Bild' }],
+                    },
+                  ],
+                },
+              ],
+            },
+            illustrating: true,
+            multimedia: {
+              plugin: 'edusharingAsset',
+              state: {},
+            },
+            width: 50,
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Quelltext' }],
+            },
+          ],
+        },
+        {
+          plugin: 'highlight',
+          state: {
+            code: "console.log('Hallo Welt!')",
+            language: 'javascript',
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Zitat' }],
+            },
+          ],
+        },
+        {
+          plugin: 'box',
+          state: {
+            type: 'quote',
+            title: {
               plugin: 'text',
               state: [
                 {
                   type: 'p',
                   children: [
                     {
-                      text: 'Was wir wissen, ist ein Tropfen, was wir nicht wissen, ein Ozean.',
+                      text: 'Sir Isaac Newton',
                     },
                   ],
                 },
               ],
             },
-          ],
-        },
-      },
-    },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Spoiler' }],
-        },
-      ],
-    },
-    {
-      plugin: 'spoiler',
-      state: {
-        title: 'Spoilertitel',
-        content: {
-          plugin: 'rows',
-          state: [
-            {
-              plugin: 'text',
-              state: [{ type: 'p', children: [{ text: 'Spoilerinhalt' }] }],
-            },
-          ],
-        },
-      },
-    },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Tabellen' }],
-        },
-      ],
-    },
-    {
-      plugin: 'serloTable',
-      state: {
-        rows: [
-          {
-            columns: [
-              {
-                content: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: 'A' }] }],
-                },
-              },
-              {
-                content: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: 'B' }] }],
-                },
-              },
-            ],
-          },
-          {
-            columns: [
-              {
-                content: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: '1' }] }],
-                },
-              },
-              {
-                content: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: '2' }] }],
-                },
-              },
-            ],
-          },
-        ],
-        tableType: 'OnlyColumnHeader',
-      },
-    },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Terme und Gleichungen' }],
-        },
-      ],
-    },
-    // {
-    //   plugin: 'equations',
-    //   state: {
-    //     steps: [
-    //       {
-    //         left: 'x\\ -1',
-    //         sign: 'equals',
-    //         right: '9',
-    //         transform: '+1',
-    //         explanation: {
-    //           plugin: 'text',
-    //           state: [{ type: 'p', children: [{ text: 'Beide Seiten + 1' }] }],
-    //         },
-    //       },
-    //       {
-    //         left: 'x',
-    //         sign: 'equals',
-    //         right: '10',
-    //         transform: '',
-    //         explanation: {
-    //           plugin: 'text',
-    //           state: [{ type: 'p', children: [{ text: '' }] }],
-    //         },
-    //       },
-    //     ],
-    //     firstExplanation: {
-    //       plugin: 'text',
-    //       state: [{ type: 'p', children: [{ text: 'Gleichung' }] }],
-    //     },
-    //     transformationTarget: 'equation',
-    //   },
-    // },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Geogebra' }],
-        },
-      ],
-    },
-    { plugin: 'geogebra', state: 'nv5wNx9R' },
-    {
-      plugin: 'text',
-      state: [
-        {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Interaktive Aufgaben' }],
-        },
-      ],
-    },
-    {
-      plugin: 'exercise',
-      state: {
-        content: {
-          plugin: 'rows',
-          state: [
-            {
-              plugin: 'text',
-              state: [{ type: 'p', children: [{ text: 'Auswahlaufgabe' }] }],
-            },
-          ],
-        },
-        interactive: {
-          plugin: 'scMcExercise',
-          state: {
-            isSingleChoice: false,
-            answers: [
-              {
-                content: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: 'A' }] }],
-                },
-                isCorrect: true,
-                feedback: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: '' }] }],
-                },
-              },
-              {
-                content: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: 'B' }] }],
-                },
-                isCorrect: false,
-                feedback: {
-                  plugin: 'text',
-                  state: [{ type: 'p', children: [{ text: '' }] }],
-                },
-              },
-            ],
-          },
-        },
-      },
-    },
-    {
-      plugin: 'exercise',
-      state: {
-        content: {
-          plugin: 'rows',
-          state: [
-            {
-              plugin: 'text',
+            anchorId: 'box82025',
+            content: {
+              plugin: 'rows',
               state: [
-                { type: 'p', children: [{ text: 'Eingabefeld Aufgabe' }] },
+                {
+                  plugin: 'text',
+                  state: [
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: 'Was wir wissen, ist ein Tropfen, was wir nicht wissen, ein Ozean.',
+                        },
+                      ],
+                    },
+                  ],
+                },
               ],
             },
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Spoiler' }],
+            },
           ],
         },
-        interactive: {
-          plugin: 'inputExercise',
+        {
+          plugin: 'spoiler',
           state: {
-            type: 'input-number-exact-match-challenge',
-            unit: '',
-            answers: [
+            title: 'Spoilertitel',
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [{ type: 'p', children: [{ text: 'Spoilerinhalt' }] }],
+                },
+              ],
+            },
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Tabellen' }],
+            },
+          ],
+        },
+        {
+          plugin: 'serloTable',
+          state: {
+            rows: [
               {
-                value: 'A',
-                isCorrect: true,
-                feedback: {
+                columns: [
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'A' }] }],
+                    },
+                  },
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'B' }] }],
+                    },
+                  },
+                ],
+              },
+              {
+                columns: [
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '1' }] }],
+                    },
+                  },
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '2' }] }],
+                    },
+                  },
+                ],
+              },
+            ],
+            tableType: 'OnlyColumnHeader',
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Terme und Gleichungen' }],
+            },
+          ],
+        },
+        {
+          plugin: 'equations',
+          state: {
+            steps: [
+              {
+                left: 'x\\ -1',
+                sign: 'equals',
+                right: '9',
+                transform: '+1',
+                explanation: {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Beide Seiten + 1' }] },
+                  ],
+                },
+              },
+              {
+                left: 'x',
+                sign: 'equals',
+                right: '10',
+                transform: '',
+                explanation: {
                   plugin: 'text',
                   state: [{ type: 'p', children: [{ text: '' }] }],
                 },
               },
             ],
+            firstExplanation: {
+              plugin: 'text',
+              state: [{ type: 'p', children: [{ text: 'Gleichung' }] }],
+            },
+            transformationTarget: 'equation',
           },
         },
-      },
-    },
-    {
-      plugin: 'exercise',
-      state: {
-        content: {
-          plugin: 'rows',
+        {
+          plugin: 'text',
           state: [
             {
-              plugin: 'text',
-              state: [{ type: 'p', children: [{ text: 'Freitext Aufgabe' }] }],
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Geogebra' }],
             },
           ],
         },
-        interactive: {
-          plugin: 'textAreaExercise',
-          state: {},
-        },
-      },
-    },
-    {
-      plugin: 'text',
-      state: [
+        { plugin: 'geogebra', state: 'nv5wNx9R' },
         {
-          type: 'h',
-          level: 2,
-          children: [{ text: 'Serlo Injection' }],
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Interaktive Aufgaben' }],
+            },
+          ],
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Auswahlaufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'scMcExercise',
+              state: {
+                isSingleChoice: false,
+                answers: [
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'A' }] }],
+                    },
+                    isCorrect: true,
+                    feedback: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                  {
+                    content: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'B' }] }],
+                    },
+                    isCorrect: false,
+                    feedback: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Eingabefeld Aufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'inputExercise',
+              state: {
+                type: 'input-number-exact-match-challenge',
+                unit: '',
+                answers: [
+                  {
+                    value: 'A',
+                    isCorrect: true,
+                    feedback: {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: '' }] }],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Freitext Aufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'textAreaExercise',
+              state: {},
+            },
+          },
+        },
+        {
+          plugin: 'text',
+          state: [
+            {
+              type: 'h',
+              level: 2,
+              children: [{ text: 'Serlo Injection' }],
+            },
+          ],
+        },
+        {
+          plugin: 'serloInjection',
+          state: '54210',
         },
       ],
     },
-    {
-      plugin: 'serloInjection',
-      state: '54210',
-    },
-  ],
+  },
 }
-//   },
-// }

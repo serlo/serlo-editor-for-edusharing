@@ -2376,13 +2376,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@npm:^0.6.0-beta.6":
-  version: 0.6.0-beta.6
-  resolution: "@serlo/editor@npm:0.6.0-beta.6"
+"@serlo/editor@file:/home/lars/frontend/packages/editor/serlo-editor-0.6.0-beta.22.tgz::locator=%40serlo%2Fserlo-editor-for-edusharing%40workspace%3A.":
+  version: 0.6.0-beta.22
+  resolution: "@serlo/editor@file:/home/lars/frontend/packages/editor/serlo-editor-0.6.0-beta.22.tgz::locator=%40serlo%2Fserlo-editor-for-edusharing%40workspace%3A."
   dependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 9ca91b21ea83742bc0953b7b7017a556b981052f60b8023919deebab62e5269cba95c3c1826a05eaaa8af8d1dd1825aee2d46f61f430044413bcc4d608e0938d
+  checksum: d2a093f977170955abba244e7e8d812104a2c3ed6ac7fae6147588ae7bfc785fb207cbdbf922007a89abcfcd74f89e0b6e74188927f14eba13d45f06acaf9e7c
   languageName: node
   linkType: hard
 
@@ -2397,10 +2397,9 @@ __metadata:
     "@next/env": ^13.2.3
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": ^0.6.0-beta.6
+    "@serlo/editor": "file:/home/lars/frontend/packages/editor/serlo-editor-0.6.0-beta.22.tgz"
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
-    "@types/algebra.js": ^0.2.4
     "@types/express": ^4.17.17
     "@types/jest": ^29.5.11
     "@types/jsonwebtoken": ^9.0.1
@@ -2411,7 +2410,6 @@ __metadata:
     "@types/react-modal": ^3.16.1
     "@types/react-notify-toast": ^0.5.4
     "@typescript-eslint/parser": ^6.15.0
-    algebra.js: ^0.2.6
     autoprefixer: ^10.4.16
     clsx: ^1.2.1
     cypress: ^12.17.4
@@ -2713,13 +2711,6 @@ __metadata:
   version: 1.0.3
   resolution: "@tsconfig/node16@npm:1.0.3"
   checksum: 3a8b657dd047495b7ad23437d6afd20297ce90380ff0bdee93fc7d39a900dbd8d9e26e53ff6b465e7967ce2adf0b218782590ce9013285121e6a5928fbd6819f
-  languageName: node
-  linkType: hard
-
-"@types/algebra.js@npm:^0.2.4":
-  version: 0.2.4
-  resolution: "@types/algebra.js@npm:0.2.4"
-  checksum: 0e435124840153776ce954cfa85adde642857c12d8c447960f6fe22d56cf9146425e0c83a52844d52f8f9fdc39c626a15dba2a3d7bfab4ed9f502783c272283b
   languageName: node
   linkType: hard
 
@@ -3230,13 +3221,6 @@ __metadata:
     json-schema-traverse: ^0.4.1
     uri-js: ^4.2.2
   checksum: 874972efe5c4202ab0a68379481fbd3d1b5d0a7bd6d3cc21d40d3536ebff3352a2a1fabb632d4fd2cc7fe4cbdcd5ed6782084c9bbf7f32a1536d18f9da5007d4
-  languageName: node
-  linkType: hard
-
-"algebra.js@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "algebra.js@npm:0.2.6"
-  checksum: 81ddcc1854248b0dfbbe113bae1caf2acbf02a17a3df15bf34543fa8772d3efd6f2854cc4cc9fc1a8e881efd7e454fcc9d90ed2f443a0d193f7c114588b2f1aa
   languageName: node
   linkType: hard
 
