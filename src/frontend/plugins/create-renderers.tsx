@@ -167,11 +167,14 @@ export function createRenderers(): InitRenderersArgs {
     mathRenderer: (element: MathElement) => <StaticMath {...element} />,
     linkRenderer: ({ href, children }: ComponentProps<LinkRenderer>) => {
       return (
-        <>
-          <a className="serlo-link" href={href}>
-            {children}
-          </a>
-        </>
+        <a
+          className="serlo-link"
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
       )
     },
   }
