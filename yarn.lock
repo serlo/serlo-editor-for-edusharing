@@ -2341,7 +2341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@npm:^0.6.0-beta.8":
+"@serlo/editor@npm:0.6.0-beta.8":
   version: 0.6.0-beta.8
   resolution: "@serlo/editor@npm:0.6.0-beta.8"
   dependencies:
@@ -2362,7 +2362,7 @@ __metadata:
     "@next/env": ^13.5.6
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": ^0.6.0-beta.8
+    "@serlo/editor": 0.6.0-beta.8
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17
