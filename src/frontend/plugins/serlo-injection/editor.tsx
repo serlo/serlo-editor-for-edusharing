@@ -68,7 +68,6 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
             }}
             width="30%"
             inputWidth="100%"
-            tw={undefined}
           />
           {showWarning ? (
             <div className="text-red-500 p-1 my-1">Eingabe ungültig</div>

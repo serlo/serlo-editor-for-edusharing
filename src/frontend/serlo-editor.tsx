@@ -2,7 +2,14 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { default as ToastNotice } from 'react-notify-toast'
 
-import { editorPlugins, editorRenderers, StaticRenderer } from '@serlo/editor'
+import {
+  editorPlugins,
+  editorRenderers,
+  instanceDataDe,
+  loggedInDataDe,
+  SerloRenderer,
+  SerloRendererProps,
+} from '@serlo/editor'
 
 import type { EditorProps } from './editor'
 import { Layout } from './layout'
@@ -41,7 +48,15 @@ export function SerloEditor({
           <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
         ) : (
           <Layout>
-            <StaticRenderer document={state.document} />
+            <SerloRenderer
+              document={state.document}
+              instanceData={
+                instanceDataDe as SerloRendererProps['instanceData']
+              }
+              loggedInData={
+                loggedInDataDe as SerloRendererProps['loggedInData']
+              }
+            />
           </Layout>
         )}
         <ToastNotice />

@@ -16,23 +16,23 @@ export const emptyDocument: StorageFormat = {
   version: 0,
   dateModified: getCurrentDatetime(),
   document: {
-    // plugin: 'type-generic-content',
-    // state: {
-    // content: {
-    plugin: 'rows',
-    state: [
-      {
-        plugin: 'text',
+    plugin: 'type-generic-content',
+    state: {
+      content: {
+        plugin: 'rows',
         state: [
           {
-            type: 'p',
-            children: [{ text: '' }],
+            plugin: 'text',
+            state: [
+              {
+                type: 'p',
+                children: [{ text: '' }],
+              },
+            ],
           },
         ],
       },
-    ],
-    // },
-    // },
+    },
   },
 }
 
