@@ -2341,13 +2341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@file:/home/lars/frontend/packages/editor/serlo-editor-0.6.0-beta.27.tgz::locator=%40serlo%2Fserlo-editor-for-edusharing%40workspace%3A.":
-  version: 0.6.0-beta.27
-  resolution: "@serlo/editor@file:/home/lars/frontend/packages/editor/serlo-editor-0.6.0-beta.27.tgz::locator=%40serlo%2Fserlo-editor-for-edusharing%40workspace%3A."
+"@serlo/editor@npm:0.6.0-beta.8":
+  version: 0.6.0-beta.8
+  resolution: "@serlo/editor@npm:0.6.0-beta.8"
   dependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 625171aef17b5c7c820e5d13555c34958accaed939834d2cb7620e88c8abe48e3fd56502948d58ba5329cfe6330547bba597e55b263f6559a2a02ddaae99dead
+  checksum: 4fbba35cdb0c890a2effd13cc94a88e69a26ca9706b6f0c0ce2d5f3040d722c66bd41e7654370de0b83d6aa269e6847376c3cf5dd2e88ab38098e6b408cd7e1d
   languageName: node
   linkType: hard
 
@@ -2362,7 +2362,7 @@ __metadata:
     "@next/env": ^13.5.6
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": "file:/home/lars/frontend/packages/editor/serlo-editor-0.6.0-beta.27.tgz"
+    "@serlo/editor": 0.6.0-beta.8
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17
