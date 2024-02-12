@@ -1,9 +1,10 @@
-import { createRenderers as createBasicRenderers } from '@serlo/editor'
+import {
+  EditorPluginType,
+  createRenderers as createBasicRenderers,
+} from '@serlo/editor'
 
 import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
 import { SerloInjectionStaticRenderer } from './serlo-injection/static'
-import { ComponentProps } from 'react'
-import { LinkRenderer } from '@serlo/editor/dist/packages/editor/src/plugin/helpers/editor-renderer'
 import Link from 'next/link'
 
 export function createRenderers(): ReturnType<typeof createBasicRenderers> {
@@ -17,13 +18,36 @@ export function createRenderers(): ReturnType<typeof createBasicRenderers> {
         type: 'serloInjection',
         renderer: SerloInjectionStaticRenderer,
       },
-      ...pluginRenderers,
+      ...pluginRenderers.map((pluginRenderer) => {
+        // If geogebra, wrap the renderer inside a aspect-ratio 16/9 block so that the geogebra embed gets scaled correctly. In frontend this is implicitly done by PrivacyWrapper, which we do not have here.
+        if (pluginRenderer.type === EditorPluginType.Geogebra) {
+          return {
+            type: EditorPluginType.Geogebra,
+            renderer: (props) => {
+              return (
+                <div className="relative pb-[56.2%]">
+                  <pluginRenderer.renderer {...props} />
+                </div>
+              )
+            },
+          }
+        }
+        // Else, return renderer without modification
+        return pluginRenderer
+      }),
     ],
     ...otherRenderers,
-    linkRenderer: ({ href, children }: ComponentProps<LinkRenderer>) => {
+    linkRenderer: ({ href, children }) => {
       return (
         <>
-          <Link href={href}>{children}</Link>
+          <Link
+            className="serlo-link"
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {children}
+          </Link>
         </>
       )
     },
