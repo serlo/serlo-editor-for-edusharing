@@ -10,7 +10,7 @@ file [`.env`](./.env).
 
 ## Local development
 
-1. Clone this repository using `git clone --recurse-submodules [repo url]`
+1. Clone this repository using `git clone [repo url]`
 2. Install tools from [`.tool-versions`](./.tool-versions) (for example via
    [`asdf`](https://asdf-vm.com/))
 3. Install `docker` and `docker-compose`
@@ -42,15 +42,6 @@ Use repo
 to test the integration with a full instance of edu-sharing instead of just a
 mock.
 
-## Initialize and update frontend git submodule
-
-This is useful when you used the normal git clone, without the
-recurse-submodules flag, or when you want to update the frontend dependency.
-
-1. `git submodule init`
-
-2. `git submodule update`
-
 ## Usage perspective
 
 The following user story describes how the editor is integrated within
@@ -76,7 +67,7 @@ This project includes:
   via LTI (only used for local development & testing, not part of the docker
   image)
 
-This uses an unpublished alpha version of `@serlo/editor`.
+This uses an beta version of `@serlo/editor`.
 
 ## Implementation details
 
@@ -122,20 +113,13 @@ https://github.com/serlo/documentation/wiki/LTI-integration-of-the-Serlo-Editor-
 
 ### Rendering
 
-In [frontend](https://github.com/serlo/frontend/) content is rendered
-differently depending on if it is editable:
+Content is rendered differently depending on if it is editable:
 
 - In edit mode: The whole editor code is loaded and renders the content. The
   content is stored in the redux store alongside other information like the edit
   history.
 - In view mode: A separate renderer is used that is more lightweight compared to
   the editor code. Content is passed as parameter and there is no redux store.
-
-This repository uses the same approach for edit mode. However, in no-edit mode
-the content is rendered by `frontend/src/serlo-editor/renderer`, which also
-stores the content in the redux store. See `serlo-editor.tsx`. A planned future
-improvement is to use the same approach as in
-[frontend](https://github.com/serlo/frontend/).
 
 ### Storage format
 
