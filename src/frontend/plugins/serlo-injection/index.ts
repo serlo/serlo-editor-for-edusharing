@@ -1,11 +1,8 @@
-import {
-  EditorPlugin,
-  EditorPluginProps,
-  string,
-  StringStateType,
-} from '@frontend/src/serlo-editor/plugin'
+import { EditorPlugin, EditorPluginProps, string } from '@serlo/editor'
 
 import { SerloInjectionEditor } from './editor'
+
+const state = string()
 
 export function createSerloInjectionPlugin(
   config: SerloInjectionConfig = {},
@@ -13,7 +10,7 @@ export function createSerloInjectionPlugin(
   return {
     Component: SerloInjectionEditor,
     config,
-    state: string(),
+    state,
     defaultTitle: 'serlo.org Inhalt',
     defaultDescription: 'Inhalte von serlo.org einbinden',
   }
@@ -23,7 +20,7 @@ export interface SerloInjectionConfig {
   i18n?: Partial<SerloInjectionPluginConfig['i18n']>
 }
 
-export type SerloInjectionPluginState = StringStateType
+export type SerloInjectionPluginState = typeof state
 
 export interface SerloInjectionPluginConfig {
   i18n: {

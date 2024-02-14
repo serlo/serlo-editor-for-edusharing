@@ -1,8 +1,9 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
-import { Editor as Edtr } from '@frontend/src/serlo-editor/core'
 import {
+  SerloEditor as SerloEditorPackage,
+  SerloEditorProps,
   selectHasPendingChanges,
   useAppDispatch,
   useAppSelector,
@@ -13,7 +14,11 @@ import {
   persistHistory,
   selectDocuments,
   selectStaticDocument,
-} from '@frontend/src/serlo-editor/store'
+  ROOT,
+  StaticRenderer,
+  instanceDataDe,
+  loggedInDataDe,
+} from '@serlo/editor'
 
 import { Layout } from './layout'
 import {
@@ -24,8 +29,6 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { ROOT } from '@/serlo-editor/store/root/constants'
-import { StaticRenderer } from '@/serlo-editor/static-renderer/static-renderer'
 
 export interface EditorProps {
   state: StorageFormat
@@ -34,16 +37,26 @@ export interface EditorProps {
 }
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
+  // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
+  loggedInDataDe.strings.editor.plugins.text.linkOverlay.placeholder =
+    'https://example.com/'
+  loggedInDataDe.strings.editor.plugins.text.linkOverlay.inputLabel =
+    "Gib eine URL inklusive 'https://' ein"
+
   return (
-    <Edtr initialState={state.document}>
-      {(document) => {
+    <SerloEditorPackage
+      initialState={state.document}
+      instanceData={instanceDataDe as SerloEditorProps['instanceData']}
+      loggedInData={loggedInDataDe as SerloEditorProps['loggedInData']}
+    >
+      {(editor) => {
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
-            {document}
+            {editor}
           </EditInner>
         )
       }}
-    </Edtr>
+    </SerloEditorPackage>
   )
 }
 

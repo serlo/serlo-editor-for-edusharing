@@ -4,15 +4,14 @@ import { faNewspaper } from '@fortawesome/free-solid-svg-icons'
 import {
   EditorInput,
   PreviewOverlay,
-} from '@frontend/src/serlo-editor/editor-ui'
-import { FaIcon } from '@frontend/src/components/fa-icon'
-import styled from 'styled-components'
+  FaIcon,
+  PluginToolbar,
+  PluginDefaultTools,
+} from '@serlo/editor'
 
 import { SerloInjectionProps } from '.'
 import { useSerloInjectionConfig } from './config'
 import { SerloInjectionRenderer } from './renderer'
-import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
-import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
 
 export const SerloInjectionEditor = (props: SerloInjectionProps) => {
   const { focused, id } = props
@@ -48,16 +47,16 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
           <SerloInjectionRenderer contentId={cache} />
         </PreviewOverlay>
       ) : (
-        <div className="relative w-full text-center">
+        <div className="edusharing-relative edusharing-w-full edusharing-text-center">
           <FaIcon
             icon={faNewspaper}
-            className="relative w-full text-center text-[5rem] text-gray-400"
+            className="edusharing-relative edusharing-w-full edusharing-text-center edusharing-text-[5rem] edusharing-text-gray-400"
           />
         </div>
       )}
 
       {props.focused && !preview ? (
-        <div className="mt-4">
+        <div className="edusharing-mt-4">
           <EditorInput
             label={config.i18n.label}
             placeholder={config.i18n.placeholder}
@@ -69,7 +68,6 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
             }}
             width="30%"
             inputWidth="100%"
-            tw={undefined}
           />
           {showWarning ? (
             <div className="text-red-500 p-1 my-1">Eingabe ungültig</div>

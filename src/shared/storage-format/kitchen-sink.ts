@@ -392,7 +392,7 @@ export const kitchenSink = {
             interactive: {
               plugin: 'inputExercise',
               state: {
-                type: 'input-number-exact-match-challenge',
+                type: 'input-string-normalized-match-challenge',
                 unit: '',
                 answers: [
                   {
@@ -425,6 +425,82 @@ export const kitchenSink = {
             interactive: {
               plugin: 'textAreaExercise',
               state: {},
+            },
+          },
+        },
+        {
+          plugin: 'exercise',
+          state: {
+            content: {
+              plugin: 'rows',
+              state: [
+                {
+                  plugin: 'text',
+                  state: [
+                    { type: 'p', children: [{ text: 'Lückentext Aufgabe' }] },
+                  ],
+                },
+              ],
+            },
+            interactive: {
+              plugin: 'blanksExercise',
+              state: {
+                extraDraggableAnswers: [
+                  {
+                    answer: 'neun',
+                  },
+                ],
+                mode: 'drag-and-drop',
+                text: {
+                  plugin: 'text',
+                  state: [
+                    {
+                      type: 'p',
+                      children: [
+                        {
+                          text: 'eins ',
+                        },
+                        {
+                          type: 'textBlank',
+                          blankId: '64c5d680-a8da-40db-99f1-ea342e08a892',
+                          acceptMathEquivalents: true,
+                          correctAnswers: [
+                            { answer: 'zwei' },
+                            { answer: 'Zwei' },
+                          ],
+                          children: [{ text: '' }],
+                        },
+                        {
+                          text: ' drei',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+            solution: {
+              plugin: 'solution',
+              state: {
+                steps: {
+                  plugin: 'rows',
+                  state: [
+                    {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'Lösung' }] }],
+                    },
+                  ],
+                },
+                strategy: {
+                  plugin: 'rows',
+                  state: [
+                    {
+                      plugin: 'text',
+                      state: [{ type: 'p', children: [{ text: 'Strategie' }] }],
+                    },
+                  ],
+                },
+              },
             },
           },
         },

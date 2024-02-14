@@ -5,7 +5,7 @@ import {
   EditorPluginProps,
   EditorPlugin,
   number,
-} from '@frontend/src/serlo-editor/plugin'
+} from '@serlo/editor'
 
 import { EdusharingAssetEditor } from './editor'
 

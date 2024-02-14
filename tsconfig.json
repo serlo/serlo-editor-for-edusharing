@@ -15,10 +15,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "allowJs": true,
-    "paths": {
-      "@/*": ["./dep/frontend/src/*"],
-      "@frontend/*": ["./dep/frontend/*"]
-    },
     "plugins": [
       {
         "name": "next"
@@ -28,6 +24,13 @@
   "ts-node": {
     "esm": true
   },
-  "include": ["custom.d.ts", "next-env.d.ts", "src/**/*.{ts,tsx}"],
-  "exclude": ["node_modules", "dep/frontend/node_modules"]
+  "include": [
+    "custom.d.ts",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "__tests__"
+  ],
+  "exclude": ["node_modules"]
 }

@@ -9,12 +9,13 @@ import {
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 
-import { redo, undo } from '@frontend/src/serlo-editor/store'
 import {
+  redo,
+  undo,
   useAppDispatch,
   useAppSelector,
-} from '@frontend/src/serlo-editor/store'
-import { selectHasPendingChanges } from '@frontend/src/serlo-editor/store'
+  selectHasPendingChanges,
+} from '@serlo/editor'
 
 import { ToolbarButton } from './button'
 
@@ -50,8 +51,8 @@ export function Toolbar({
   }, [hasPendingChanges, shouldClose])
 
   return (
-    <nav className="fixed left-0 right-0 z-[100] bg-sky-700/95">
-      <div className="mx-auto flex max-w-5xl justify-between py-2 px-4 sm:px-6 lg:px-8">
+    <nav className="edusharing-fixed edusharing-left-0 edusharing-right-0 edusharing-z-[100] edusharing-bg-sky-700/95">
+      <div className="edusharing-mx-auto edusharing-flex edusharing-max-w-5xl edusharing-justify-between edusharing-py-2 edusharing-px-4 sm:edusharing-px-6 lg:edusharing-px-8">
         {mode === 'render' ? renderRenderButtons() : renderEditButtons()}
       </div>
     </nav>
@@ -63,7 +64,7 @@ export function Toolbar({
         <ToolbarButton
           active
           onClick={() => setIsEditing(true)}
-          className="ml-12"
+          className="edusharing-ml-12"
         >
           <FontAwesomeIcon icon={faEdit} /> Bearbeiten
         </ToolbarButton>
@@ -85,7 +86,7 @@ export function Toolbar({
         {renderSaveInfo()}
         <div>
           <ToolbarButton
-            className="ml-12"
+            className="edusharing-ml-12"
             active
             onClick={() => setSaveVersionModalIsOpen(true)}
           >
@@ -102,7 +103,7 @@ export function Toolbar({
     if (save == null) return
     return (
       <ToolbarButton
-        className="ml-12"
+        className="edusharing-ml-12"
         active
         onClick={async () => {
           await save(savedBySerloString)
@@ -117,7 +118,7 @@ export function Toolbar({
 
   function renderSaveInfo() {
     return (
-      <div className="m-auto text-xs font-bold text-white opacity-50">
+      <div className="edusharing-m-auto edusharing-text-xs edusharing-font-bold edusharing-text-white edusharing-opacity-50">
         {isSaving ? (
           <>
             Autom. Speichern <FontAwesomeIcon icon={faSpinner} spin />

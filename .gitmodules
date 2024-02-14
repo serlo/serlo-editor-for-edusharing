@@ -1,3 +1,0 @@
-[submodule "dep/frontend"]
-	path = dep/frontend
-	url = https://github.com/serlo/frontend

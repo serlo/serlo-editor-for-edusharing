@@ -1,26 +1,28 @@
+@tailwind base;
+@tailwind utilities;
 @tailwind components;
 
 @layer components {
   /* HACK: Makes file name invisible (requested by RLP) in edusharing-plugin after embedding a file. Better solution: edu-sharing should modify the html they send. */
   .license_permalink {
-    @apply invisible;
+    @apply edusharing-invisible;
   }
 
-  .ece-button {
-    @apply inline-block rounded-[4rem] py-1 px-2 transition-all;
-    @apply cursor-pointer border-none font-bold no-underline;
-    @apply text-lg leading-[normal];
-    @apply duration-200 ease-in-out hover:no-underline;
-    @apply focus-visible:outline-dashed focus-visible:outline-2 focus-visible:outline-sky-800;
+  .edusharing-ece-button {
+    @apply edusharing-inline-block edusharing-rounded-[4rem] edusharing-py-1 edusharing-px-2 edusharing-transition-all;
+    @apply edusharing-cursor-pointer edusharing-border-none edusharing-font-bold edusharing-no-underline;
+    @apply edusharing-text-lg edusharing-leading-[normal];
+    @apply edusharing-duration-200 edusharing-ease-in-out hover:edusharing-no-underline;
+    @apply focus-visible:edusharing-outline-dashed focus-visible:edusharing-outline-2 focus-visible:edusharing-outline-sky-800;
   }
-  .ece-button-blue {
-    @apply ece-button bg-sky-800 text-white hover:bg-sky-500;
+  .edusharing-ece-button-blue {
+    @apply edusharing-ece-button edusharing-bg-sky-800 edusharing-text-white hover:edusharing-bg-sky-500;
   }
-  .ece-button-light {
-    @apply ece-button bg-sky-100 text-sky-800 hover:bg-sky-500 hover:text-white;
+  .edusharing-ece-button-light {
+    @apply edusharing-ece-button edusharing-bg-sky-100 edusharing-text-sky-800 hover:edusharing-bg-sky-500 hover:edusharing-text-white;
   }
-  .ece-button-blue-transparent {
-    @apply ece-button bg-transparent text-sky-800 hover:bg-sky-100;
+  .edusharing-ece-button-blue-transparent {
+    @apply edusharing-ece-button edusharing-bg-transparent edusharing-text-sky-800 hover:edusharing-bg-sky-100;
   }
 
   /* HACK: This was needed to position the ModalWithCloseButton like on serlo.org. But this should instead be fixed in `frontend` */

@@ -1,12 +1,9 @@
 module.exports = {
-  presets: [require('./dep/frontend/shared/tailwind-base.cjs')],
   mode: 'jit',
-  content: [
-    'src/**/*.{js,ts,jsx,tsx}',
-    'dep/frontend/src/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./src/**/*.{ts,tsx}'],
   /* Class name license_permalink can not be found by tailwind in the source files. It appears in the embed html sent by edu-sharing at runtime. This prevents tailwind from tree-shaking it. */
   safelist: ['license_permalink'],
+  prefix: 'edusharing-',
   // Note: Commented out because it leads to error during webpack somehow. Maybe we do not need this anyway?
   // plugins: [require('@tailwindcss/typography')],
   // theme: {

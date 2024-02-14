@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { EdusharingAssetProps } from '.'
 import { EdusharingAssetDecoder } from '../../../shared/decoders'
-import { PluginToolbar } from '@/serlo-editor/editor-ui/plugin-toolbar'
-import { PluginDefaultTools } from '@/serlo-editor/editor-ui/plugin-toolbar/plugin-tool-menu/plugin-default-tools'
+import { PluginToolbar, PluginDefaultTools } from '@serlo/editor'
 import Modal from 'react-modal'
 import { EdusharingAssetRenderer } from './renderer'
 
@@ -166,7 +165,11 @@ export function EdusharingAssetEditor({
           },
         }}
       >
-        <iframe src={url.href} className="h-full w-full" ref={iframeRef} />
+        <iframe
+          src={url.href}
+          className="edusharing-h-full edusharing-w-full"
+          ref={iframeRef}
+        />
       </Modal>
     )
   }

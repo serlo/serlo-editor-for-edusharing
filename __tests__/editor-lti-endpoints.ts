@@ -1,6 +1,7 @@
 import { createJWKSResponse, signJwtWithBase64Key } from '../src/server-utils'
 import express from 'express'
 import { Server } from 'node:http'
+import { test, expect, describe } from '@jest/globals'
 
 // See: https://cvmcosta.me/ltijs/#/provider?id=request-authentication
 describe('All requests to editor endpoints /lti/... shall return Unauthorized (401) if url parameter "ltik" is missing or invalid.', () => {
@@ -284,7 +285,10 @@ describe('endpoint "/lti"', () => {
     if ('issuer' in params.overwriteParameters) {
       payloadInIdToken.iss = params.overwriteParameters.issuer
     }
-    if ('nonce' in params.overwriteParameters) {
+    if (
+      'nonce' in params.overwriteParameters &&
+      params.overwriteParameters.nonce != null
+    ) {
       payloadInIdToken.nonce = params.overwriteParameters.nonce
     }
     if ('audience' in params.overwriteParameters) {
