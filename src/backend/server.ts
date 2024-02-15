@@ -1,6 +1,9 @@
 import express from 'express'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
+import Server from 'next/dist/server/next-server.js'
+import type { NextServer } from 'next/dist/server/next'
+import { defaultImport } from 'default-import'
 import { createServer } from 'net'
 import {
   createAutoFromResponse,
@@ -19,12 +22,11 @@ import {
   LtiCustomType,
 } from '../shared/decoders'
 import { StorageFormatRuntimeType } from '../shared/storage-format'
-import next from 'next'
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
+const isDevEnvironment = process.env.NODE_ENV !== 'production'
 
-if (dev && !(await isPortOpen(port))) {
+if (isDevEnvironment && !(await isPortOpen(port))) {
   console.error(`ERROR: Cannot listen on port ${port}`)
   console.error(
     `Probably there is already a dev server running -> so we do not start another server`,
@@ -32,8 +34,20 @@ if (dev && !(await isPortOpen(port))) {
   process.exit(0)
 }
 
-loadEnvConfig()
-const app = next({ dev: dev })
+let app: Server | NextServer
+
+if (process.env.NODE_ENV == 'production') {
+  const NextServer = defaultImport(Server)
+  app = new NextServer({
+    dev: false,
+    conf: global.NEXT_CONFIG,
+  })
+} else {
+  loadEnvConfig()
+  const next = (await import('next')).default
+  app = next({ dev: true })
+}
+
 const nextJsRequestHandler = app.getRequestHandler()
 
 if (!process.env.MONGODB_URL) {
