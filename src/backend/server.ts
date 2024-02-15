@@ -1,9 +1,6 @@
 import express from 'express'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Provider } from 'ltijs'
-import Server from 'next/dist/server/next-server.js'
-import type { NextServer } from 'next/dist/server/next'
-import { defaultImport } from 'default-import'
 import { createServer } from 'net'
 import {
   createAutoFromResponse,
@@ -22,6 +19,8 @@ import {
   LtiCustomType,
 } from '../shared/decoders'
 import { StorageFormatRuntimeType } from '../shared/storage-format'
+import next from 'next'
+import nextConfig from '../../next.config.mjs'
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const isDevEnvironment = process.env.NODE_ENV !== 'production'
@@ -34,20 +33,8 @@ if (isDevEnvironment && !(await isPortOpen(port))) {
   process.exit(0)
 }
 
-let app: Server | NextServer
-
-if (process.env.NODE_ENV == 'production') {
-  const NextServer = defaultImport(Server)
-  app = new NextServer({
-    dev: false,
-    conf: global.NEXT_CONFIG,
-  })
-} else {
-  loadEnvConfig()
-  const next = (await import('next')).default
-  app = next({ dev: true })
-}
-
+loadEnvConfig()
+const app = next({ dev: isDevEnvironment, conf: nextConfig })
 const nextJsRequestHandler = app.getRequestHandler()
 
 if (!process.env.MONGODB_URL) {

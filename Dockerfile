@@ -14,7 +14,7 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Copy entire project to /app except files specified in .gitignore
+# Copy entire project to /app except files specified in .dockerignore
 COPY . .
 
 RUN yarn --immutable --immutable-cache
@@ -47,6 +47,6 @@ COPY --from=build --chown=nextjs:nodejs /app/dist/custom-server.mjs .
 USER nextjs
 
 ENTRYPOINT ["node", "--experimental-modules", \
-            "--experimental-specifier-resolution=node", \
-            "custom-server.mjs"]
+  "--experimental-specifier-resolution=node", \
+  "custom-server.mjs"]
 EXPOSE 3000
