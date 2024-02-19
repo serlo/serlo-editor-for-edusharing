@@ -20,11 +20,12 @@ import {
 } from '../shared/decoders'
 import { StorageFormatRuntimeType } from '../shared/storage-format'
 import next from 'next'
+import nextConfig from '../../next.config.mjs'
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
+const isDevEnvironment = process.env.NODE_ENV !== 'production'
 
-if (dev && !(await isPortOpen(port))) {
+if (isDevEnvironment && !(await isPortOpen(port))) {
   console.error(`ERROR: Cannot listen on port ${port}`)
   console.error(
     `Probably there is already a dev server running -> so we do not start another server`,
@@ -33,7 +34,7 @@ if (dev && !(await isPortOpen(port))) {
 }
 
 loadEnvConfig()
-const app = next({ dev: dev })
+const app = next({ dev: isDevEnvironment, conf: nextConfig })
 const nextJsRequestHandler = app.getRequestHandler()
 
 if (!process.env.MONGODB_URL) {

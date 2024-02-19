@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const nextConfig = {
+export const nextConfig = {
   // This would case an error in react-hotkeys, when reactStrictMode is true.
   // TODO: Fix this bug and set it to true.
   reactStrictMode: false,
