@@ -67,18 +67,6 @@
 //     cy.wait(6000)
 //     expectSavedVersionWithComment(null)
 //   })
-
-//   it('The editor does not save automatically when there are no changes', () => {
-//     openSerloEditorWithLTI()
-
-//     expectEditorOpenedSuccessfully()
-
-//     // Wait 8 seconds -> Autosave is set to be done all 5 seconds
-//     cy.wait(8000)
-//     cy.task('getSavedVersionsInEdusharing').then((savedVersions) => {
-//       expect(savedVersions).to.be.an('array').that.has.lengthOf(0)
-//     })
-//   })
 // })
 
 // it('Saved versions can be opened again', () => {
@@ -126,13 +114,14 @@
 
 //   embedEdusharingAsset()
 
-//   cy.contains('Inhalt von edu-sharing')
+//   cy.get('img[title="Testbild"]').should('be.visible')
+//   // cy.contains('Inhalt von edu-sharing')
 // })
 
 // function embedEdusharingAsset() {
 //   cy.get('.add-trigger').eq(1).click()
 //   cy.contains('Edu-sharing Inhalt').click()
-//   cy.get('[data-testid="edusharing-plugin-button"]:first').click()
+//   cy.get('[data-qa="plugin-edusharing-select-content-button"]:first').click()
 //   // TODO: Find a way around this wait
 //   cy.wait(6000)
 // }
