@@ -25,11 +25,12 @@ development. The most important ones are:
   1. A mock of edu-sharing: Listens on port 8100 and launches & redirects to the
      Serlo editor using LTI
   2. The Serlo editor: Listens on port 3000
+- `yarn docker:build` & `yarn docker:run`: Build and run the docker container.
+  Opening `localhost:3000` in the browser should show the Serlo editor.
 - `yarn e2e:docker-build`: Build the docker container and run cypress e2e tests.
-  IMPORTANT: Uncomment test in `editor.cy.ts` first. Confirm this runs without
-  errors before merging into `main`. Cypress tests are temporarily disabled in
-  the Github workflows because they were flaky in the CI pipeline and kept
-  failing.
+  IMPORTANT: Uncomment test in `editor.cy.ts` first. Cypress tests are
+  temporarily disabled in the Github workflows because they were flaky in the CI
+  pipeline and kept failing.
 - `yarn test`: Run all jest tests.
 - `yarn lint`: Run all lints (eslint, prettier, ...).
 - `yarn format`: Format all source code.
@@ -39,8 +40,8 @@ url to preview also the no-edit view.
 
 Use repo
 [https://github.com/serlo/serlo-edusharing-integration/](https://github.com/serlo/serlo-edusharing-integration/)
-to test the integration with a full instance of edu-sharing instead of just a
-mock.
+to test the integration with a local instance of edu-sharing instead of just a
+mock. However, this version of edu-sharing is pretty outdated at this point.
 
 ## Usage perspective
 
@@ -146,9 +147,11 @@ docker container works internally.
 Merging changes into branch `main` triggers a new release under the tag `main`.
 The `main` tag should only be used for development.
 
-Pushing a git tag like `v1.2.3` (need to be in this form) to any branch triggers
-a new release under the specified version tag. These releases can then be
-consumed by edu-sharing. Remember to update the version in package.json as well.
+Creating a git tag (`git tag -a v1.2.3 -m "Version 1.2.3"`) and pushing the tag
+to any branch (`git push origin v1.2.3`) triggers a new release under the
+specified version tag. It needs to be in the form `v[x].[y].[z]`. You can push
+the tag to `main`. These releases can then be consumed by edu-sharing. Remember
+to update the version in package.json as well.
 
 Version numbering should follow
 [Semantic Versioning](https://semver.org/lang/de/spec/v2.0.0.html).
