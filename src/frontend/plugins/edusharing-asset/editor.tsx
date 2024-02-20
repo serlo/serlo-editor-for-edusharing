@@ -77,7 +77,7 @@ export function EdusharingAssetEditor({
             <button
               onClick={() => setModalIsOpen(true)}
               className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
-              data-qa="plugin-edusharing-bigger-button"
+              data-qa="plugin-edusharing-select-content-button"
             >
               Inhalt wählen
             </button>
@@ -89,7 +89,7 @@ export function EdusharingAssetEditor({
                   }
                 }}
                 className="mr-2 rounded-md border border-gray-500 px-1 text-sm transition-all hover:bg-editor-primary-200 focus-visible:bg-editor-primary-200"
-                data-qa="plugin-edusharing-bigger-button"
+                data-qa="plugin-edusharing-change-size-button"
               >
                 Größe verändern
               </button>
