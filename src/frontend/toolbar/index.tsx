@@ -43,7 +43,7 @@ export function Toolbar({
 }: ToolbarProps) {
   const [shouldClose, setShouldClose] = useState(false)
   const dispatch = useAppDispatch()
-  const canBeClosed = window.opener != null || window.history.length == 1
+  const canBeClosed = window.opener != null
   const hasPendingChanges = useAppSelector(selectHasPendingChanges)
 
   useEffect(() => {
