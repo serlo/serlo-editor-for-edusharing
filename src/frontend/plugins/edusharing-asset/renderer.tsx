@@ -5,6 +5,11 @@ import IframeResizer from 'iframe-resizer-react'
 
 type RenderMethod = 'dangerously-set-inner-html' | 'iframe'
 
+type EmbeddedContent = {
+  detailsSnippet: string
+  [key: string]: any
+}
+
 export function EdusharingAssetRenderer(props: {
   nodeId?: string
   repositoryId?: string
@@ -53,7 +58,7 @@ export function EdusharingAssetRenderer(props: {
 
       // HTML snipped returned by edu-sharing cannot be used as it is.
       const { html, renderMethod, defineContainerHeight } =
-        embedHtmlAndRenderMethod(result.detailsSnippet)
+        embedHtmlAndRenderMethod(result)
 
       setEmbedHtml(html)
       setRenderMethod(renderMethod)
@@ -83,11 +88,13 @@ export function EdusharingAssetRenderer(props: {
     </figure>
   )
 
-  function embedHtmlAndRenderMethod(detailsSnippet: string): {
+  function embedHtmlAndRenderMethod(content: EmbeddedContent): {
     html: string
     renderMethod: RenderMethod
     defineContainerHeight: boolean
   } {
+    let { detailsSnippet } = content
+
     // Remove all min-width
     detailsSnippet = detailsSnippet.replaceAll(/min-width[^;]*;/g, '')
 
@@ -97,6 +104,35 @@ export function EdusharingAssetRenderer(props: {
       'edusharing_rendering_content_footer { display: none;',
     )
 
+    if (
+      content?.mimeType === 'image/jpeg' &&
+      content?.node?.remote?.repository?.repositoryType === 'PIXABAY'
+    ) {
+      // Positions the button to the right, makes it smaller and removes bg
+      // color + padding
+      const shrinkPixabaySourceButton = `
+      <style>
+        #edusharing_rendering_content_href {
+            margin-left: 0px !important;
+            text-align: left !important;
+            margin-top: 10px !important;
+            display: block !important;
+            width: fit-content !important;
+            background-color: transparent !important;
+            padding: 0px !important;
+            color: #007bff !important;
+            font-size: 0.7rem !important;
+        }
+        </style>
+        `
+
+      return {
+        html: detailsSnippet + shrinkPixabaySourceButton,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
+      }
+    }
+
     const parser = new DOMParser()
     const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
 
@@ -104,6 +140,7 @@ export function EdusharingAssetRenderer(props: {
     const image = htmlDocument.querySelector<HTMLImageElement>(
       '.edusharing_rendering_content_wrapper > img',
     )
+
     const isImageSnippet =
       image && !image.classList.contains('edusharing_rendering_content_preview')
     if (isImageSnippet) {
@@ -146,6 +183,7 @@ export function EdusharingAssetRenderer(props: {
         'get_resource = function(authstring)',
         'function get_resource(authstring)',
       )
+
       // Add iframe resizer script
       const newEmbedHtml =
         detailsSnippet +
