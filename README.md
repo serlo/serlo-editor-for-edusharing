@@ -14,8 +14,9 @@ file [`.env`](./.env).
 2. Install tools from [`.tool-versions`](./.tool-versions) (for example via
    [`asdf`](https://asdf-vm.com/))
 3. Install `docker` and `docker-compose`
-4. Run `yarn` in root directory
-5. Add `127.0.0.1 repository.127.0.0.1.nip.io` to your `/etc/hosts`
+4. Follow [Manage docker as non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) (or use `sudo`)
+5. Run `yarn` in root directory
+6. Add `127.0.0.1 repository.127.0.0.1.nip.io` to your `/etc/hosts`
 
 You can use `yarn run` to see which scripts you can use in the local
 development. The most important ones are:
