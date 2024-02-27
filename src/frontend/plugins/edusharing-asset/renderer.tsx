@@ -113,8 +113,8 @@ export function EdusharingAssetRenderer(props: {
       const shrinkPixabaySourceButton = `
       <style>
         #edusharing_rendering_content_href {
-            margin-left: auto !important;
-            margin-right: 0px !important;
+            margin-left: 0px !important;
+            text-align: left !important;
             margin-top: 10px !important;
             display: block !important;
             width: fit-content !important;
