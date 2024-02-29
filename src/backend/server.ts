@@ -298,7 +298,7 @@ const server = (async () => {
         `/${repositoryId}/${nodeId}`,
     )
 
-    url.searchParams.append('displayMode', 'embed')
+    url.searchParams.append('displayMode', 'inline')
     url.searchParams.append('jwt', encodeURIComponent(message))
 
     // HACK: Replace host when in docker, see .env
