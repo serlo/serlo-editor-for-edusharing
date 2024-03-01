@@ -104,18 +104,31 @@ export function EdusharingAssetRenderer(props: {
       'edusharing_rendering_content_footer { display: none;',
     )
 
-    if (
-      content?.mimeType === 'image/jpeg' &&
+    const parser = new DOMParser()
+    const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
+
+    const image = getImageOrUndefined(htmlDocument)
+
+    const isPixabayImage =
+      hasImageMimeType(content?.mimeType || '') &&
       content?.node?.remote?.repository?.repositoryType === 'PIXABAY'
-    ) {
-      // Positions the button to the right, makes it smaller and removes bg
-      // color + padding
+    if (isPixabayImage) {
+      const imageSnippet = buildImageSnippet(image)
+
+      // fetch the src link of the image (usually says "Zur Originalseite
+      // springen"). Note that not all pixabay images contain a source link.
+      const sourceLink = htmlDocument.querySelector<HTMLAnchorElement>(
+        '#edusharing_rendering_content_href',
+      )
+
+      // Positions the button to the left, makes it smaller and removes bg
+      // color + padding.
       const shrinkPixabaySourceButton = `
       <style>
         #edusharing_rendering_content_href {
             margin-left: 0px !important;
             text-align: left !important;
-            margin-top: 10px !important;
+            margin-top: 5px !important;
             display: block !important;
             width: fit-content !important;
             background-color: transparent !important;
@@ -126,32 +139,22 @@ export function EdusharingAssetRenderer(props: {
         </style>
         `
 
+      const emptyStringOrJumpToSource = sourceLink
+        ? sourceLink.outerHTML + shrinkPixabaySourceButton
+        : ''
+
       return {
-        html: detailsSnippet + shrinkPixabaySourceButton,
+        html: imageSnippet + emptyStringOrJumpToSource,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: false,
       }
     }
 
-    const parser = new DOMParser()
-    const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
-
-    // Image
-    const image = htmlDocument.querySelector<HTMLImageElement>(
-      '.edusharing_rendering_content_wrapper > img',
-    )
-
     const isImageSnippet =
       image && !image.classList.contains('edusharing_rendering_content_preview')
     if (isImageSnippet) {
       // Create completely new <img> element because patching the existing one is more work/error-prone
-      const imageSnippet = `
-        <img style="width: 100%; object-fit: contain;" src="${image.getAttribute(
-          'src',
-        )}" alt="${image.getAttribute('alt')}" title="${image.getAttribute(
-          'title',
-        )}" />
-      `
+      const imageSnippet = buildImageSnippet(image)
       return {
         html: imageSnippet,
         renderMethod: 'dangerously-set-inner-html',
@@ -256,6 +259,9 @@ export function EdusharingAssetRenderer(props: {
       return (
         <div
           className={`not-prose overflow-auto max-w-full`}
+          // className={`not-prose overflow-auto max-w-full !w-[${
+          //   contentWidth ? contentWidth : '100%'
+          // }]`}
           style={{
             width: contentWidth ? contentWidth : '100%',
             aspectRatio: defineContainerHeight ? '16/9' : undefined,
@@ -302,6 +308,48 @@ export function EdusharingAssetRenderer(props: {
 
     return null
   }
+}
+
+function getImageOrUndefined(
+  htmlDocument: Document,
+): HTMLImageElement | undefined {
+  const image =
+    htmlDocument.querySelector<HTMLImageElement>(
+      '.edusharing_rendering_content_wrapper > img',
+    ) ??
+    htmlDocument.querySelector<HTMLImageElement>(
+      '.edusharing_rendering_content',
+    )
+
+  if (image && image.nodeName !== 'IMG') {
+    return undefined
+  }
+
+  return image
+}
+
+function buildImageSnippet(image: HTMLImageElement): string {
+  return `
+    <img style="width: 100%; object-fit: contain;" src="${image.getAttribute(
+      'src',
+    )}" alt="${image.getAttribute('alt')}" title="${image.getAttribute(
+      'title',
+    )}" />
+  `
+}
+
+const imageMimeTypes = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/svg+xml',
+  'image/bmp',
+  'image/tiff',
+]
+
+function hasImageMimeType(mimeType: string): boolean {
+  return imageMimeTypes.includes(mimeType)
 }
 
 // Only re-render if `srcDoc` prop changed. We do not want to re-render the Iframe every time when EdusharingAssetRenderer is re-rendered because the state within the iframe is lost.
