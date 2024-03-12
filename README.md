@@ -46,6 +46,26 @@ Use repo
 to test the integration with a local instance of edu-sharing instead of just a
 mock. However, this version of edu-sharing is pretty outdated at this point.
 
+## Local development of Serlo Editor integration
+
+Prerequisites:
+
+- Yalc: `yarn global add yalc`
+
+Initial steps:
+
+1. From frontend/packages/editor -> run `yarn yalc:publish`
+2. From serlo-editor-for-edusharing -> run `yalc add @serlo/editor`
+3. From serlo-editor-for-edusharing -> run `yarn dev`
+
+After making some changes in the editor:
+
+1. From frontend/packages/editor -> run `yarn yalc:publish`
+
+To remove the local link to Serlo Editor:
+
+1. From serlo-editor-for-edusharing -> run `yalc remove @serlo/editor`
+
 ## Usage perspective
 
 The following user story describes how the editor is integrated within
