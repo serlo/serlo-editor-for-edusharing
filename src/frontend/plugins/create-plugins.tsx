@@ -1,10 +1,6 @@
 import IconImage from '../assets/plugin-icons/icon-image.svg'
 import IconInjection from '../assets/plugin-icons/icon-injection.svg'
-import {
-  EditorPluginType,
-  createBasicPlugins,
-  loggedInDataDe,
-} from '@serlo/editor'
+import { EditorPluginType, createBasicPlugins } from '@serlo/editor'
 
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
@@ -12,7 +8,6 @@ import { createSerloInjectionPlugin } from './serlo-injection'
 export function createPlugins({ ltik }: { ltik: string }) {
   return [
     ...createBasicPlugins({
-      editorStrings: loggedInDataDe.strings.editor,
       enableTextAreaExercise: true,
       allowImageInTableCells: false,
       exerciseVisibleInSuggestion: true,
