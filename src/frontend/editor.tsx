@@ -242,19 +242,8 @@ function EditInner({
   function renderExtraEditorStyles() {
     return (
       <style jsx global>{`
-        .fa-4x {
-          color: rgb(175, 215, 234);
-          width: 3rem;
-        }
-
         div[data-document] h3 {
           margin-top: 1.5rem;
-        }
-
-        /* fixes bug in chromium based browsers v105+ */
-        /* https://github.com/ianstormtaylor/slate/issues/5110#issuecomment-1234951122 */
-        div[data-slate-editor] {
-          -webkit-user-modify: read-write !important;
         }
       `}</style>
     )
