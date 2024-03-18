@@ -54,13 +54,13 @@ Prerequisites:
 
 Initial steps:
 
-1. From frontend/packages/editor -> run `yarn yalc:publish`
+1. From frontend -> run `yarn editor:publish-local`
 2. From serlo-editor-for-edusharing -> run `yalc add @serlo/editor`
 3. From serlo-editor-for-edusharing -> run `yarn dev`
 
 After making some changes in the editor:
 
-1. From frontend/packages/editor -> run `yarn yalc:publish`
+1. From frontend -> run `yarn editor:publish-local`
 
 To remove the local link to Serlo Editor:
 
