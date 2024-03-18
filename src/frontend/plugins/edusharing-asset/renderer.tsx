@@ -16,8 +16,6 @@ export function EdusharingAssetRenderer(props: {
   ltik: string
   contentWidth: string | null
 }) {
-  // Use default value for widthInPercent so that old content can be load
-  // where this property was not set
   const { nodeId, repositoryId, ltik, contentWidth } = props
 
   let [embedHtml, setEmbedHtml] = useState<string | null>(null)
@@ -106,6 +104,34 @@ export function EdusharingAssetRenderer(props: {
 
     const parser = new DOMParser()
     const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
+
+    // Sadly, LearningApps also have `mediatype: 'link'` so we need to check more stuff here than just `mediatype`
+    const isLink =
+      content.node.mediatype === 'link' &&
+      !content.node.mimetype &&
+      content.node.repositoryType === 'ALFRESCO'
+    if (isLink) {
+      const linkElement = htmlDocument.querySelector<HTMLLinkElement>(
+        '.edusharing_rendering_content_footer a',
+      )
+      if (!linkElement) {
+        return {
+          html: '<div>Fehler beim Einbinden des Inhalts</div>',
+          renderMethod: 'dangerously-set-inner-html',
+          defineContainerHeight: false,
+        }
+      }
+
+      return {
+        html: `<a class="serlo-link" target="_blank" rel="noopener noreferrer" href="${
+          linkElement.href
+        }">${
+          linkElement.innerText ? linkElement.innerText : linkElement.href
+        }</a>`,
+        renderMethod: 'dangerously-set-inner-html',
+        defineContainerHeight: false,
+      }
+    }
 
     const image = getImageOrUndefined(htmlDocument)
 
