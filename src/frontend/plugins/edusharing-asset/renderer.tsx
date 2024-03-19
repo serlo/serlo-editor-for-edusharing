@@ -5,10 +5,20 @@ import IframeResizer from 'iframe-resizer-react'
 
 type RenderMethod = 'dangerously-set-inner-html' | 'iframe'
 
-type EmbeddedContent = {
-  detailsSnippet: string
-  [key: string]: any
-}
+const EmbedJson = t.type({
+  detailsSnippet: t.string,
+  node: t.type({
+    mediatype: t.string,
+    remote: t.union([
+      t.null,
+      t.type({
+        repository: t.type({
+          repositoryType: t.string,
+        }),
+      }),
+    ]),
+  }),
+})
 
 export function EdusharingAssetRenderer(props: {
   nodeId?: string
@@ -45,11 +55,12 @@ export function EdusharingAssetRenderer(props: {
         return
       }
 
-      const result: object = await response.json()
+      const result: unknown = await response.json()
 
-      if (!t.type({ detailsSnippet: t.string }).is(result)) {
+      if (!EmbedJson.is(result)) {
+        console.log(JSON.stringify(result))
         setEmbedHtml(
-          'Request to /lit/get-embed-html failed. "detailsSnipped" is missing or not of type string.',
+          'Request to /lit/get-embed-html failed. Response json was malformed. Json was logged to console.',
         )
         return
       }
@@ -86,7 +97,7 @@ export function EdusharingAssetRenderer(props: {
     </figure>
   )
 
-  function embedHtmlAndRenderMethod(content: EmbeddedContent): {
+  function embedHtmlAndRenderMethod(content: t.TypeOf<typeof EmbedJson>): {
     html: string
     renderMethod: RenderMethod
     defineContainerHeight: boolean
@@ -105,11 +116,8 @@ export function EdusharingAssetRenderer(props: {
     const parser = new DOMParser()
     const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
 
-    // Sadly, LearningApps also have `mediatype: 'link'` so we need to check more stuff here than just `mediatype`
-    const isLink =
-      content.node.mediatype === 'link' &&
-      !content.node.mimetype &&
-      content.node.repositoryType === 'ALFRESCO'
+    // Sadly, LearningApps also have `mediatype: 'link'` so we need to check if `remote` is falsy as well
+    const isLink = content.node.mediatype === 'link' && !content.node.remote
     if (isLink) {
       const linkElement = htmlDocument.querySelector<HTMLLinkElement>(
         '.edusharing_rendering_content_footer a',
@@ -136,8 +144,8 @@ export function EdusharingAssetRenderer(props: {
     const image = getImageOrUndefined(htmlDocument)
 
     const isPixabayImage =
-      hasImageMimeType(content?.mimeType || '') &&
-      content?.node?.remote?.repository?.repositoryType === 'PIXABAY'
+      content.node.mediatype === 'file-image' &&
+      content.node.remote?.repository.repositoryType === 'PIXABAY'
     if (isPixabayImage) {
       const imageSnippet = buildImageSnippet(image)
 
@@ -362,20 +370,6 @@ function buildImageSnippet(image: HTMLImageElement): string {
       'title',
     )}" />
   `
-}
-
-const imageMimeTypes = [
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/svg+xml',
-  'image/bmp',
-  'image/tiff',
-]
-
-function hasImageMimeType(mimeType: string): boolean {
-  return imageMimeTypes.includes(mimeType)
 }
 
 // Only re-render if `srcDoc` prop changed. We do not want to re-render the Iframe every time when EdusharingAssetRenderer is re-rendered because the state within the iframe is lost.
