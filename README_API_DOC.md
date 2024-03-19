@@ -46,12 +46,12 @@
 - **Long-Term Support**: Should be removed
 - **Needs Change?**:  Change completed
 
-- **`editorPlugins`, `editorRenderers`**
+#### 8.  - **`editorPlugins`, `editorRenderers`**
   - **Why Exported/How Used**: These are utilized for initializing and configuring the editor with custom plugins and renderers. `editorPlugins.init` and `editorRenderers.init` are called to set up the editor's functionality with plugins and renderers defined elsewhere in your application (`createPlugins`, `createRenderers`). 
   - **Long-Term Support**: Ugly, should be removed as far as possible
 - **Needs Change?**:  Yes, perhaps one config object passed to the component
 
-- **`SerloRenderer`, `SerloRendererProps`**
+#### 9.  - **`SerloRenderer`, `SerloRendererProps`**
   - **Why Exported/How Used**: `SerloRenderer` is a component provided by the `@serlo/editor` for rendering content in a non-editable format. This is particularly useful for displaying the content to users who are not currently editing or are not allowed to edit. The `SerloRendererProps` are used for type safety, ensuring the correct data shape is passed to the renderer.
   - **Long-Term Support**: Unclear
 - **Needs Change?**:  We can probably improve/simplify the props
