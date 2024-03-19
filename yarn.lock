@@ -2341,13 +2341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@npm:0.6.0-beta.11":
-  version: 0.6.0-beta.11
-  resolution: "@serlo/editor@npm:0.6.0-beta.11"
+"@serlo/editor@npm:0.6.0-beta.12":
+  version: 0.6.0-beta.12
+  resolution: "@serlo/editor@npm:0.6.0-beta.12"
   dependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: a6241d87d8a953c6a3b9dbf81d4d13d1102cfa20f0fe0ede06c40b019e1daa12f9118063b7b51f504b471dead5fce95dce10d788b0c4bfcdc0ec535758bd99b9
+  checksum: d3c0de5afa462cf6e2fd63c30a7b34db49328b6e0b56c8d806f58e39aeff10fc23108f5abbaca351101c7c8b815c46f300d2909e79ff7df98ec09b4b7ac7405d
   languageName: node
   linkType: hard
 
@@ -2362,13 +2362,12 @@ __metadata:
     "@next/env": ^13.5.6
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": 0.6.0-beta.11
+    "@serlo/editor": 0.6.0-beta.12
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17
     "@types/jest": ^29.5.11
     "@types/jsonwebtoken": ^9.0.1
-    "@types/katex": ^0.16.3
     "@types/multer": ^1.4.7
     "@types/node": ^18.18.4
     "@types/react": ^18.0.28
@@ -2389,7 +2388,6 @@ __metadata:
     json-web-key: ^0.4.0
     jsonwebtoken: ^9.0.0
     jwks-rsa: ^3.0.1
-    katex: ^0.16.9
     ltijs: ^5.9.2
     mongodb: ^5.1.0
     multer: ^1.4.5-lts.1
@@ -2831,13 +2829,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: a7f0925e9a42ad3ae970364c63c5986d40da5c83d51d3f4e624eb0f064a380376f9e3fb3f2f837390a9ab80143f5d75fd51866da30e110f6b486a3379e1c768f
-  languageName: node
-  linkType: hard
-
-"@types/katex@npm:^0.16.3":
-  version: 0.16.6
-  resolution: "@types/katex@npm:0.16.6"
-  checksum: 20166070de2c92c4658c066bf13af5c0cd705a9c6d43e30aa6f097725fd30d5892ccbd2320257894eab9c224444c356070376a94886fdc19ec33a1458f793bf8
   languageName: node
   linkType: hard
 
@@ -4118,13 +4109,6 @@ __metadata:
   version: 7.2.0
   resolution: "commander@npm:7.2.0"
   checksum: 53501cbeee61d5157546c0bef0fedb6cdfc763a882136284bed9a07225f09a14b82d2a84e7637edfd1a679fb35ed9502fd58ef1d091e6287f60d790147f68ddc
-  languageName: node
-  linkType: hard
-
-"commander@npm:^8.3.0":
-  version: 8.3.0
-  resolution: "commander@npm:8.3.0"
-  checksum: 0f82321821fc27b83bd409510bb9deeebcfa799ff0bf5d102128b500b7af22872c0c92cb6a0ebc5a4cf19c6b550fba9cedfa7329d18c6442a625f851377bacf0
   languageName: node
   linkType: hard
 
@@ -7255,17 +7239,6 @@ __metadata:
   version: 2.5.1
   resolution: "kareem@npm:2.5.1"
   checksum: b019a960a7b9e44b6ef224ef85e7583d4e969619f53319e571677fbed7e57e01ee8774589726b29741e42790996567d878003c18e674296742dc343bfbf3efb9
-  languageName: node
-  linkType: hard
-
-"katex@npm:^0.16.9":
-  version: 0.16.9
-  resolution: "katex@npm:0.16.9"
-  dependencies:
-    commander: ^8.3.0
-  bin:
-    katex: cli.js
-  checksum: 861194dfd4d86505e657f688fb73048d46ac498edafce71199502a35b03c0ecc35ba930c631be79c4a09d90a0d23476673cd52f6bc367c7a161854d64005fa95
   languageName: node
   linkType: hard
 

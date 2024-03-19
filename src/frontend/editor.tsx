@@ -3,7 +3,6 @@ import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
-  SerloEditorProps,
   selectHasPendingChanges,
   useAppDispatch,
   useAppSelector,
@@ -16,8 +15,6 @@ import {
   selectStaticDocument,
   ROOT,
   StaticRenderer,
-  instanceDataDe,
-  loggedInDataDe,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -37,19 +34,14 @@ export interface EditorProps {
 }
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
-  // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
-  loggedInDataDe.strings.editor.plugins.text.linkOverlay.placeholder =
-    'https://example.com/'
-  loggedInDataDe.strings.editor.plugins.text.linkOverlay.inputLabel =
-    "Gib eine URL inklusive 'https://' ein"
-
   return (
-    <SerloEditorPackage
-      initialState={state.document}
-      instanceData={instanceDataDe as SerloEditorProps['instanceData']}
-      loggedInData={loggedInDataDe as SerloEditorProps['loggedInData']}
-    >
-      {(editor) => {
+    <SerloEditorPackage initialState={state.document}>
+      {(editor, languageData) => {
+        // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
+        languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
+          'https://example.com/'
+        languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
+          "Gib eine URL inklusive 'https://' ein"
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
             {editor}
@@ -242,19 +234,8 @@ function EditInner({
   function renderExtraEditorStyles() {
     return (
       <style jsx global>{`
-        .fa-4x {
-          color: rgb(175, 215, 234);
-          width: 3rem;
-        }
-
         div[data-document] h3 {
           margin-top: 1.5rem;
-        }
-
-        /* fixes bug in chromium based browsers v105+ */
-        /* https://github.com/ianstormtaylor/slate/issues/5110#issuecomment-1234951122 */
-        div[data-slate-editor] {
-          -webkit-user-modify: read-write !important;
         }
       `}</style>
     )
