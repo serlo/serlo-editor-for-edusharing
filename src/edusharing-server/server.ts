@@ -8,7 +8,7 @@ import {
   signJwtWithBase64Key,
   verifyJwt,
 } from '../server-utils'
-import { mockedImageEmbedHtml } from './mocked-image-embed-html'
+import { mockedImageEmbedJson } from './mocked-image-embed-json'
 
 // We define the absence of `versionComment` with `null` so that we can
 // tranfer it inside the cypress environment (only proper JSON can be
@@ -278,11 +278,7 @@ export class EdusharingServer {
     })
 
     this.app.get('/edu-sharing/rest/lti/v13/details/*/*', (_req, res) => {
-      res
-        .json({
-          detailsSnippet: mockedImageEmbedHtml,
-        })
-        .end()
+      res.json(mockedImageEmbedJson).end()
     })
 
     this.app.all('*', (req, res) => {
