@@ -2341,13 +2341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@npm:0.6.0-beta.11":
-  version: 0.6.0-beta.11
-  resolution: "@serlo/editor@npm:0.6.0-beta.11"
+"@serlo/editor@npm:0.6.0-beta.12":
+  version: 0.6.0-beta.12
+  resolution: "@serlo/editor@npm:0.6.0-beta.12"
   dependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: a6241d87d8a953c6a3b9dbf81d4d13d1102cfa20f0fe0ede06c40b019e1daa12f9118063b7b51f504b471dead5fce95dce10d788b0c4bfcdc0ec535758bd99b9
+  checksum: d3c0de5afa462cf6e2fd63c30a7b34db49328b6e0b56c8d806f58e39aeff10fc23108f5abbaca351101c7c8b815c46f300d2909e79ff7df98ec09b4b7ac7405d
   languageName: node
   linkType: hard
 
@@ -2362,7 +2362,7 @@ __metadata:
     "@next/env": ^13.5.6
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": 0.6.0-beta.11
+    "@serlo/editor": 0.6.0-beta.12
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17
