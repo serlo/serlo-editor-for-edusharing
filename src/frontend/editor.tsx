@@ -3,18 +3,8 @@ import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
-  selectHasPendingChanges,
-  useAppDispatch,
-  useAppSelector,
-  store,
-  selectPendingChanges,
-  selectHasUndoActions,
-  selectHasRedoActions,
-  persistHistory,
-  selectDocuments,
-  selectStaticDocument,
-  ROOT,
   StaticRenderer,
+  type EditorData,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -36,15 +26,16 @@ export interface EditorProps {
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
     <SerloEditorPackage initialState={state.document}>
-      {(editor, languageData) => {
-        // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
-        languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
-          'https://example.com/'
-        languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
-          "Gib eine URL inklusive 'https://' ein"
+      {({ element, languageData, storeData }) => {
+        customizeEditorStrings(languageData)
         return (
-          <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
-            {editor}
+          <EditInner
+            ltik={ltik}
+            state={state}
+            providerUrl={providerUrl}
+            storeData={storeData}
+          >
+            {element}
           </EditInner>
         )
       }}
@@ -52,12 +43,36 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
   )
 }
 
+function customizeEditorStrings(languageData) {
+  languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
+    'https://example.com/'
+  languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
+    "Gib eine URL inklusive 'https://' ein"
+}
+
 function EditInner({
   children,
   ltik,
   state,
   providerUrl,
-}: { children: ReactNode } & EditorProps) {
+  storeData,
+}: { children: ReactNode; storeData: EditorData['storeData'] } & EditorProps) {
+  const {
+    ROOT,
+    store,
+    useAppDispatch,
+    useAppSelector,
+    persistHistory,
+    undo,
+    redo,
+    selectHasPendingChanges,
+    selectPendingChanges,
+    selectHasUndoActions,
+    selectHasRedoActions,
+    selectDocuments,
+    selectStaticDocument,
+  } = storeData
+
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
@@ -197,10 +212,24 @@ function EditInner({
     }
   }, [getBodyForSave, getSaveUrl, hasPendingChanges, isEditing, ltik, save])
 
+  const dispatchUndo = useCallback(() => {
+    dispatch(undo())
+  }, [])
+
+  const dispatchRedo = useCallback(() => {
+    dispatch(redo())
+  }, [])
+
   if (!isEditing) {
     return (
       <>
-        <Toolbar mode="render" setIsEditing={setIsEditing} />
+        <Toolbar
+          mode="render"
+          setIsEditing={setIsEditing}
+          hasPendingChanges={hasPendingChanges}
+          dispatchUndo={dispatchUndo}
+          dispatchRedo={dispatchRedo}
+        />
         <Layout>
           <StaticRenderer document={state.document} />
         </Layout>
@@ -223,6 +252,9 @@ function EditInner({
         redoable={redoable}
         save={save}
         isSaving={isSaving}
+        hasPendingChanges={hasPendingChanges}
+        dispatchUndo={dispatchUndo}
+        dispatchRedo={dispatchRedo}
       />
       <div className="h-20"></div>
       <Layout>{children}</Layout>

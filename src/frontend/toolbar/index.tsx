@@ -1,21 +1,12 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faCheck,
   faComment,
   faEdit,
   faRedoAlt,
   faSave,
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
-
-import {
-  redo,
-  undo,
-  useAppDispatch,
-  useAppSelector,
-  selectHasPendingChanges,
-} from '@serlo/editor'
 
 import { ToolbarButton } from './button'
 
@@ -30,6 +21,9 @@ export interface ToolbarProps {
   redoable?: boolean
   save?: (comment?: string) => Promise<void>
   isSaving?: boolean
+  hasPendingChanges: boolean
+  dispatchUndo: () => void
+  dispatchRedo: () => void
 }
 
 export function Toolbar({
@@ -40,11 +34,12 @@ export function Toolbar({
   redoable,
   save,
   isSaving,
+  hasPendingChanges,
+  dispatchUndo,
+  dispatchRedo,
 }: ToolbarProps) {
   const [shouldClose, setShouldClose] = useState(false)
-  const dispatch = useAppDispatch()
   const canBeClosed = window.opener != null
-  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
 
   useEffect(() => {
     if (shouldClose && !hasPendingChanges) window.close()
@@ -76,10 +71,10 @@ export function Toolbar({
     return (
       <>
         <div>
-          <ToolbarButton active={undoable} onClick={() => dispatch(undo())}>
+          <ToolbarButton active={undoable} onClick={dispatchUndo}>
             <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
           </ToolbarButton>
-          <ToolbarButton active={redoable} onClick={() => dispatch(redo())}>
+          <ToolbarButton active={redoable} onClick={dispatchRedo}>
             <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
           </ToolbarButton>
         </div>
