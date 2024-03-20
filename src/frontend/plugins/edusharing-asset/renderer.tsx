@@ -277,10 +277,13 @@ export function EdusharingAssetRenderer(props: {
       }
     }
 
-    // If the detailsSnipped was not handled by one of the handlers above, change nothing in html snippet
+    // Backup when content type could not be determined above -> Render in iframe with iframe-resizer.
+    // This will make sure <script> tags execute. They would not if using 'dangerously-set-inner-html'
     return {
-      html: detailsSnippet,
-      renderMethod: 'dangerously-set-inner-html',
+      html:
+        detailsSnippet +
+        '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>',
+      renderMethod: 'iframe',
       defineContainerHeight: false,
     }
   }
