@@ -8,8 +8,8 @@ import type { EditorProps } from './editor'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
 import { createRenderers } from './plugins/create-renderers'
-import { createPlugins } from './plugins/create-plugins'
 import { LtikContext } from './context/ltikContext'
+import { createPluginsConfig } from './plugins/create-plugins-config'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor),
@@ -28,7 +28,7 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
-  editorPlugins.init(createPlugins({ ltik }))
+  editorPlugins.initTemp(createPluginsConfig(ltik))
   editorRenderers.init(createRenderers())
 
   return (
