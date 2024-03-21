@@ -27,19 +27,14 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
     <SerloEditorPackage initialState={state.document}>
       {(editor) => {
-        const { element, languageData, storeData } = editor
-
-        customizeEditorStrings(languageData)
-
+        customizeEditorStrings(editor.languageData)
         return (
           <EditInner
             ltik={ltik}
             state={state}
             providerUrl={providerUrl}
-            storeData={storeData}
-          >
-            {element}
-          </EditInner>
+            editor={editor}
+          />
         )
       }}
     </SerloEditorPackage>
@@ -54,21 +49,13 @@ function customizeEditorStrings(languageData) {
 }
 
 function EditInner({
-  children,
   ltik,
   state,
   providerUrl,
-  storeData,
-}: { children: ReactNode; storeData: EditorData['storeData'] } & EditorProps) {
-  const {
-    hasUndoActions,
-    hasRedoActions,
-    dispatchUndo,
-    dispatchRedo,
-    pendingChanges,
-    dispatchPersistHistory,
-    selectRootDocument,
-  } = storeData
+  editor,
+}: { editor: EditorData } & EditorProps) {
+  const { historyData, selectRootDocument } = editor
+  const { pendingChanges, dispatchPersistHistory } = historyData
 
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -210,9 +197,7 @@ function EditInner({
         <Toolbar
           mode="render"
           setIsEditing={setIsEditing}
-          hasPendingChanges={hasPendingChanges}
-          dispatchUndo={dispatchUndo}
-          dispatchRedo={dispatchRedo}
+          historyData={historyData}
         />
         <Layout>
           <StaticRenderer document={state.document} />
@@ -232,16 +217,12 @@ function EditInner({
         mode="edit"
         setIsEditing={setIsEditing}
         setSaveVersionModalIsOpen={setSaveVersionModalIsOpen}
-        hasUndoActions={hasUndoActions}
-        hasRedoActions={hasRedoActions}
         save={save}
         isSaving={isSaving}
-        hasPendingChanges={hasPendingChanges}
-        dispatchUndo={dispatchUndo}
-        dispatchRedo={dispatchRedo}
+        historyData={historyData}
       />
       <div className="h-20"></div>
-      <Layout>{children}</Layout>
+      <Layout>{editor.element}</Layout>
       {renderExtraEditorStyles()}
       <div ref={formDiv} />
     </>

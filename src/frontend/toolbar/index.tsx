@@ -9,6 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import { ToolbarButton } from './button'
+import type { EditorData } from '@serlo/editor'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -17,27 +18,27 @@ export interface ToolbarProps {
   mode: 'edit' | 'render'
   setIsEditing: Dispatch<SetStateAction<boolean>>
   setSaveVersionModalIsOpen?: Dispatch<SetStateAction<boolean>>
-  hasUndoActions?: boolean
-  hasRedoActions?: boolean
   save?: (comment?: string) => Promise<void>
   isSaving?: boolean
-  hasPendingChanges: boolean
-  dispatchUndo: () => void
-  dispatchRedo: () => void
+  historyData: EditorData['historyData']
 }
 
 export function Toolbar({
   mode,
   setIsEditing,
   setSaveVersionModalIsOpen,
-  hasUndoActions,
-  hasRedoActions,
   save,
   isSaving,
-  hasPendingChanges,
-  dispatchUndo,
-  dispatchRedo,
+  historyData,
 }: ToolbarProps) {
+  const {
+    pendingChanges,
+    hasUndoActions,
+    hasRedoActions,
+    dispatchUndo,
+    dispatchRedo,
+  } = historyData
+  const hasPendingChanges = pendingChanges !== 0
   const [shouldClose, setShouldClose] = useState(false)
   const canBeClosed = window.opener != null
 
