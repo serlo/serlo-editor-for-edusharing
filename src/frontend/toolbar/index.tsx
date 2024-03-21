@@ -17,8 +17,8 @@ export interface ToolbarProps {
   mode: 'edit' | 'render'
   setIsEditing: Dispatch<SetStateAction<boolean>>
   setSaveVersionModalIsOpen?: Dispatch<SetStateAction<boolean>>
-  undoable?: boolean
-  redoable?: boolean
+  hasUndoActions?: boolean
+  hasRedoActions?: boolean
   save?: (comment?: string) => Promise<void>
   isSaving?: boolean
   hasPendingChanges: boolean
@@ -30,8 +30,8 @@ export function Toolbar({
   mode,
   setIsEditing,
   setSaveVersionModalIsOpen,
-  undoable,
-  redoable,
+  hasUndoActions,
+  hasRedoActions,
   save,
   isSaving,
   hasPendingChanges,
@@ -71,10 +71,10 @@ export function Toolbar({
     return (
       <>
         <div>
-          <ToolbarButton active={undoable} onClick={dispatchUndo}>
+          <ToolbarButton active={hasUndoActions} onClick={dispatchUndo}>
             <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
           </ToolbarButton>
-          <ToolbarButton active={redoable} onClick={dispatchRedo}>
+          <ToolbarButton active={hasRedoActions} onClick={dispatchRedo}>
             <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
           </ToolbarButton>
         </div>

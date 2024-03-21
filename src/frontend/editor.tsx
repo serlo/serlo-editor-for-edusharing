@@ -26,8 +26,11 @@ export interface EditorProps {
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
     <SerloEditorPackage initialState={state.document}>
-      {({ element, languageData, storeData }) => {
+      {(editor) => {
+        const { element, languageData, storeData } = editor
+
         customizeEditorStrings(languageData)
+
         return (
           <EditInner
             ltik={ltik}
@@ -58,32 +61,23 @@ function EditInner({
   storeData,
 }: { children: ReactNode; storeData: EditorData['storeData'] } & EditorProps) {
   const {
-    ROOT,
-    store,
-    useAppDispatch,
-    useAppSelector,
-    persistHistory,
-    undo,
-    redo,
-    selectHasPendingChanges,
-    selectPendingChanges,
-    selectHasUndoActions,
-    selectHasRedoActions,
-    selectDocuments,
-    selectStaticDocument,
+    hasUndoActions,
+    hasRedoActions,
+    dispatchUndo,
+    dispatchRedo,
+    pendingChanges,
+    dispatchPersistHistory,
+    selectRootDocument,
   } = storeData
 
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
 
-  const dispatch = useAppDispatch()
-  const undoable = useAppSelector(selectHasUndoActions)
-  const redoable = useAppSelector(selectHasRedoActions)
-  const pendingChanges = useAppSelector(selectPendingChanges)
-  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
   const lastSaveWasWithComment = useRef<boolean>(true)
   const formDiv = useRef<HTMLDivElement>(null)
+
+  const hasPendingChanges = pendingChanges !== 0
 
   const getSaveUrl = useCallback(
     (comment?: string) => {
@@ -98,7 +92,7 @@ function EditInner({
     [providerUrl],
   )
   const getBodyForSave = useCallback(() => {
-    const document = selectStaticDocument(store.getState(), ROOT)
+    const document = selectRootDocument()
 
     if (document === null) {
       throw new Error(
@@ -132,9 +126,7 @@ function EditInner({
           body: getBodyForSave(),
         })
         if (response.status === 200) {
-          const documents = selectDocuments(store.getState())
-          dispatch(persistHistory(documents))
-
+          dispatchPersistHistory()
           lastSaveWasWithComment.current = Boolean(comment)
         } else {
           window.alert(
@@ -151,7 +143,7 @@ function EditInner({
         setIsSaving(false)
       }
     },
-    [isSaving, getSaveUrl, ltik, getBodyForSave, dispatch],
+    [isSaving, getSaveUrl, ltik, getBodyForSave],
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -212,14 +204,6 @@ function EditInner({
     }
   }, [getBodyForSave, getSaveUrl, hasPendingChanges, isEditing, ltik, save])
 
-  const dispatchUndo = useCallback(() => {
-    dispatch(undo())
-  }, [])
-
-  const dispatchRedo = useCallback(() => {
-    dispatch(redo())
-  }, [])
-
   if (!isEditing) {
     return (
       <>
@@ -248,8 +232,8 @@ function EditInner({
         mode="edit"
         setIsEditing={setIsEditing}
         setSaveVersionModalIsOpen={setSaveVersionModalIsOpen}
-        undoable={undoable}
-        redoable={redoable}
+        hasUndoActions={hasUndoActions}
+        hasRedoActions={hasRedoActions}
         save={save}
         isSaving={isSaving}
         hasPendingChanges={hasPendingChanges}
