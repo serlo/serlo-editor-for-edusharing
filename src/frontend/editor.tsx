@@ -4,7 +4,7 @@ import { useDebounce } from 'rooks'
 import {
   SerloEditor as SerloEditorPackage,
   StaticRenderer,
-  type EditorData,
+  type BaseEditor,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -27,7 +27,7 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
   return (
     <SerloEditorPackage initialState={state.document}>
       {(editor) => {
-        customizeEditorStrings(editor.languageData)
+        customizeEditorStrings(editor.i18n)
         return (
           <EditInner
             ltik={ltik}
@@ -41,7 +41,7 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
   )
 }
 
-function customizeEditorStrings(languageData) {
+function customizeEditorStrings(languageData: BaseEditor['i18n']) {
   languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
     'https://example.com/'
   languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
@@ -53,9 +53,9 @@ function EditInner({
   state,
   providerUrl,
   editor,
-}: { editor: EditorData } & EditorProps) {
-  const { historyData, selectRootDocument } = editor
-  const { pendingChanges, dispatchPersistHistory } = historyData
+}: { editor: BaseEditor } & EditorProps) {
+  const { history, selectRootDocument } = editor
+  const { pendingChanges, dispatchPersistHistory } = history
 
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -197,7 +197,7 @@ function EditInner({
         <Toolbar
           mode="render"
           setIsEditing={setIsEditing}
-          historyData={historyData}
+          editorHistory={history}
         />
         <Layout>
           <StaticRenderer document={state.document} />
@@ -219,7 +219,7 @@ function EditInner({
         setSaveVersionModalIsOpen={setSaveVersionModalIsOpen}
         save={save}
         isSaving={isSaving}
-        historyData={historyData}
+        editorHistory={history}
       />
       <div className="h-20"></div>
       <Layout>{editor.element}</Layout>

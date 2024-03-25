@@ -9,7 +9,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import { ToolbarButton } from './button'
-import type { EditorData } from '@serlo/editor'
+import type { BaseEditor } from '@serlo/editor'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -20,7 +20,7 @@ export interface ToolbarProps {
   setSaveVersionModalIsOpen?: Dispatch<SetStateAction<boolean>>
   save?: (comment?: string) => Promise<void>
   isSaving?: boolean
-  historyData: EditorData['historyData']
+  editorHistory: BaseEditor['history']
 }
 
 export function Toolbar({
@@ -29,7 +29,7 @@ export function Toolbar({
   setSaveVersionModalIsOpen,
   save,
   isSaving,
-  historyData,
+  editorHistory,
 }: ToolbarProps) {
   const {
     pendingChanges,
@@ -37,7 +37,7 @@ export function Toolbar({
     hasRedoActions,
     dispatchUndo,
     dispatchRedo,
-  } = historyData
+  } = editorHistory
   const hasPendingChanges = pendingChanges !== 0
   const [shouldClose, setShouldClose] = useState(false)
   const canBeClosed = window.opener != null
