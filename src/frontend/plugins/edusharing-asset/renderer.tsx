@@ -211,7 +211,7 @@ export function EdusharingAssetRenderer(props: {
       }
     }
 
-    // Video & audio
+    // Audio
     const isEmbedThatNeedsToFetchContent =
       detailsSnippet.includes('get_resource')
     if (isEmbedThatNeedsToFetchContent) {
@@ -221,12 +221,31 @@ export function EdusharingAssetRenderer(props: {
         'function get_resource(authstring)',
       )
 
-      // Add iframe resizer script
-      const newEmbedHtml =
-        detailsSnippet +
-        '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>'
       return {
-        html: newEmbedHtml,
+        html: appendIframeResizer(detailsSnippet),
+        renderMethod: 'iframe',
+        defineContainerHeight: false,
+      }
+    }
+
+    // Video
+    const isVideo: boolean = htmlDocument.querySelector('video') !== null
+    if (isVideo) {
+      // Add style overwrites
+      detailsSnippet =
+        detailsSnippet +
+        `
+        <style>
+        .edusharing_rendering_content_video_wrapper {
+          display: block !important;
+        }
+        .edusharing_rendering_content_video_wrapper video {
+          width: 100% !important;
+        }
+        </style>
+        `
+      return {
+        html: appendIframeResizer(detailsSnippet),
         renderMethod: 'iframe',
         defineContainerHeight: false,
       }
@@ -238,9 +257,7 @@ export function EdusharingAssetRenderer(props: {
     const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
     if (isH5P) {
       return {
-        html:
-          detailsSnippet +
-          '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>',
+        html: appendIframeResizer(detailsSnippet),
         renderMethod: 'iframe',
         defineContainerHeight: false,
       }
@@ -280,9 +297,7 @@ export function EdusharingAssetRenderer(props: {
     // Backup when content type could not be determined above -> Render in iframe with iframe-resizer.
     // This will make sure <script> tags execute. They would not if using 'dangerously-set-inner-html'
     return {
-      html:
-        detailsSnippet +
-        '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>',
+      html: appendIframeResizer(detailsSnippet),
       renderMethod: 'iframe',
       defineContainerHeight: false,
     }
@@ -373,6 +388,13 @@ function buildImageSnippet(image: HTMLImageElement): string {
       'title',
     )}" />
   `
+}
+
+function appendIframeResizer(htmlSnippet: string) {
+  return (
+    htmlSnippet +
+    '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.9/iframeResizer.contentWindow.min.js"></script>'
+  )
 }
 
 // Only re-render if `srcDoc` prop changed. We do not want to re-render the Iframe every time when EdusharingAssetRenderer is re-rendered because the state within the iframe is lost.
