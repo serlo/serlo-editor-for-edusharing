@@ -34,7 +34,6 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
       initialState={state.document}
       basicPluginsConfig={basicPluginsConfig}
       customPlugins={customPlugins}
-    >
       {(editor) => {
         customizeEditorStrings(editor.i18n)
         return (
@@ -65,6 +64,7 @@ function EditInner({
 }: { editor: BaseEditor } & EditorProps) {
   const { history, selectRootDocument } = editor
   const { pendingChanges, dispatchPersistHistory } = history
+
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
