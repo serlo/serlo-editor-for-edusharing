@@ -1,20 +1,10 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
-  selectHasPendingChanges,
-  useAppDispatch,
-  useAppSelector,
-  store,
-  selectPendingChanges,
-  selectHasUndoActions,
-  selectHasRedoActions,
-  persistHistory,
-  selectDocuments,
-  selectStaticDocument,
-  ROOT,
   StaticRenderer,
+  type BaseEditor,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -45,39 +35,44 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
       basicPluginsConfig={basicPluginsConfig}
       customPlugins={customPlugins}
     >
-      {(editor, languageData) => {
-        // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
-        languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
-          'https://example.com/'
-        languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
-          "Gib eine URL inklusive 'https://' ein"
+      {(editor) => {
+        customizeEditorStrings(editor.i18n)
         return (
-          <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
-            {editor}
-          </EditInner>
+          <EditInner
+            ltik={ltik}
+            state={state}
+            providerUrl={providerUrl}
+            editor={editor}
+          />
         )
       }}
     </SerloEditorPackage>
   )
 }
 
+function customizeEditorStrings(languageData: BaseEditor['i18n']) {
+  languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
+    'https://example.com/'
+  languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
+    "Gib eine URL inklusive 'https://' ein"
+}
+
 function EditInner({
-  children,
   ltik,
   state,
   providerUrl,
-}: { children: ReactNode } & EditorProps) {
+  editor,
+}: { editor: BaseEditor } & EditorProps) {
+  const { history, selectRootDocument } = editor
+  const { pendingChanges, dispatchPersistHistory } = history
   const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
 
-  const dispatch = useAppDispatch()
-  const undoable = useAppSelector(selectHasUndoActions)
-  const redoable = useAppSelector(selectHasRedoActions)
-  const pendingChanges = useAppSelector(selectPendingChanges)
-  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
   const lastSaveWasWithComment = useRef<boolean>(true)
   const formDiv = useRef<HTMLDivElement>(null)
+
+  const hasPendingChanges = pendingChanges !== 0
 
   const getSaveUrl = useCallback(
     (comment?: string) => {
@@ -92,7 +87,7 @@ function EditInner({
     [providerUrl],
   )
   const getBodyForSave = useCallback(() => {
-    const document = selectStaticDocument(store.getState(), ROOT)
+    const document = selectRootDocument()
 
     if (document === null) {
       throw new Error(
@@ -126,9 +121,7 @@ function EditInner({
           body: getBodyForSave(),
         })
         if (response.status === 200) {
-          const documents = selectDocuments(store.getState())
-          dispatch(persistHistory(documents))
-
+          dispatchPersistHistory()
           lastSaveWasWithComment.current = Boolean(comment)
         } else {
           window.alert(
@@ -145,7 +138,7 @@ function EditInner({
         setIsSaving(false)
       }
     },
-    [isSaving, getSaveUrl, ltik, getBodyForSave, dispatch],
+    [isSaving, getSaveUrl, ltik, getBodyForSave],
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -209,7 +202,11 @@ function EditInner({
   if (!isEditing) {
     return (
       <>
-        <Toolbar mode="render" setIsEditing={setIsEditing} />
+        <Toolbar
+          mode="render"
+          setIsEditing={setIsEditing}
+          editorHistory={history}
+        />
         <Layout>
           <StaticRenderer document={state.document} />
         </Layout>
@@ -228,13 +225,12 @@ function EditInner({
         mode="edit"
         setIsEditing={setIsEditing}
         setSaveVersionModalIsOpen={setSaveVersionModalIsOpen}
-        undoable={undoable}
-        redoable={redoable}
         save={save}
         isSaving={isSaving}
+        editorHistory={history}
       />
       <div className="h-20"></div>
-      <Layout>{children}</Layout>
+      <Layout>{editor.element}</Layout>
       {renderExtraEditorStyles()}
       <div ref={formDiv} />
     </>
