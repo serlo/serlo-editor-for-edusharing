@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faCheck,
   faComment,
   faEdit,
   faRedoAlt,
@@ -9,15 +8,8 @@ import {
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 
-import {
-  redo,
-  undo,
-  useAppDispatch,
-  useAppSelector,
-  selectHasPendingChanges,
-} from '@serlo/editor'
-
 import { ToolbarButton } from './button'
+import type { BaseEditor } from '@serlo/editor'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
@@ -26,25 +18,29 @@ export interface ToolbarProps {
   mode: 'edit' | 'render'
   setIsEditing: Dispatch<SetStateAction<boolean>>
   setSaveVersionModalIsOpen?: Dispatch<SetStateAction<boolean>>
-  undoable?: boolean
-  redoable?: boolean
   save?: (comment?: string) => Promise<void>
   isSaving?: boolean
+  editorHistory: BaseEditor['history']
 }
 
 export function Toolbar({
   mode,
   setIsEditing,
   setSaveVersionModalIsOpen,
-  undoable,
-  redoable,
   save,
   isSaving,
+  editorHistory,
 }: ToolbarProps) {
+  const {
+    pendingChanges,
+    hasUndoActions,
+    hasRedoActions,
+    dispatchUndo,
+    dispatchRedo,
+  } = editorHistory
+  const hasPendingChanges = pendingChanges !== 0
   const [shouldClose, setShouldClose] = useState(false)
-  const dispatch = useAppDispatch()
   const canBeClosed = window.opener != null
-  const hasPendingChanges = useAppSelector(selectHasPendingChanges)
 
   useEffect(() => {
     if (shouldClose && !hasPendingChanges) window.close()
@@ -76,10 +72,10 @@ export function Toolbar({
     return (
       <>
         <div>
-          <ToolbarButton active={undoable} onClick={() => dispatch(undo())}>
+          <ToolbarButton active={hasUndoActions} onClick={dispatchUndo}>
             <FontAwesomeIcon icon={faRedoAlt} flip="horizontal" /> Rückgängig
           </ToolbarButton>
-          <ToolbarButton active={redoable} onClick={() => dispatch(redo())}>
+          <ToolbarButton active={hasRedoActions} onClick={dispatchRedo}>
             <FontAwesomeIcon icon={faRedoAlt} /> Wiederholen
           </ToolbarButton>
         </div>
