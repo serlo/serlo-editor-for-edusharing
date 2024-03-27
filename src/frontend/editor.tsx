@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
 import {
@@ -40,23 +40,17 @@ export interface EditorProps {
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
   const customPlugins = createEdusharingPlugins({ ltik })
   return (
-<<<<<<< Updated upstream
-    <SerloEditorPackage initialState={state.document}>
+    <SerloEditorPackage
+      initialState={state.document}
+      basicPluginsConfig={basicPluginsConfig}
+      customPlugins={customPlugins}
+    >
       {(editor, languageData) => {
         // HACK: Change strings in link element. Searching or inserting an id is not possible in this integration.
         languageData.loggedInData.strings.editor.plugins.text.linkOverlay.placeholder =
           'https://example.com/'
         languageData.loggedInData.strings.editor.plugins.text.linkOverlay.inputLabel =
           "Gib eine URL inklusive 'https://' ein"
-=======
-    <SerloEditorPackage
-      initialState={state.document}
-      basicPluginsConfig={basicPluginsConfig}
-      customPlugins={customPlugins}
-    >
-      {(editor) => {
-        customizeEditorStrings(editor.i18n)
->>>>>>> Stashed changes
         return (
           <EditInner ltik={ltik} state={state} providerUrl={providerUrl}>
             {editor}

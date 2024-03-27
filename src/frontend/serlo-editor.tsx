@@ -9,7 +9,6 @@ import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
 import { createRenderers } from './plugins/create-renderers'
 import { LtikContext } from './context/ltikContext'
-import { createPluginsConfig } from './plugins/create-plugins-config'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor),
@@ -28,10 +27,6 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
-<<<<<<< Updated upstream
-  editorPlugins.initTemp(createPluginsConfig(ltik))
-=======
->>>>>>> Stashed changes
   editorRenderers.init(createRenderers())
 
   return (
