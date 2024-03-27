@@ -2,7 +2,7 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { default as ToastNotice } from 'react-notify-toast'
 
-import { editorPlugins, editorRenderers, SerloRenderer } from '@serlo/editor'
+import { editorRenderers, SerloRenderer } from '@serlo/editor'
 
 import type { EditorProps } from './editor'
 import { Layout } from './layout'
@@ -28,7 +28,10 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
+<<<<<<< Updated upstream
   editorPlugins.initTemp(createPluginsConfig(ltik))
+=======
+>>>>>>> Stashed changes
   editorRenderers.init(createRenderers())
 
   return (

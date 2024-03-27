@@ -1,32 +1,33 @@
+import { EditorPluginType } from '@serlo/editor'
 import IconImage from '../assets/plugin-icons/icon-image.svg'
 import IconInjection from '../assets/plugin-icons/icon-injection.svg'
-import { EditorPluginType, createBasicPlugins } from '@serlo/editor'
 
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
 
-export function createPlugins({ ltik }: { ltik: string }) {
-  return [
-    ...createBasicPlugins({
-      enableTextAreaExercise: true,
-      allowImageInTableCells: false,
-      exerciseVisibleInSuggestion: true,
-      allowedChildPlugins: [
-        EditorPluginType.Text,
-        EditorPluginType.Equations,
-        EditorPluginType.Highlight,
-        'edusharingAsset',
-      ],
-      multimediaConfig: {
-        explanation: {
-          plugin: EditorPluginType.Rows,
-          config: {
-            allowedPlugins: [EditorPluginType.Text],
-          },
-        },
-        allowedPlugins: ['edusharingAsset'],
+export const basicPluginsConfig = {
+  enableTextAreaExercise: true,
+  allowImageInTableCells: false,
+  exerciseVisibleInSuggestion: true,
+  allowedChildPlugins: [
+    EditorPluginType.Text,
+    EditorPluginType.Equations,
+    EditorPluginType.Highlight,
+    'edusharingAsset',
+  ],
+  multimediaConfig: {
+    explanation: {
+      plugin: EditorPluginType.Rows,
+      config: {
+        allowedPlugins: [EditorPluginType.Text],
       },
-    }),
+    },
+    allowedPlugins: ['edusharingAsset'],
+  },
+}
+
+export function createEdusharingPlugins({ ltik }: { ltik: string }) {
+  return [
     {
       type: 'serloInjection',
       plugin: createSerloInjectionPlugin(),
