@@ -2,12 +2,11 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { default as ToastNotice } from 'react-notify-toast'
 
-import { editorRenderers, SerloRenderer } from '@serlo/editor'
+import { SerloRenderer } from '@serlo/editor'
 
 import type { EditorProps } from './editor'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
-import { createRenderers } from './plugins/create-renderers'
 import { LtikContext } from './context/ltikContext'
 
 const Editor = dynamic<EditorProps>(() =>
@@ -27,8 +26,6 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
-  editorRenderers.init(createRenderers())
-
   return (
     <>
       <Head>

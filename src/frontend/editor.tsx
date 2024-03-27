@@ -20,6 +20,10 @@ import {
   basicPluginsConfig,
   createEdusharingPlugins,
 } from './plugins/create-plugins'
+import {
+  customPluginsRenderers,
+  customRenderers,
+} from './plugins/create-renderers'
 
 export interface EditorProps {
   state: StorageFormat
@@ -34,6 +38,8 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
       initialState={state.document}
       basicPluginsConfig={basicPluginsConfig}
       customPlugins={customPlugins}
+      customRenderers={customRenderers}
+      customPluginsRenderers={customPluginsRenderers}
     >
       {(editor) => {
         customizeEditorStrings(editor.i18n)
