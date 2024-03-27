@@ -34,6 +34,7 @@ export function Editor({ state, providerUrl, ltik }: EditorProps) {
       initialState={state.document}
       basicPluginsConfig={basicPluginsConfig}
       customPlugins={customPlugins}
+    >
       {(editor) => {
         customizeEditorStrings(editor.i18n)
         return (
