@@ -16,14 +16,7 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import {
-  basicPluginsConfig,
-  createEdusharingPlugins,
-} from './plugins/create-plugins'
-import {
-  customPluginsRenderers,
-  customRenderers,
-} from './plugins/create-renderers'
+import { createPluginsConfig } from './plugins/create-plugins-config'
 
 export interface EditorProps {
   state: StorageFormat
@@ -32,14 +25,10 @@ export interface EditorProps {
 }
 
 export function Editor({ state, providerUrl, ltik }: EditorProps) {
-  const customPlugins = createEdusharingPlugins({ ltik })
   return (
     <SerloEditorPackage
+      pluginsConfig={createPluginsConfig({ ltik })}
       initialState={state.document}
-      basicPluginsConfig={basicPluginsConfig}
-      customPlugins={customPlugins}
-      customRenderers={customRenderers}
-      customPluginsRenderers={customPluginsRenderers}
     >
       {(editor) => {
         customizeEditorStrings(editor.i18n)

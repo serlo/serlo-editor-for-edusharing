@@ -1,11 +1,23 @@
 import { EditorPluginType } from '@serlo/editor'
+import Link from 'next/link'
+
 import IconImage from '../assets/plugin-icons/icon-image.svg'
 import IconInjection from '../assets/plugin-icons/icon-injection.svg'
 
 import { createEdusharingAssetPlugin } from './edusharing-asset'
 import { createSerloInjectionPlugin } from './serlo-injection'
+import { EdusharingAssetStaticRenderer } from './edusharing-asset/static'
+import { SerloInjectionStaticRenderer } from './serlo-injection/static'
 
-export const basicPluginsConfig = {
+export function createPluginsConfig({ ltik }: { ltik: string }) {
+  return {
+    basicPluginsConfig,
+    customPlugins: createCustomPlugins({ ltik }),
+    customRenderers,
+  }
+}
+
+const basicPluginsConfig = {
   enableTextAreaExercise: true,
   allowImageInTableCells: false,
   exerciseVisibleInSuggestion: true,
@@ -26,50 +38,38 @@ export const basicPluginsConfig = {
   },
 }
 
-export function createEdusharingPlugins({ ltik }: { ltik: string }) {
+function createCustomPlugins({ ltik }: { ltik: string }) {
   return [
     {
       type: 'serloInjection',
       plugin: createSerloInjectionPlugin(),
+      renderer: SerloInjectionStaticRenderer,
       visibleInSuggestions: true,
       icon: <IconInjection />,
     },
     {
       type: 'edusharingAsset',
       plugin: createEdusharingAssetPlugin({ ltik }),
+      renderer: EdusharingAssetStaticRenderer,
       visibleInSuggestions: true,
       icon: <IconImage />,
     },
-
-    // Exercises etc.
-    // ===================================================
-
-    // {
-    //   type: EditorPluginType.InputExercise,
-    //   plugin: {
-    //     ...createInputExercisePlugin({
-    //       feedback: {
-    //         plugin: EditorPluginType.Text,
-    //         config: {
-    //           placeholder: 'Schreibe ein Feedback für diese Antwort',
-    //         },
-    //       },
-    //     }),
-    //     defaultTitle: 'Aufgabe mit Eingabefeld',
-    //     defaultDescription:
-    //       'Interaktive Aufgabe mit Eingabefeld (Text oder Zahlen)',
-    //   },
-    //   icon: <IconFallback />,
-    // },
-    // {
-    //   type: EditorPluginType.ScMcExercise,
-    //   plugin: {
-    //     ...createScMcExercisePlugin(),
-    //     defaultTitle: 'Multiple-Choice-Aufgabe',
-    //     defaultDescription:
-    //       'Interaktive Multiple-Choice-Aufgabe (eine oder mehrere richtige Antworten)',
-    //   },
-    //   icon: <IconFallback />,
-    // },
   ]
+}
+
+const customRenderers = {
+  linkRenderer: ({ href, children }) => {
+    return (
+      <>
+        <Link
+          className="serlo-link"
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </Link>
+      </>
+    )
+  },
 }
