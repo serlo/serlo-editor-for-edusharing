@@ -8,6 +8,7 @@ import type { EditorProps } from './editor'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
 import { LtikContext } from './context/ltikContext'
+import { createPluginsConfig } from './plugins/create-plugins-config'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor),
@@ -26,6 +27,8 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
+  const pluginsConfig = createPluginsConfig({ ltik })
+
   return (
     <>
       <Head>
@@ -33,10 +36,18 @@ export function SerloEditor({
       </Head>
       <LtikContext.Provider value={ltik}>
         {mayEdit ? (
-          <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+          <Editor
+            state={state}
+            providerUrl={providerUrl}
+            ltik={ltik}
+            pluginsConfig={pluginsConfig}
+          />
         ) : (
           <Layout>
-            <SerloRenderer document={state.document} />
+            <SerloRenderer
+              document={state.document}
+              pluginsConfig={pluginsConfig}
+            />
           </Layout>
         )}
         <ToastNotice />

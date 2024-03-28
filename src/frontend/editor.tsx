@@ -5,6 +5,7 @@ import {
   SerloEditor as SerloEditorPackage,
   StaticRenderer,
   type BaseEditor,
+  type SerloEditorProps,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -16,30 +17,25 @@ import {
 } from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
-import { createPluginsConfig } from './plugins/create-plugins-config'
 
 export interface EditorProps {
   state: StorageFormat
   providerUrl: string
   ltik: string
+  pluginsConfig: SerloEditorProps['pluginsConfig']
 }
 
-export function Editor({ state, providerUrl, ltik }: EditorProps) {
+export function Editor(props: EditorProps) {
+  const { state, pluginsConfig } = props
+
   return (
     <SerloEditorPackage
-      pluginsConfig={createPluginsConfig({ ltik })}
+      pluginsConfig={pluginsConfig}
       initialState={state.document}
     >
       {(editor) => {
         customizeEditorStrings(editor.i18n)
-        return (
-          <EditInner
-            ltik={ltik}
-            state={state}
-            providerUrl={providerUrl}
-            editor={editor}
-          />
-        )
+        return <EditInner editor={editor} {...props} />
       }}
     </SerloEditorPackage>
   )
