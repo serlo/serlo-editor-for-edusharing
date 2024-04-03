@@ -13,7 +13,6 @@ export function createPluginsConfig({ ltik }: { ltik: string }) {
   return {
     basicPluginsConfig,
     customPlugins: createCustomPlugins({ ltik }),
-    customRenderers,
   }
 }
 
@@ -55,21 +54,4 @@ function createCustomPlugins({ ltik }: { ltik: string }) {
       icon: <IconImage />,
     },
   ]
-}
-
-const customRenderers = {
-  linkRenderer: ({ href, children }) => {
-    return (
-      <>
-        <Link
-          className="serlo-link"
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {children}
-        </Link>
-      </>
-    )
-  },
 }
