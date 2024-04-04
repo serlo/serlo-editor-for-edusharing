@@ -83,7 +83,7 @@ export const SerloInjectionEditor = (props: SerloInjectionProps) => {
       for (const regex of [
         /de.serlo.org\/(?<id>\d+)/,
         /de.serlo.org\/entity\/view\/(?<id>\d+)$/,
-        /de.serlo.org\/(?<subject>[^/]+\/)?(?<id>\d+)\/(?<title>[^/]*)/,
+        /de.serlo.org\/(?<subject>[^/]+\/)?(?<id>\d+)/,
         /de.serlo.org\/entity\/repository\/compare\/\d+\/(?<id>\d+)$/,
         /de.serlo.org\/user\/profile\/(?<id>\d+)$/,
       ]) {
