@@ -4,6 +4,18 @@ import Image from 'next/image'
 import IframeResizer from 'iframe-resizer-react'
 
 type RenderMethod = 'dangerously-set-inner-html' | 'iframe'
+type EmbedType =
+  | 'unknown'
+  | 'audio'
+  | 'brockhaus'
+  | 'file'
+  | 'h5p'
+  | 'image'
+  | 'learning-app'
+  | 'link'
+  | 'pdf'
+  | 'pixabay'
+  | 'video'
 
 const EmbedJson = t.type({
   detailsSnippet: t.string,
@@ -34,6 +46,7 @@ export function EdusharingAssetRenderer(props: {
   )
   const [defineContainerHeight, setDefineContainerHeight] =
     useState<boolean>(false)
+  const [embedType, setEmbedType] = useState<EmbedType>('unknown')
 
   useEffect(() => {
     async function fetchEmbedHtml() {
@@ -55,10 +68,10 @@ export function EdusharingAssetRenderer(props: {
         return
       }
 
-      const result: unknown = await response.json()
+      const responseJson: unknown = await response.json()
 
-      if (!EmbedJson.is(result)) {
-        console.log(JSON.stringify(result))
+      if (!EmbedJson.is(responseJson)) {
+        console.log(JSON.stringify(responseJson))
         setEmbedHtml(
           'Request to /lit/get-embed-html failed. Response json was malformed. Json was logged to console.',
         )
@@ -66,9 +79,10 @@ export function EdusharingAssetRenderer(props: {
       }
 
       // HTML snipped returned by edu-sharing cannot be used as it is.
-      const { html, renderMethod, defineContainerHeight } =
-        embedHtmlAndRenderMethod(result)
+      const { embedType, html, renderMethod, defineContainerHeight } =
+        embedHtmlAndRenderMethod(responseJson)
 
+      setEmbedType(embedType)
       setEmbedHtml(html)
       setRenderMethod(renderMethod)
       setDefineContainerHeight(defineContainerHeight)
@@ -98,6 +112,7 @@ export function EdusharingAssetRenderer(props: {
   )
 
   function embedHtmlAndRenderMethod(content: t.TypeOf<typeof EmbedJson>): {
+    embedType: EmbedType
     html: string
     renderMethod: RenderMethod
     defineContainerHeight: boolean
@@ -116,14 +131,17 @@ export function EdusharingAssetRenderer(props: {
     const parser = new DOMParser()
     const htmlDocument = parser.parseFromString(detailsSnippet, 'text/html')
 
-    // Sadly, LearningApps also have `mediatype: 'link'` so we need to check if `remote` is falsy as well
+    const isBrockhaus =
+      content.node.remote?.repository.repositoryType === 'BROCKHAUS'
+    // Both 'link' and 'learning-app' have mediatype:'link' so we need to check if 'remote' is falsy as well
     const isLink = content.node.mediatype === 'link' && !content.node.remote
-    if (isLink) {
+    if (isLink || isBrockhaus) {
       const linkElement = htmlDocument.querySelector<HTMLLinkElement>(
         '.edusharing_rendering_content_footer a',
       )
       if (!linkElement) {
         return {
+          embedType: 'unknown',
           html: '<div>Fehler beim Einbinden des Inhalts</div>',
           renderMethod: 'dangerously-set-inner-html',
           defineContainerHeight: false,
@@ -131,6 +149,7 @@ export function EdusharingAssetRenderer(props: {
       }
 
       return {
+        embedType: isLink ? 'link' : isBrockhaus ? 'brockhaus' : 'unknown',
         html: `<a class="serlo-link" target="_blank" rel="noopener noreferrer" href="${
           linkElement.href
         }">${
@@ -178,25 +197,26 @@ export function EdusharingAssetRenderer(props: {
         : ''
 
       return {
+        embedType: 'pixabay',
         html: imageSnippet + emptyStringOrJumpToSource,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: false,
       }
     }
 
-    const isImageSnippet =
-      image && !image.classList.contains('edusharing_rendering_content_preview')
+    const isImageSnippet = image && !content.node.remote
     if (isImageSnippet) {
       // Create completely new <img> element because patching the existing one is more work/error-prone
       const imageSnippet = buildImageSnippet(image)
       return {
+        embedType: 'image',
         html: imageSnippet,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: false,
       }
     }
 
-    // .docx, .pptx
+    // File. For example .docx, .pptx
     const isFilePreview =
       image && image.classList.contains('edusharing_rendering_content_preview')
     if (isFilePreview) {
@@ -205,6 +225,7 @@ export function EdusharingAssetRenderer(props: {
         .replace('width="0"', '')
         .replace('height="0"', '')
       return {
+        embedType: 'file',
         html: detailsSnippet,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: false,
@@ -222,6 +243,7 @@ export function EdusharingAssetRenderer(props: {
       )
 
       return {
+        embedType: 'audio',
         html: appendIframeResizer(detailsSnippet),
         renderMethod: 'iframe',
         defineContainerHeight: false,
@@ -245,6 +267,7 @@ export function EdusharingAssetRenderer(props: {
         </style>
         `
       return {
+        embedType: 'video',
         html: appendIframeResizer(detailsSnippet),
         renderMethod: 'iframe',
         defineContainerHeight: false,
@@ -254,9 +277,10 @@ export function EdusharingAssetRenderer(props: {
     const iframe = htmlDocument.querySelector('iframe')
 
     // H5P
-    const isH5P = iframe && iframe.getAttribute('src')?.includes('h5p')
+    const isH5P = iframe && content.node.mediatype === 'file-h5p'
     if (isH5P) {
       return {
+        embedType: 'h5p',
         html: appendIframeResizer(detailsSnippet),
         renderMethod: 'iframe',
         defineContainerHeight: false,
@@ -268,6 +292,7 @@ export function EdusharingAssetRenderer(props: {
       // Do not adjust height based on container size
       iframe.style.height = 'auto'
       return {
+        embedType: 'pdf',
         html: htmlDocument.body.innerHTML,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: true,
@@ -279,6 +304,7 @@ export function EdusharingAssetRenderer(props: {
       let iframeHtmlElement = htmlDocument.querySelector('iframe')
       if (!iframeHtmlElement) {
         return {
+          embedType: 'unknown',
           html: 'Error. Please contact support. Details: Could not find iframe in learningapp embed html.',
           renderMethod: 'dangerously-set-inner-html',
           defineContainerHeight: false,
@@ -288,6 +314,7 @@ export function EdusharingAssetRenderer(props: {
         .replace('width="95%"', 'width="100%"')
         .replace('height: 80vh', '')
       return {
+        embedType: 'learning-app',
         html: iframeHtml,
         renderMethod: 'dangerously-set-inner-html',
         defineContainerHeight: true,
@@ -297,6 +324,7 @@ export function EdusharingAssetRenderer(props: {
     // Backup when content type could not be determined above -> Render in iframe with iframe-resizer.
     // This will make sure <script> tags execute. They would not if using 'dangerously-set-inner-html'
     return {
+      embedType: 'unknown',
       html: appendIframeResizer(detailsSnippet),
       renderMethod: 'iframe',
       defineContainerHeight: false,
@@ -319,6 +347,7 @@ export function EdusharingAssetRenderer(props: {
             aspectRatio: defineContainerHeight ? '16/9' : undefined,
           }}
           dangerouslySetInnerHTML={{ __html: embedHtml }}
+          data-embed-type={embedType}
         />
       )
       // We could use dangerously-set-html-content npm package instead. This will execute <script> tags but sadly did not work in case of the video embed.
@@ -340,6 +369,7 @@ export function EdusharingAssetRenderer(props: {
             width: contentWidth ? contentWidth : '100%',
             aspectRatio: defineContainerHeight ? '16/9' : undefined,
           }}
+          data-embed-type={embedType}
         >
           {defineContainerHeight ? (
             <iframe
