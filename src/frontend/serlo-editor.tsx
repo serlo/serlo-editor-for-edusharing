@@ -2,14 +2,13 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { default as ToastNotice } from 'react-notify-toast'
 
-import { editorPlugins, editorRenderers, SerloRenderer } from '@serlo/editor'
+import { SerloRenderer } from '@serlo/editor'
 
 import type { EditorProps } from './editor'
 import { Layout } from './layout'
 import { StorageFormat } from '../shared/storage-format'
-import { createRenderers } from './plugins/create-renderers'
-import { createPlugins } from './plugins/create-plugins'
 import { LtikContext } from './context/ltikContext'
+import { createPluginsConfig } from './plugins/create-plugins-config'
 
 const Editor = dynamic<EditorProps>(() =>
   import('../frontend/editor').then((mod) => mod.Editor),
@@ -28,8 +27,7 @@ export function SerloEditor({
   providerUrl,
   mayEdit,
 }: SerloEditorProps) {
-  editorPlugins.init(createPlugins({ ltik }))
-  editorRenderers.init(createRenderers())
+  const pluginsConfig = createPluginsConfig({ ltik })
 
   return (
     <>
@@ -38,10 +36,18 @@ export function SerloEditor({
       </Head>
       <LtikContext.Provider value={ltik}>
         {mayEdit ? (
-          <Editor state={state} providerUrl={providerUrl} ltik={ltik} />
+          <Editor
+            state={state}
+            providerUrl={providerUrl}
+            ltik={ltik}
+            pluginsConfig={pluginsConfig}
+          />
         ) : (
           <Layout>
-            <SerloRenderer document={state.document} />
+            <SerloRenderer
+              document={state.document}
+              pluginsConfig={pluginsConfig}
+            />
           </Layout>
         )}
         <ToastNotice />

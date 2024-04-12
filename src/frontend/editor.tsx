@@ -1,10 +1,11 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
   StaticRenderer,
   type BaseEditor,
+  type SerloEditorProps,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
@@ -21,21 +22,20 @@ export interface EditorProps {
   state: StorageFormat
   providerUrl: string
   ltik: string
+  pluginsConfig: SerloEditorProps['pluginsConfig']
 }
 
-export function Editor({ state, providerUrl, ltik }: EditorProps) {
+export function Editor(props: EditorProps) {
+  const { state, pluginsConfig } = props
+
   return (
-    <SerloEditorPackage initialState={state.document}>
+    <SerloEditorPackage
+      pluginsConfig={pluginsConfig}
+      initialState={state.document}
+    >
       {(editor) => {
         customizeEditorStrings(editor.i18n)
-        return (
-          <EditInner
-            ltik={ltik}
-            state={state}
-            providerUrl={providerUrl}
-            editor={editor}
-          />
-        )
+        return <EditInner editor={editor} {...props} />
       }}
     </SerloEditorPackage>
   )

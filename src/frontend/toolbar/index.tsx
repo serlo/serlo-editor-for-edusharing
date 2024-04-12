@@ -8,8 +8,9 @@ import {
   faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 
-import { ToolbarButton } from './button'
 import type { BaseEditor } from '@serlo/editor'
+
+import { ToolbarButton } from './button'
 
 export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
