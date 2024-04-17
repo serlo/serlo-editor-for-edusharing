@@ -16,8 +16,6 @@ export const savedBySerloString =
   'Diese Version wurde automatisch vom Serlo-Editor erstellt'
 
 export interface ToolbarProps {
-  mode: 'edit' | 'render'
-  setIsEditing: Dispatch<SetStateAction<boolean>>
   setSaveVersionModalIsOpen?: Dispatch<SetStateAction<boolean>>
   save?: (comment?: string) => Promise<void>
   isSaving?: boolean
@@ -25,8 +23,6 @@ export interface ToolbarProps {
 }
 
 export function Toolbar({
-  mode,
-  setIsEditing,
   setSaveVersionModalIsOpen,
   save,
   isSaving,
@@ -50,24 +46,10 @@ export function Toolbar({
   return (
     <nav className="edusharing-fixed edusharing-left-0 edusharing-right-0 edusharing-z-[100] edusharing-bg-sky-700/95">
       <div className="edusharing-mx-auto edusharing-flex edusharing-max-w-5xl edusharing-justify-between edusharing-py-2 edusharing-px-4 sm:edusharing-px-6 lg:edusharing-px-8">
-        {mode === 'render' ? renderRenderButtons() : renderEditButtons()}
+        {renderEditButtons()}
       </div>
     </nav>
   )
-
-  function renderRenderButtons() {
-    return (
-      <>
-        <ToolbarButton
-          active
-          onClick={() => setIsEditing(true)}
-          className="edusharing-ml-12"
-        >
-          <FontAwesomeIcon icon={faEdit} /> Bearbeiten
-        </ToolbarButton>
-      </>
-    )
-  }
 
   function renderEditButtons() {
     return (

@@ -3,7 +3,6 @@ import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
-  StaticRenderer,
   type BaseEditor,
   type SerloEditorProps,
 } from '@serlo/editor'
@@ -57,7 +56,6 @@ function EditInner({
   const { history, selectRootDocument } = editor
   const { pendingChanges, dispatchPersistHistory } = history
 
-  const [isEditing, setIsEditing] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [saveVersionModalIsOpen, setSaveVersionModalIsOpen] = useState(false)
 
@@ -139,8 +137,6 @@ function EditInner({
   }, [hasPendingChanges, debouncedSave, pendingChanges])
 
   useEffect(() => {
-    if (!isEditing) return
-
     window.addEventListener('beforeunload', handleOnBeforeUnload)
 
     return () =>
@@ -189,22 +185,7 @@ function EditInner({
 
       return request.status
     }
-  }, [getBodyForSave, getSaveUrl, hasPendingChanges, isEditing, ltik, save])
-
-  if (!isEditing) {
-    return (
-      <>
-        <Toolbar
-          mode="render"
-          setIsEditing={setIsEditing}
-          editorHistory={history}
-        />
-        <Layout>
-          <StaticRenderer document={state.document} />
-        </Layout>
-      </>
-    )
-  }
+  }, [getBodyForSave, getSaveUrl, hasPendingChanges, ltik, save])
 
   return (
     <>
@@ -214,8 +195,6 @@ function EditInner({
         setOpen={setSaveVersionModalIsOpen}
       />
       <Toolbar
-        mode="edit"
-        setIsEditing={setIsEditing}
         setSaveVersionModalIsOpen={setSaveVersionModalIsOpen}
         save={save}
         isSaving={isSaving}
