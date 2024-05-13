@@ -22,14 +22,16 @@ export interface EditorProps {
   providerUrl: string
   ltik: string
   pluginsConfig: SerloEditorProps['pluginsConfig']
+  customPlugins: SerloEditorProps['customPlugins']
 }
 
 export function Editor(props: EditorProps) {
-  const { state, pluginsConfig } = props
+  const { state, pluginsConfig, customPlugins } = props
 
   return (
     <SerloEditorPackage
       pluginsConfig={pluginsConfig}
+      customPlugins={customPlugins}
       initialState={state.document}
     >
       {(editor) => {
