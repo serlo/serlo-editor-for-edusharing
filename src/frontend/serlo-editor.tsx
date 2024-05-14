@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic'
 import { default as ToastNotice } from 'react-notify-toast'
 
 import { SerloRenderer } from '@serlo/editor'
-import '@serlo/editor/style.css'
 
 import type { EditorProps } from './editor'
 import { Layout } from './layout'
