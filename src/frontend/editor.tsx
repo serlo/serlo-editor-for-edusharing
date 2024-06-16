@@ -49,6 +49,15 @@ function customizeEditorStrings(languageData: BaseEditor['i18n']) {
     "Gib eine URL inklusive 'https://' ein"
 }
 
+// Extends each document type to ensure id is always present. TODO We can remove
+// this, once we have done more type simplifications see comment
+// https://github.com/serlo/frontend/pull/3734#pullrequestreview-2040993595
+type DocumentWithId<T> = T & { id: string }
+
+type AnyEditorDocumentWithId = DocumentWithId<
+  ReturnType<BaseEditor['selectRootDocument']>
+>
+
 function EditInner({
   ltik,
   state,
@@ -79,12 +88,16 @@ function EditInner({
     [providerUrl],
   )
   const getBodyForSave = useCallback(() => {
-    const document = selectRootDocument()
+    const document = selectRootDocument() as AnyEditorDocumentWithId
 
     if (document === null) {
       throw new Error(
         'Transforming the document content into a saveable format failed!',
       )
+    }
+
+    if (!document.id) {
+      throw new Error('Document does not have an id')
     }
 
     const body: StorageFormat = {

@@ -29,10 +29,13 @@ export const emptyDocument: StorageFormat = {
                 children: [{ text: '' }],
               },
             ],
+            id: 'db8ce020-1888-465f-b28b-0a9af91cdf02',
           },
         ],
+        id: '704fd746-463d-46be-b0aa-8230e454c875',
       },
     },
+    id: 'e6133755-6ab9-4c1e-88ae-ed1504ea2ab7',
   },
 }
 
@@ -74,6 +77,7 @@ export const StorageFormatRuntimeType = t.type({
   document: t.intersection([
     t.type({
       plugin: t.string,
+      id: t.string,
     }),
     t.partial({
       state: t.unknown,
