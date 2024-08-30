@@ -1,42 +1,56 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDebounce } from 'rooks'
 
 import {
   SerloEditor as SerloEditorPackage,
   type BaseEditor,
-  type SerloEditorProps,
+  defaultPlugins,
+  EditorPluginType,
 } from '@serlo/editor'
 
 import { Layout } from './layout'
-import {
-  StorageFormat,
-  documentType,
-  getCurrentDatetime,
-  variantType,
-} from '../shared/storage-format'
 import { Toolbar, savedBySerloString } from './toolbar'
 import { SaveVersionModal } from './save-version-modal'
 
-export interface EditorProps {
-  state: StorageFormat
+export interface SerloEditorWrapperProps {
+  initialState: unknown
   providerUrl: string
   ltik: string
-  pluginsConfig: SerloEditorProps['pluginsConfig']
-  customPlugins: SerloEditorProps['customPlugins']
 }
 
-export function Editor(props: EditorProps) {
-  const { state, pluginsConfig, customPlugins } = props
+export function SerloEditorWrapper(props: SerloEditorWrapperProps) {
+  const { initialState, ltik } = props
+  const state = useRef(initialState)
 
   return (
     <SerloEditorPackage
-      pluginsConfig={pluginsConfig}
-      customPlugins={customPlugins}
-      initialState={state.document}
+      initialState={initialState}
+      plugins={[
+        ...defaultPlugins.filter(
+          (plugin) =>
+            plugin !== EditorPluginType.Image &&
+            plugin !== EditorPluginType.DropzoneImage &&
+            plugin !== EditorPluginType.ImageGallery,
+        ),
+        EditorPluginType.EdusharingAsset,
+        EditorPluginType.SerloInjection,
+        EditorPluginType.TextAreaExercise,
+      ]}
+      _ltik={ltik}
+      editorVariant="edusharing"
+      onChange={(payload) => {
+        state.current = payload
+      }}
     >
       {(editor) => {
         customizeEditorStrings(editor.i18n)
-        return <EditInner editor={editor} {...props} />
+        return <EditInner editor={editor} state={state} {...props} />
       }}
     </SerloEditorPackage>
   )
@@ -54,8 +68,10 @@ function EditInner({
   state,
   providerUrl,
   editor,
-}: { editor: BaseEditor } & EditorProps) {
-  const { history, selectRootDocument } = editor
+}: { editor: BaseEditor } & SerloEditorWrapperProps & {
+    state: MutableRefObject<unknown>
+  }) {
+  const { history } = editor
   const { pendingChanges, dispatchPersistHistory } = history
 
   const [isSaving, setIsSaving] = useState(false)
@@ -78,25 +94,6 @@ function EditInner({
     },
     [providerUrl],
   )
-  const getBodyForSave = useCallback(() => {
-    const document = selectRootDocument()
-
-    if (document === null) {
-      throw new Error(
-        'Transforming the document content into a saveable format failed!',
-      )
-    }
-
-    const body: StorageFormat = {
-      type: documentType,
-      variant: variantType,
-      version: state.version,
-      dateModified: getCurrentDatetime(),
-      document,
-    }
-
-    return JSON.stringify(body)
-  }, [state.version])
   const save = useCallback(
     async (comment?: string) => {
       if (isSaving) return
@@ -110,7 +107,7 @@ function EditInner({
             'content-type': 'application/json',
           },
           keepalive: true,
-          body: getBodyForSave(),
+          body: JSON.stringify(state.current),
         })
         if (response.status === 200) {
           dispatchPersistHistory()
@@ -130,7 +127,7 @@ function EditInner({
         setIsSaving(false)
       }
     },
-    [isSaving, getSaveUrl, ltik, getBodyForSave],
+    [isSaving, getSaveUrl, ltik],
   )
   const debouncedSave = useDebounce(save, 5000)
 
@@ -183,11 +180,11 @@ function EditInner({
       request.open('POST', getSaveUrl(savedBySerloString), false)
       request.setRequestHeader('Authorization', `Bearer ${ltik}`)
       request.setRequestHeader('content-type', 'application/json')
-      request.send(getBodyForSave())
+      request.send(JSON.stringify(state.current))
 
       return request.status
     }
-  }, [getBodyForSave, getSaveUrl, hasPendingChanges, ltik, save])
+  }, [getSaveUrl, hasPendingChanges, ltik, save])
 
   return (
     <>

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import multer from 'multer'
 import * as t from 'io-ts'
-import { kitchenSinkDocument } from '../shared/storage-format'
+import { kitchenSinkContent } from './kitchen-sink-content'
 import {
   createAutoFromResponse,
   createJWKSResponse,
@@ -36,7 +36,7 @@ export class EdusharingServer {
   private user = 'admin'
   private custom = this.defaultCustom
   private app = express()
-  private content: unknown = kitchenSinkDocument
+  private content: unknown = kitchenSinkContent
   public savedVersions: Array<{ comment: t.TypeOf<typeof VersionComment> }> = []
 
   constructor() {
@@ -290,7 +290,7 @@ export class EdusharingServer {
   init() {
     this.savedVersions = []
     this.custom = { ...this.defaultCustom }
-    this.content = kitchenSinkDocument
+    this.content = kitchenSinkContent
   }
 
   removePropertyInCustom(propertyName: string): boolean {

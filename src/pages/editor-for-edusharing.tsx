@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react'
 import { GetServerSideProps } from 'next'
 
-import {
-  migrate,
-  emptyDocument,
-  StorageFormatRuntimeType,
-} from '../shared/storage-format'
-import { SerloEditor, SerloEditorProps } from '../frontend'
+import { SerloEditorWrapper } from '../frontend/serlo-editor-wrapper'
+import { SerloRenderer } from '@serlo/editor'
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async (
   context,
@@ -26,7 +22,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async (
 }
 
 export default function Page(props: PageProps) {
-  const { ltik, providerUrl } = props
+  const { ltik, providerUrl, mayEdit } = props
   const [state, setState] = useState<PageState>({ type: 'loading' })
 
   useEffect(() => {
@@ -51,23 +47,20 @@ export default function Page(props: PageProps) {
       // Server will send code 204 when newly created content was opened in the editor and there is no saved state on the server yet.
       const noContentReceived = response.status === 204
       if (noContentReceived) {
-        setState({ type: 'content-fetched', content: migrate(emptyDocument) })
+        if (mayEdit) {
+          setState({ type: 'editor', content: undefined })
+        } else {
+          setState({ type: 'error', message: 'Missing content!' })
+        }
         return
       }
 
       const contentJson: unknown = await response.json()
 
-      if (!StorageFormatRuntimeType.is(contentJson)) {
-        setState({
-          type: 'error',
-          message: `Content json received from edu-sharing was malformed. Contained: ${JSON.stringify(
-            contentJson,
-          )}`,
-        })
-        return
-      }
-
-      setState({ type: 'content-fetched', content: migrate(contentJson) })
+      setState({
+        type: mayEdit ? 'editor' : 'static-renderer',
+        content: contentJson,
+      })
     }
   }, [ltik, providerUrl])
 
@@ -77,14 +70,21 @@ export default function Page(props: PageProps) {
     // TODO: Design
     case 'error':
       return <p>Fehler: {state.message}</p>
-    case 'content-fetched':
-      return <SerloEditor state={state.content} {...props} />
+    case 'static-renderer':
+      return <SerloRenderer state={state.content} />
+    case 'editor':
+      return <SerloEditorWrapper initialState={state.content} {...props} />
   }
 }
 
-type PageProps = Omit<SerloEditorProps, 'state'>
+type PageProps = {
+  mayEdit: boolean
+  ltik: string
+  providerUrl: string
+}
 
 type PageState =
   | { type: 'loading' }
   | { type: 'error'; message: string }
-  | { type: 'content-fetched'; content: SerloEditorProps['state'] }
+  | { type: 'editor'; content: unknown }
+  | { type: 'static-renderer'; content: unknown }

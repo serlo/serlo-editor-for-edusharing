@@ -2341,15 +2341,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@npm:0.10.0":
-  version: 0.10.0
-  resolution: "@serlo/editor@npm:0.10.0"
+"@serlo/editor@npm:0.11.0":
+  version: 0.11.0
+  resolution: "@serlo/editor@npm:0.11.0"
   dependencies:
     "@serlo/katex-styles": 1.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
     react-resizable: ^3.0.5
-  checksum: 411526fc57f703fe995d569e5ab3d522c7ad2ddef32ec38944ee4eb8bd671460647088bcdeb9ecbed5fd2f98b56ee367f87aa0775d98bae6c189a1538a7f4942
+  checksum: fa9024da75a24960a6b4447e5801fc67b37a460aa367b157907ad66a08d18f635e82963e14e5d6b1956f7032a6653819849fd91b63a53e521b4edd4ce899d4b6
   languageName: node
   linkType: hard
 
@@ -2371,7 +2371,7 @@ __metadata:
     "@next/env": ^13.5.6
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": 0.10.0
+    "@serlo/editor": 0.11.0
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17

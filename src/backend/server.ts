@@ -18,7 +18,6 @@ import {
   JwtDeepflowResponseDecoder,
   LtiCustomType,
 } from '../shared/decoders'
-import { StorageFormatRuntimeType } from '../shared/storage-format'
 import next from 'next'
 import nextConfig from '../../next.config.mjs'
 
@@ -167,14 +166,6 @@ const server = (async () => {
     }
 
     const content: unknown = req.body
-    if (!StorageFormatRuntimeType.is(content)) {
-      res.status(400).json({
-        error:
-          'Content submitted to /lti/save-content was malformed. See StorageFormat.',
-        status: 401,
-      })
-      return
-    }
 
     const platform = await Provider.getPlatformById(res.locals.token.platformId)
     const { appId, nodeId, user, postContentApiUrl, dataToken } = custom
