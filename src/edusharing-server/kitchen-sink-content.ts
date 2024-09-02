@@ -1,8 +1,8 @@
 export const kitchenSinkContent = {
   type: 'https://serlo.org/editor',
-  variant: 'edusharing',
+  variant: 'https://github.com/serlo/serlo-editor-for-edusharing',
   version: 0,
-  dateModified: 'someDate',
+  dateModified: '2024-09-02T07:34:15.025Z',
   document: {
     plugin: 'type-generic-content',
     state: {

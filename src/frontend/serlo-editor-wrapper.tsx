@@ -43,7 +43,7 @@ export function SerloEditorWrapper(props: SerloEditorWrapperProps) {
         EditorPluginType.TextAreaExercise,
       ]}
       _ltik={ltik}
-      editorVariant="edusharing"
+      editorVariant="https://github.com/serlo/serlo-editor-for-edusharing"
       onChange={(payload) => {
         state.current = payload
       }}
