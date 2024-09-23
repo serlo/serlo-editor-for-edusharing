@@ -2341,18 +2341,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serlo/editor@npm:0.7.1":
-  version: 0.7.1
-  resolution: "@serlo/editor@npm:0.7.1"
+"@serlo/editor@npm:0.12.0":
+  version: 0.12.0
+  resolution: "@serlo/editor@npm:0.12.0"
   dependencies:
-    "@serlo/katex-styles": ^1.0.1
+    "@serlo/katex-styles": 1.0.1
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: f8f07f8023807103be27c99f6ec7d6783157847f582e94fc0f4bfacefa253d64ef79b7e9271f01b13815723179fd8d265d1d70e5762eaf7e0b3822d1bf617f23
+    react-resizable: ^3.0.5
+  checksum: 7718492bff722d9a671c942066caaa70e7683120b7b934cd7b799ff9d9aee0a67700e36803432ab8e9505fb7a8717d1b6620d1066589a598b568db52e0b67062
   languageName: node
   linkType: hard
 
-"@serlo/katex-styles@npm:^1.0.1":
+"@serlo/katex-styles@npm:1.0.1":
   version: 1.0.1
   resolution: "@serlo/katex-styles@npm:1.0.1"
   checksum: b8e50847d42669b78a14ee972348457573d806f487b099bf7a552d98cd734abce502be029b2125df0d20dcffc9f51ab1c365965f2c23eafec9aaeddfbc7859d1
@@ -2370,7 +2371,7 @@ __metadata:
     "@next/env": ^13.5.6
     "@next/eslint-plugin-next": ^14.0.4
     "@next/swc-linux-x64-gnu": ^14.0.3
-    "@serlo/editor": 0.7.1
+    "@serlo/editor": 0.12.0
     "@svgr/webpack": ^8.1.0
     "@tailwindcss/typography": ^0.5.9
     "@types/express": ^4.17.17
@@ -4021,7 +4022,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.2.1":
+"clsx@npm:^1.1.1, clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
@@ -8818,7 +8819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.5.8, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:15.x, prop-types@npm:^15.5.8, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -8991,6 +8992,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-draggable@npm:^4.0.3":
+  version: 4.4.6
+  resolution: "react-draggable@npm:4.4.6"
+  dependencies:
+    clsx: ^1.1.1
+    prop-types: ^15.8.1
+  peerDependencies:
+    react: ">= 16.3.0"
+    react-dom: ">= 16.3.0"
+  checksum: 9b15aac59244873ac4561c5a2bead43a56e18d406e0a5f242bd4f9d151c074530c02b99387983104bf43417292f9cf8d063e554ed08d88792235e3fbc965f1b8
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -9037,6 +9051,18 @@ react-notify-toast@Entkenntnis/tmp-react-notify-toast:
     react: ^0.14.7 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     react-dom: ^0.14.7 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
   checksum: ed764b1a1644670f3d5a320ccf764fadc89f86b689757bbb346ee053e6b0cab9c624ce56cc02836af2a3ba15dc57b6998c3d015b6f51183f13e6942e79964854
+  languageName: node
+  linkType: hard
+
+"react-resizable@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "react-resizable@npm:3.0.5"
+  dependencies:
+    prop-types: 15.x
+    react-draggable: ^4.0.3
+  peerDependencies:
+    react: ">= 16.3"
+  checksum: 616a10205acfaf8cc3aa0824b60f6d037eef87143d8f338cf826deb74a353db9b9baad67a65dc8535fe90840bfc3e1b8a901f9c247033ffeec2f30405ac7528e
   languageName: node
   linkType: hard
 
