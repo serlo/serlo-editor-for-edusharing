@@ -1,3 +1,5 @@
+# This repo is deprecated. The code was migrated to [serlo/serlo-editor-as-lti-tool](https://github.com/serlo/serlo-editor-as-lti-tool)
+
 # Docker container for integrating the Serlo Editor into edu-sharing
 
 You can pull the container from
