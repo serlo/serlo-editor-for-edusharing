@@ -1,0 +1,16 @@
+name: Sync to GitLab
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync to GitLab
+        uses: kulla/sync-to-gitlab@v1
+        with:
+          owner: stephan_kulla
+          repository_name: serlo-editor-for-edusharing
+          token: ${{ secrets.GITLAB_TOKEN }}
